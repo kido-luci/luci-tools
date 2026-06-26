@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import QrWifi from '../components/QrWifi.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'wifi-qr-code-generator')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my WiFi password sent anywhere?',
+    a: 'No. The QR code is built entirely in your browser, so your network name and password never leave your device. Nothing is uploaded.',
+  },
+  {
+    q: 'How do guests use the WiFi QR code?',
+    a: 'They open their phone camera and point it at the code. The phone recognises it as a network and offers to join — no typing the password.',
+  },
+  {
+    q: 'Which encryption should I pick?',
+    a: 'Almost every modern home and office router uses WPA or WPA2, so choose WPA / WPA2. Pick WEP only for old equipment, or No password for an open network.',
+  },
+  {
+    q: 'Do iPhone and Android both support this?',
+    a: 'Yes. The WiFi QR format is a standard that the built-in camera apps on current iPhones and Android phones both understand.',
+  },
+  {
+    q: 'What is the “Hidden network” option for?',
+    a: 'Tick it only if your router hides its name (SSID broadcast is off). It tells the scanning phone to look for the network even though it is not advertised.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 py-10">
+    <h1 class="text-3xl font-bold text-slate-900">{meta.h1}</h1>
+    <p class="mt-3 text-slate-600">{meta.description}</p>
+
+    <QrWifi />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to create a WiFi QR code</h2>
+      <ol>
+        <li>Enter your network name (SSID) exactly as it appears on devices.</li>
+        <li>Choose the encryption type and type the password.</li>
+        <li>The QR code updates instantly — generated only in your browser.</li>
+        <li>
+          Download it as <strong>PNG</strong> or <strong>SVG</strong> and print
+          it for guests to scan.
+        </li>
+      </ol>
+
+      <h2>Why use a WiFi QR code?</h2>
+      <p>
+        Sharing a long, complicated WiFi password by reading it out is slow and
+        error-prone. A WiFi QR code lets guests connect by simply pointing their
+        phone camera at it. It is ideal for cafés, holiday rentals, offices and
+        guest rooms — print one card and never dictate a password again.
+      </p>
+
+      <h2>Is it safe to print?</h2>
+      <p>
+        The code only contains the network details you typed, the same ones you
+        would tell a guest anyway. It is generated on your device and nothing is
+        uploaded, so only people who can see the printed code can read it. Place
+        it where guests need it, not on the public street.
+      </p>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

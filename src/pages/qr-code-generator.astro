@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import QrText from '../components/QrText.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'qr-code-generator')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is anything I type uploaded to a server?',
+    a: 'No. The QR code is generated entirely in your browser with JavaScript. The text or URL you enter never leaves your device.',
+  },
+  {
+    q: 'Should I download the PNG or the SVG?',
+    a: 'Use the PNG for websites, documents and quick sharing. Use the SVG when you need to print large — flyers, posters or packaging — because it stays perfectly sharp at any size.',
+  },
+  {
+    q: 'Do these QR codes ever expire?',
+    a: 'No. The code is a static image that encodes your text directly, so it works forever and keeps working even if this site goes away.',
+  },
+  {
+    q: 'How much text can a QR code hold?',
+    a: 'A lot — thousands of characters in theory — but shorter content scans far more reliably. For links, a plain URL is ideal.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 py-10">
+    <h1 class="text-3xl font-bold text-slate-900">{meta.h1}</h1>
+    <p class="mt-3 text-slate-600">{meta.description}</p>
+
+    <QrText />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to make a QR code</h2>
+      <ol>
+        <li>Type or paste any text or URL into the box above.</li>
+        <li>The QR code is generated instantly, right in your browser.</li>
+        <li>
+          Click <strong>Download PNG</strong> for a ready-to-use image, or
+          <strong>Download SVG</strong> for a sharp, print-ready vector.
+        </li>
+      </ol>
+
+      <h2>What can you put in a QR code?</h2>
+      <p>
+        Anything that fits as text: a website link, a phone number, an email
+        address, a short message, a product code, or plain notes. When someone
+        points their phone camera at the code, their device reads the text and
+        offers to open the link or copy the content — no app required on most
+        modern phones.
+      </p>
+
+      <h2>PNG vs SVG</h2>
+      <p>
+        PNG is a fixed-size image that works everywhere and is perfect for the
+        web. SVG is a vector that scales without ever getting blurry, so choose
+        it whenever the code will be printed large or resized.
+      </p>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
