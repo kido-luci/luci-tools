@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'json-formatter')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my JSON uploaded to a server?',
+    a: 'No. Formatting and validation run entirely in your browser with the native JSON parser. Your data never leaves your device.',
+  },
+  {
+    q: 'How does the validator report errors?',
+    a: 'If the input is not valid JSON, the parser message is shown below the editor, including the character position where parsing failed, so you can jump straight to the problem.',
+  },
+  {
+    q: 'Can I choose the indentation?',
+    a: 'Yes. Pick 2 spaces, 4 spaces or a tab, and the output is re-formatted instantly to match.',
+  },
+  {
+    q: 'Does formatting change my data?',
+    a: 'No. Only whitespace and key ordering as written are affected — the values and structure stay exactly the same. Reformatting is lossless.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 py-10">
+    <h1 class="text-3xl font-bold text-slate-900">{meta.h1}</h1>
+    <p class="mt-3 text-slate-600">{meta.description}</p>
+
+    <ToolShell mode="format" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to format and validate JSON</h2>
+      <ol>
+        <li>Paste your JSON into the input box on the left.</li>
+        <li>
+          It is parsed and pretty-printed instantly in the output panel; pick an
+          indent size if you want.
+        </li>
+        <li>
+          If the JSON is invalid, the error message and position appear below so
+          you can fix it.
+        </li>
+        <li>Click <strong>Copy</strong> to put the clean JSON on your clipboard.</li>
+      </ol>
+
+      <h2>Why format JSON?</h2>
+      <p>
+        Minified or hand-edited JSON is hard to read and easy to break. Formatting
+        adds consistent indentation and line breaks so the structure is obvious,
+        and validating it first catches the missing comma or stray bracket that
+        would otherwise crash your app or API call.
+      </p>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

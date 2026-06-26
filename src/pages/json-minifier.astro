@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'json-minifier')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my JSON uploaded anywhere?',
+    a: 'No. Minifying runs locally in your browser with the native JSON parser. Nothing is sent to a server.',
+  },
+  {
+    q: 'What does minifying remove?',
+    a: 'All insignificant whitespace — indentation, line breaks and spaces between tokens. The data itself is unchanged, just packed into the smallest valid form.',
+  },
+  {
+    q: 'Why minify JSON?',
+    a: 'Smaller JSON means less bandwidth and faster loading. It is handy for API payloads, config embedded in code, and anywhere file size matters.',
+  },
+  {
+    q: 'Is minified JSON still valid?',
+    a: 'Yes. Whitespace is not significant in JSON, so a minified document parses exactly the same as its formatted version.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 py-10">
+    <h1 class="text-3xl font-bold text-slate-900">{meta.h1}</h1>
+    <p class="mt-3 text-slate-600">{meta.description}</p>
+
+    <ToolShell mode="minify" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to minify JSON</h2>
+      <ol>
+        <li>Paste your JSON into the input box on the left.</li>
+        <li>It is parsed and re-serialised with no whitespace in the output panel.</li>
+        <li>
+          If the JSON is invalid, the error message and position appear below so
+          you can fix it first.
+        </li>
+        <li>Click <strong>Copy</strong> to put the minified JSON on your clipboard.</li>
+      </ol>
+
+      <h2>Why minify JSON?</h2>
+      <p>
+        Formatted JSON is great for reading, but the extra whitespace adds up over
+        large payloads. Minifying strips it out to produce the smallest valid
+        document, which means quicker transfers and smaller files — without
+        touching the data itself.
+      </p>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
