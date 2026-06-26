@@ -26,6 +26,7 @@ export function isHeic(file: File): boolean {
   );
 }
 
+/* v8 ignore start -- browser-only (Canvas/createImageBitmap), verified via manual browser testing */
 async function decodeToBitmap(file: File): Promise<ImageBitmap> {
   if (isHeic(file)) {
     // Chrome/Firefox can't decode HEIC on canvas — convert via WASM first.
@@ -36,12 +37,19 @@ async function decodeToBitmap(file: File): Promise<ImageBitmap> {
   }
   return createImageBitmap(file);
 }
+/* v8 ignore stop */
+
+export function outputFilename(inputName: string, to: TargetFormat): string {
+  const base = inputName.replace(/\.[^.]+$/, '') || 'image';
+  return `${base}.${EXT[to]}`;
+}
 
 export interface ConvertResult {
   blob: Blob;
   filename: string;
 }
 
+/* v8 ignore start -- browser-only (Canvas/createImageBitmap), verified via manual browser testing */
 export async function convertImageFile(
   file: File,
   opts: { to: TargetFormat; quality?: number; background?: string },
@@ -72,6 +80,6 @@ export async function convertImageFile(
     );
   });
 
-  const base = file.name.replace(/\.[^.]+$/, '') || 'image';
-  return { blob, filename: `${base}.${EXT[opts.to]}` };
+  return { blob, filename: outputFilename(file.name, opts.to) };
 }
+/* v8 ignore stop */
