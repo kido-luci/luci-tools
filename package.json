@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "test": "vitest run"
   },
   "dependencies": {
     "astro": "^5.13.0",
@@ -15,6 +16,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "vitest": "^3.2.4",
     "@types/qrcode": "^1.5.5",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
