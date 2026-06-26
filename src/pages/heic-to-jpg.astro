@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'heic-to-jpg')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Are my photos uploaded to a server?',
+    a: 'No. Conversion runs entirely in your browser using WebAssembly and Canvas. Your HEIC files never leave your device.',
+  },
+  {
+    q: 'What is a HEIC file?',
+    a: 'HEIC is the high-efficiency image format Apple uses for iPhone photos. It saves space but is not supported everywhere, which is why converting to JPG is useful for sharing.',
+  },
+  {
+    q: 'Will I lose image quality?',
+    a: 'JPG uses lossy compression, but at the default quality the difference is visually negligible for photos. The original HEIC file on your device is left untouched.',
+  },
+  {
+    q: 'Can I convert several HEIC files at once?',
+    a: 'Yes. Select or drop multiple files and each one is converted and offered as a separate download.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 py-10">
+    <h1 class="text-3xl font-bold text-slate-900">{meta.h1}</h1>
+    <p class="mt-3 text-slate-600">{meta.description}</p>
+
+    <ToolShell
+      to="jpeg"
+      accept=".heic,.heif,image/heic,image/heif"
+      prompt="Drag & drop HEIC photos here"
+    />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert HEIC to JPG</h2>
+      <ol>
+        <li>Drop your HEIC photos onto the box above, or click to browse.</li>
+        <li>Each photo is decoded and converted to JPG right in your browser.</li>
+        <li>Click <strong>Download</strong> next to each result to save the JPG.</li>
+      </ol>
+
+      <h2>Why convert HEIC to JPG?</h2>
+      <p>
+        HEIC keeps iPhone photos small, but many apps, websites and Windows tools
+        still expect JPG. Converting gives you a file you can share or upload
+        anywhere, while your original photos stay exactly as they are.
+      </p>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

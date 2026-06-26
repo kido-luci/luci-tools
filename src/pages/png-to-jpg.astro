@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'png-to-jpg')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Are my images uploaded anywhere?',
+    a: 'No. The conversion happens locally on your device with the Canvas API. Nothing is sent to a server.',
+  },
+  {
+    q: 'What happens to transparent areas?',
+    a: 'JPG does not support transparency, so transparent pixels are filled with a white background during conversion.',
+  },
+  {
+    q: 'Why convert PNG to JPG?',
+    a: 'JPG files are usually much smaller than PNG for photos, which makes them faster to upload, email and load on the web.',
+  },
+  {
+    q: 'Can I convert multiple PNGs at once?',
+    a: 'Yes. Add several files and each is converted and offered as its own download.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 py-10">
+    <h1 class="text-3xl font-bold text-slate-900">{meta.h1}</h1>
+    <p class="mt-3 text-slate-600">{meta.description}</p>
+
+    <ToolShell to="jpeg" accept=".png,image/png" prompt="Drag & drop PNG images here" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert PNG to JPG</h2>
+      <ol>
+        <li>Drop your PNG files onto the box above, or click to browse.</li>
+        <li>Each image is redrawn on a canvas and encoded as JPG in your browser.</li>
+        <li>Click <strong>Download</strong> next to each result to save the JPG.</li>
+      </ol>
+
+      <h2>Why convert PNG to JPG?</h2>
+      <p>
+        PNG is great for graphics and screenshots with sharp edges, but for
+        photographs it produces large files. JPG compresses photos far more
+        efficiently, so converting is a quick way to shrink a file before
+        sharing or uploading it.
+      </p>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

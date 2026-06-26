@@ -1,0 +1,34 @@
+---
+// The interactive converter widget. `to` selects the output format and is read
+// back by the client script, so every converter page reuses this component.
+import type { TargetFormat } from '../lib/image';
+
+interface Props {
+  to: TargetFormat;
+  accept?: string;
+  prompt?: string;
+}
+
+const { to, accept = 'image/*', prompt = 'Drag & drop images here' } = Astro.props;
+---
+
+<div data-image-tool data-to={to} class="mt-8">
+  <div
+    data-dropzone
+    class="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white px-6 py-12 text-center transition-colors"
+  >
+    <p class="text-slate-700">
+      {prompt}, or <span class="font-medium text-blue-600">browse</span>
+    </p>
+    <p class="mt-1 text-xs text-slate-400">
+      100% in your browser — your files never leave your device.
+    </p>
+    <input type="file" accept={accept} multiple class="hidden" />
+  </div>
+
+  <div data-results class="mt-4 space-y-2"></div>
+</div>
+
+<script>
+  import '../scripts/image-tool.ts';
+</script>
