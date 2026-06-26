@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'strikethrough-text-generator')!;
+const title = `${meta.h1} — Copy & Paste s̶t̶r̶i̶k̶e̶ Text | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How does the strikethrough survive copy and paste?',
+    a: 'A combining "long stroke overlay" mark is added after every character. Because the line is encoded as part of the text rather than as formatting, it stays crossed-out when you paste it into a chat or post.',
+  },
+  {
+    q: 'Where can I use strikethrough text?',
+    a: 'Plain-text fields across Instagram, TikTok, Twitter/X, Facebook, Discord and WhatsApp. Rendering depends on the font, so the line may look slightly different from one app to another.',
+  },
+  {
+    q: 'Why does it sometimes look misaligned?',
+    a: 'The strike is a combining character that each font positions itself. On a few fonts the line can sit a little high or low, but the text remains readable and clearly struck through.',
+  },
+  {
+    q: 'Is anything sent to a server?',
+    a: 'No. The strikethrough is added in your browser with JavaScript, and your text never leaves your device.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 py-10">
+    <h1 class="text-3xl font-bold text-slate-900">{meta.h1}</h1>
+    <p class="mt-3 text-slate-600">{meta.description}</p>
+
+    <ToolShell
+      style="strike"
+      placeholder="Type your text to cross it out…"
+    />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to make strikethrough text</h2>
+      <ol>
+        <li>Type or paste your text into the box above.</li>
+        <li>Each character gets a line through it instantly as you type.</li>
+        <li>Click <strong>Copy</strong>, then paste the crossed-out text anywhere.</li>
+      </ol>
+
+      <h2>Why use a strikethrough text generator?</h2>
+      <p>
+        Most social apps have no strikethrough button for bios and captions. This
+        tool adds a crossed-out line to your words using Unicode combining
+        characters, so you can show a "before and after" price, mark something as
+        done, or make a joke that lands — all in plain text that pastes anywhere.
+      </p>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

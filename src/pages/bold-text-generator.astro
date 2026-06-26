@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'bold-text-generator')!;
+const title = `${meta.h1} — Copy & Paste 𝗕𝗼𝗹𝗱 Text | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How does this make text bold without a formatting button?',
+    a: 'It swaps each letter for its bold Unicode equivalent (the Mathematical Sans-Serif Bold characters). Because the bold look is built into the characters themselves, it survives copy and paste into places that have no bold button, like an Instagram bio.',
+  },
+  {
+    q: 'Where can I paste the bold text?',
+    a: 'Almost anywhere that accepts plain text — Instagram, TikTok, Twitter/X, Facebook, Discord, WhatsApp bios and captions, and most usernames. A few platforms restrict unusual characters, so test before posting.',
+  },
+  {
+    q: 'Is my text sent to a server?',
+    a: 'No. The conversion runs entirely in your browser with JavaScript. Your text never leaves your device.',
+  },
+  {
+    q: 'Why are some characters not bold?',
+    a: 'Only letters A–Z, a–z and digits 0–9 have bold Unicode versions. Spaces, emoji and punctuation are left exactly as you typed them.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 py-10">
+    <h1 class="text-3xl font-bold text-slate-900">{meta.h1}</h1>
+    <p class="mt-3 text-slate-600">{meta.description}</p>
+
+    <ToolShell style="bold" placeholder="Type your text to make it 𝗯𝗼𝗹𝗱…" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to make bold text</h2>
+      <ol>
+        <li>Type or paste your text into the box above.</li>
+        <li>The bold version appears instantly underneath as you type.</li>
+        <li>Click <strong>Copy</strong>, then paste it into your bio, caption or post.</li>
+      </ol>
+
+      <h2>Why use a bold text generator?</h2>
+      <p>
+        Social platforms like Instagram and TikTok do not give you a bold button
+        for bios and captions. This tool gets around that by turning your words
+        into bold Unicode characters that already look bold everywhere they are
+        pasted — no formatting required. It is a quick way to make a name, a
+        headline or a key line stand out in feeds full of plain text.
+      </p>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

@@ -1,0 +1,47 @@
+---
+// The interactive fancy-text widget. `style` selects the transform and is read
+// back by the client script, so every generator page reuses this component.
+import type { Style } from '../lib/fancy';
+
+interface Props {
+  style: Style;
+  placeholder?: string;
+}
+
+const { style, placeholder = 'Type or paste your text here…' } = Astro.props;
+---
+
+<div data-fancy-tool data-style={style} class="mt-8">
+  <label class="block text-sm font-medium text-slate-700" for="fancy-input">
+    Your text
+  </label>
+  <textarea
+    id="fancy-input"
+    data-input
+    rows="3"
+    placeholder={placeholder}
+    class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+  ></textarea>
+
+  <p class="mt-2 text-xs text-slate-400">
+    100% in your browser — your text never leaves your device.
+  </p>
+
+  <div
+    data-output
+    class="mt-4 min-h-[3rem] select-all whitespace-pre-wrap break-words rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-lg text-slate-900"
+  >
+  </div>
+
+  <button
+    type="button"
+    data-copy
+    class="mt-3 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+  >
+    Copy
+  </button>
+</div>
+
+<script>
+  import '../scripts/fancy-tool.ts';
+</script>

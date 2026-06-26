@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'italic-text-generator')!;
+const title = `${meta.h1} — Copy & Paste 𝘐𝘵𝘢𝘭𝘪𝘤 Text | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How does this italicise text without a formatting button?',
+    a: 'It replaces each letter with its italic Unicode equivalent (the Mathematical Sans-Serif Italic characters). The slant is part of the character, so it stays italic when you copy and paste it into a bio or caption.',
+  },
+  {
+    q: 'Where can I paste the italic text?',
+    a: 'Most places that take plain text — Instagram, TikTok, Twitter/X, Facebook, Discord and WhatsApp bios and captions. Some platforms filter unusual characters, so it is worth a quick test first.',
+  },
+  {
+    q: 'Why do numbers stay normal?',
+    a: 'Unicode does not include a sans-serif italic set for digits, so 0–9 are left as-is. Only the letters A–Z and a–z are converted; spaces and punctuation are unchanged.',
+  },
+  {
+    q: 'Is my text uploaded anywhere?',
+    a: 'No. Everything happens locally in your browser. Your text never leaves your device.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 py-10">
+    <h1 class="text-3xl font-bold text-slate-900">{meta.h1}</h1>
+    <p class="mt-3 text-slate-600">{meta.description}</p>
+
+    <ToolShell style="italic" placeholder="Type your text to make it 𝘪𝘵𝘢𝘭𝘪𝘤…" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to make italic text</h2>
+      <ol>
+        <li>Type or paste your text into the box above.</li>
+        <li>The italic version updates live as you type.</li>
+        <li>Click <strong>Copy</strong>, then paste it wherever you need it.</li>
+      </ol>
+
+      <h2>Why use an italic text generator?</h2>
+      <p>
+        Bios, captions and usernames on most social apps are plain text with no
+        italic option. This generator converts your words into italic Unicode
+        characters that keep their slant anywhere you paste them, so you can add
+        emphasis or a softer, stylish tone without any markup or screenshots.
+      </p>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
