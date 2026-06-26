@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'jpg-to-pdf')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Are my images uploaded anywhere?',
+    a: 'No. The PDF is built locally in your browser, so your JPG and PNG images never leave your device.',
+  },
+  {
+    q: 'Can I combine several images into one PDF?',
+    a: 'Yes. Add as many images as you like and each one becomes a page in a single PDF, in the order you added them.',
+  },
+  {
+    q: 'Which image formats are supported?',
+    a: 'JPG and PNG. Each page is sized to match its image, so nothing is cropped or stretched.',
+  },
+  {
+    q: 'Does converting reduce image quality?',
+    a: 'No. Your images are embedded at their original resolution, so the PDF looks exactly like the source photos.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 py-10">
+    <h1 class="text-3xl font-bold text-slate-900">{meta.h1}</h1>
+    <p class="mt-3 text-slate-600">{meta.description}</p>
+
+    <ToolShell
+      mode="images"
+      accept="image/jpeg,image/png,.jpg,.jpeg,.png"
+      cta="Create PDF"
+      prompt="Drag & drop JPG or PNG images here"
+    />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert JPG to PDF</h2>
+      <ol>
+        <li>Drop your JPG or PNG images onto the box above, or click to browse.</li>
+        <li>The images are placed one per page in the order you added them.</li>
+        <li>Click <strong>Create PDF</strong>, then download the finished PDF.</li>
+      </ol>
+
+      <h2>Why turn images into a PDF?</h2>
+      <p>
+        A single PDF is much easier to email, print and archive than a folder of
+        loose photos — ideal for receipts, ID scans, screenshots or a set of
+        pictures you want to keep together. Since the conversion runs entirely in
+        your browser, even personal documents stay on your own device.
+      </p>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

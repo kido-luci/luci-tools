@@ -1,0 +1,46 @@
+---
+// The interactive PDF widget. `mode` selects the operation and is read back by
+// the client script, so both tool pages reuse this component. Files are queued,
+// listed, then turned into a single downloadable PDF by the action button.
+interface Props {
+  mode: 'merge' | 'images';
+  accept: string;
+  cta: string;
+  prompt?: string;
+}
+
+const { mode, accept, cta, prompt = 'Drag & drop files here' } = Astro.props;
+---
+
+<div data-pdf-tool data-mode={mode} class="mt-8">
+  <div
+    data-dropzone
+    class="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white px-6 py-12 text-center transition-colors"
+  >
+    <p class="text-slate-700">
+      {prompt}, or <span class="font-medium text-blue-600">browse</span>
+    </p>
+    <p class="mt-1 text-xs text-slate-400">
+      100% in your browser — your files never leave your device.
+    </p>
+    <input type="file" accept={accept} multiple class="hidden" />
+  </div>
+
+  <div data-files class="mt-4 space-y-2"></div>
+
+  <button
+    data-action
+    type="button"
+    disabled
+    class="mt-4 rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+  >
+    {cta}
+  </button>
+
+  <div data-results class="mt-4"></div>
+  <p data-status class="mt-4 text-sm text-slate-500"></p>
+</div>
+
+<script>
+  import '../scripts/pdf-tool.ts';
+</script>
