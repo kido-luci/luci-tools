@@ -1,0 +1,41 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "image-converter",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "image-converter", "--", "--port", "4399"],
+      "port": 4399
+    },
+    {
+      "name": "fancy-text-generator",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "fancy-text-generator", "--", "--port", "4391"],
+      "port": 4391
+    },
+    {
+      "name": "json-tools",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "json-tools", "--", "--port", "4392"],
+      "port": 4392
+    },
+    {
+      "name": "qr-tools",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "qr-tools", "--", "--port", "4393"],
+      "port": 4393
+    },
+    {
+      "name": "pdf-tools",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "pdf-tools", "--", "--port", "4394"],
+      "port": 4394
+    },
+    {
+      "name": "tools-home",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "tools-home", "--", "--port", "4395"],
+      "port": 4395
+    }
+  ]
+}
