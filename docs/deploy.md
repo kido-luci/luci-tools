@@ -88,3 +88,22 @@ To have the CLI steps (2–3) run non-interactively/in CI, create a scoped
 `CLOUDFLARE_API_TOKEN` (Workers Scripts: Edit · Pages: Edit · Zone `luci-studio.com`)
 and provide it as an **environment variable** — never commit it. Otherwise
 `wrangler login` (browser OAuth) is enough.
+
+## First-deploy gotchas (resolved)
+
+The initial deploy was done via CLI (`wrangler pages deploy dist` per site +
+`wrangler deploy` for the Worker) and hit two non-obvious issues, both now handled
+in `tools-router/src/index.ts`:
+
+1. **`<engine>.pages.dev` is globally unique.** The plain names were taken, so
+   Cloudflare assigned suffixed origins (`image-converter-69t.pages.dev`, …). The
+   Worker's `ORIGINS` map hardcodes the real hosts — check `wrangler pages project
+   list` for the actual domains, and update `ORIGINS` if a project is recreated.
+2. **Astro `base` does not nest the build output.** `dist/` serves at the origin
+   root (`/heic-to-jpg/`, not `/image/heic-to-jpg/`), so the Worker strips the
+   `/<engine>` prefix before proxying and re-adds it on redirect `Location` headers.
+   This means a flat `dist` deploy is correct — do **not** try to nest it.
+
+Bare `*.pages.dev` origins have broken internal links (they point at `/<engine>/…`,
+which only exists behind the Worker); that is fine — users and canonicals use
+`tools.luci-studio.com`. Optionally mark the `*.pages.dev` origins `noindex` later.

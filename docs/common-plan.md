@@ -52,8 +52,15 @@ in the Worker (every new page edits the Worker) and risk slug collisions.
 Engine-prefix makes the Worker trivial (first segment = project), lets each repo own
 its namespace with zero central coupling, and gives free category hub pages
 (`/image/`, `/pdf/`) which are good for SEO. The extra path segment is a negligible
-ranking factor. Each repo sets Astro `base: '/<engine>'` so the Worker is pure
-pass-through (no rewriting → no asset/canonical breakage).
+ranking factor. Each repo sets Astro `base: '/<engine>'` so its **links, canonical
+tags and sitemap** already use the production path.
+
+> **Correction (learned on first deploy):** `base` does **not** nest the build
+> output — the dist serves at the origin *root* (`/heic-to-jpg/`, not
+> `/image/heic-to-jpg/`). So the Worker is **not** a pure pass-through: it strips the
+> `/<engine>` prefix when proxying and re-adds it on redirect `Location` headers
+> (see §3). Also, `<engine>.pages.dev` names are globally unique, so the deployed
+> origins carry a random suffix (e.g. `image-converter-69t.pages.dev`).
 
 ### Other locked choices
 - **Separate repos** (the deploy/isolation model is **not** a monorepo and **not**
@@ -87,11 +94,14 @@ Pure reverse proxy. Bound to `tools.luci-studio.com/*`. Logic:
 - Watch the Worker free tier (100k req/day); move to Workers Paid ($5/mo) only when
   traffic justifies it.
 
-> **Status — built (Phase 1, not deployed).** `tools-router/` is scaffolded:
-> `src/index.ts` implements the project map, target-URL build and redirect-`Location`
-> rewrite, with `pickProject` / `buildTarget` / `rewriteLocation` factored out and
-> unit-tested (8/8 via vitest); `tsc` is clean. `wrangler deploy` + the
-> `tools.luci-studio.com/*` route binding are pending Cloudflare access (Phase 2).
+> **Status — DEPLOYED (live).** `tools-router/` proxies `tools.luci-studio.com`
+> (Worker custom domain) to the origin Pages projects. First deploy surfaced two
+> gotchas, now handled in `src/index.ts` (`resolveRoute` / `rewriteLocation`,
+> unit-tested 9/9): (a) `<engine>.pages.dev` is globally unique, so the real origins
+> carry a suffix — hardcoded in `ORIGINS`; (b) Astro `base` does not nest dist, so
+> the Worker strips the `/<engine>` prefix and re-adds it on redirects. ⚠️ The
+> suffixed origin hosts change if a Pages project is deleted/recreated — a stable
+> upgrade is per-project custom domains under `luci-studio.com`.
 
 ### `tools-home` (root Pages project)
 Serves everything not owned by an engine:
@@ -109,8 +119,8 @@ Serves everything not owned by an engine:
 > `public/robots.txt`, plus the sitemap **index** (`/sitemap.xml`) and the home-pages
 > sitemap (`/sitemap-home.xml`). Reuses the Option A design system (dark mode +
 > toggle). `astro check` and build are green; previewed light + dark; canonicals
-> resolve to the production host. Deploy to `tools-home.pages.dev` is pending
-> Cloudflare access (Phase 2).
+> resolve to the production host. **Deployed live** at `tools-home.pages.dev`, served
+> at the root of `tools.luci-studio.com` via the Worker.
 
 ### A blog-side touchpoint (separate small task, lands in `luci_web_blog`)
 Add a `/tools` page on `luci-studio.com` that promotes the portfolio and links to
@@ -258,9 +268,10 @@ Ranked by (traffic × RPM × ease):
 | 5 | `qr-tools` | 🔥 evergreen, easy |
 
 `tools-home` + `tools-router` are built once there is ≥1 tool to route (see CLAUDE.md
-build sequence). **Both are now scaffolded and verified locally (Phase 1); deploying
-them is Phase 2, pending `CLOUDFLARE_API_TOKEN` and the `tools.luci-studio.com` DNS /
-route setup.** The step-by-step Phase 2 runbook is in [deploy.md](deploy.md).
+build sequence). **Both are now DEPLOYED — the portfolio is live on
+`tools.luci-studio.com`** (the 6 Pages projects via `wrangler pages deploy`, the
+Worker via `wrangler deploy` with a custom domain). The runbook + the first-deploy
+gotchas are in [deploy.md](deploy.md).
 
 ## 9. Definition of Done (per tool)
 
