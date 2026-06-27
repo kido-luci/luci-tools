@@ -86,7 +86,7 @@ function init(): void {
       link.download = mode === 'merge' ? 'merged.pdf' : 'images.pdf';
       link.textContent = `Download PDF · ${formatBytes(blob.size)}`;
       link.className =
-        'inline-block rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700';
+        'inline-block rounded-md bg-brand px-4 py-2 font-medium text-white hover:bg-brand-dark';
       results.appendChild(link);
 
       status.textContent = 'Done.';
@@ -103,11 +103,11 @@ function init(): void {
 
     const activate = (e: Event) => {
       e.preventDefault();
-      dropzone.classList.add('border-blue-500', 'bg-blue-50');
+      dropzone.classList.add('border-brand', 'bg-brand-tint');
     };
     const deactivate = (e: Event) => {
       e.preventDefault();
-      dropzone.classList.remove('border-blue-500', 'bg-blue-50');
+      dropzone.classList.remove('border-brand', 'bg-brand-tint');
     };
 
     dropzone.addEventListener('dragover', activate);

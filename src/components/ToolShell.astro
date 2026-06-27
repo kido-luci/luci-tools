@@ -18,7 +18,7 @@ const { mode, accept, cta, prompt = 'Drag & drop files here' } = Astro.props;
     class="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white px-6 py-12 text-center transition-colors"
   >
     <p class="text-slate-700">
-      {prompt}, or <span class="font-medium text-blue-600">browse</span>
+      {prompt}, or <span class="font-medium text-brand">browse</span>
     </p>
     <p class="mt-1 text-xs text-slate-400">
       100% in your browser — your files never leave your device.
@@ -32,7 +32,7 @@ const { mode, accept, cta, prompt = 'Drag & drop files here' } = Astro.props;
     data-action
     type="button"
     disabled
-    class="mt-4 rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+    class="mt-4 rounded-md bg-brand px-4 py-2 font-medium text-white hover:bg-brand-dark disabled:cursor-not-allowed disabled:bg-slate-300"
   >
     {cta}
   </button>
