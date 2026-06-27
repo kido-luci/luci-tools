@@ -260,7 +260,7 @@ Ranked by (traffic × RPM × ease):
 `tools-home` + `tools-router` are built once there is ≥1 tool to route (see CLAUDE.md
 build sequence). **Both are now scaffolded and verified locally (Phase 1); deploying
 them is Phase 2, pending `CLOUDFLARE_API_TOKEN` and the `tools.luci-studio.com` DNS /
-route setup.**
+route setup.** The step-by-step Phase 2 runbook is in [deploy.md](deploy.md).
 
 ## 9. Definition of Done (per tool)
 
