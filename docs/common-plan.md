@@ -56,9 +56,16 @@ ranking factor. Each repo sets Astro `base: '/<engine>'` so the Worker is pure
 pass-through (no rewriting → no asset/canonical breakage).
 
 ### Other locked choices
-- **Separate repos** (not one monorepo, not submodules): isolation, independent
-  deploy, each tool can graduate/sell separately. The SEO cost of separation is
-  recovered by the single-host routing above.
+- **Separate repos** (the deploy/isolation model is **not** a monorepo and **not**
+  submodule-coupled): isolation, independent deploy, each tool can graduate/sell
+  separately. The SEO cost of separation is recovered by the single-host routing
+  above.
+  - *Management layer (added):* a thin meta-repo **`kido-luci/luci-tools`** (private)
+    aggregates every tool repo as **git submodules** purely for convenience —
+    one-command clone, backup, and versioning the shared `CLAUDE.md` + `docs/` +
+    `.claude/launch.json`. This does **not** change the above: each tool stays an
+    independent repo and Cloudflare Pages deploys it directly from its own `master`;
+    the submodule pointer never touches deployment.
 - **Astro static**: SSG = strong SEO + one repo → many landing pages via file
   routing + $0 server. Matches existing skill. No Sentry / no SSR adapter keeps the
   dev server working.
@@ -270,8 +277,9 @@ route setup.**
 - Choose the specific CMP (Google's own consent or a free certified CMP).
 - Confirm the exact `tools-home` design / branding (logo, colors, fonts) — shared
   visual identity across tools, copied per repo (no shared package yet, by design).
-- Decide whether to version/`git init` this planning workspace itself (currently
-  plain files; the tool repos are each their own git repo).
+- ~~Decide whether to version/`git init` this planning workspace itself~~ —
+  **Done:** the workspace is now the private meta-repo `kido-luci/luci-tools`,
+  aggregating the tool repos as submodules and versioning the shared docs (see §2).
 - Revisit Ezoic/Mediavine migration once a tool crosses their traffic thresholds.
 
 ## 11. Internationalization (i18n) — design doc (NOT yet built)
