@@ -4,23 +4,23 @@
 ---
 
 <div data-qr-text class="mt-8">
-  <label for="qr-text-input" class="block text-sm font-medium text-slate-700">
+  <label for="qr-text-input" class="block text-sm font-medium text-slate-700 dark:text-slate-300">
     Text or URL
   </label>
   <textarea
     id="qr-text-input"
     rows="3"
     placeholder="https://example.com"
-    class="mt-2 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 shadow-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+    class="mt-2 w-full resize-y rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 shadow-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:placeholder:text-slate-500"
   ></textarea>
-  <p class="mt-1 text-xs text-slate-400">
+  <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">
     100% in your browser — nothing you enter leaves your device.
   </p>
 
   <div class="mt-6 flex flex-col items-center">
     <div
       data-preview
-      class="flex h-64 w-64 items-center justify-center rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-400"
+      class="flex h-64 w-64 items-center justify-center rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-400 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-500"
     >
       Your QR code will appear here.
     </div>
@@ -36,7 +36,7 @@
       <button
         data-download-svg
         type="button"
-        class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:border-brand-ring hover:text-brand"
+        class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:border-brand-ring hover:text-brand dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300"
       >
         Download SVG
       </button>

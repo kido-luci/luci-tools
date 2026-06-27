@@ -5,10 +5,10 @@
 /* Shared readable-copy styles for the SEO body (how-to + explanation). */
 @layer components {
   .copy {
-    @apply mt-10 text-slate-700 leading-relaxed;
+    @apply mt-10 text-slate-700 leading-relaxed dark:text-slate-300;
   }
   .copy h2 {
-    @apply text-xl font-semibold text-slate-900 mt-8 mb-3;
+    @apply text-xl font-semibold text-slate-900 mt-8 mb-3 dark:text-slate-100;
   }
   .copy p {
     @apply mt-3;
