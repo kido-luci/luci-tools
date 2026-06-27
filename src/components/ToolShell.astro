@@ -15,10 +15,10 @@ const { to, accept = 'image/*', prompt = 'Drag & drop images here' } = Astro.pro
 <div data-image-tool data-to={to} class="mt-8">
   <div
     data-dropzone
-    class="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white px-6 py-12 text-center transition-colors"
+    class="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white px-6 py-12 text-center transition-colors hover:border-brand"
   >
     <p class="text-slate-700">
-      {prompt}, or <span class="font-medium text-blue-600">browse</span>
+      {prompt}, or <span class="font-medium text-brand">browse</span>
     </p>
     <p class="mt-1 text-xs text-slate-400">
       100% in your browser — your files never leave your device.
