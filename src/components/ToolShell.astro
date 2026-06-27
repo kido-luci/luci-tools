@@ -15,12 +15,12 @@ const { mode, accept, cta, prompt = 'Drag & drop files here' } = Astro.props;
 <div data-pdf-tool data-mode={mode} class="mt-8">
   <div
     data-dropzone
-    class="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white px-6 py-12 text-center transition-colors"
+    class="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white px-6 py-12 text-center transition-colors dark:bg-slate-900 dark:border-slate-700"
   >
-    <p class="text-slate-700">
-      {prompt}, or <span class="font-medium text-brand">browse</span>
+    <p class="text-slate-700 dark:text-slate-300">
+      {prompt}, or <span class="font-medium text-brand dark:text-brand-light">browse</span>
     </p>
-    <p class="mt-1 text-xs text-slate-400">
+    <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">
       100% in your browser — your files never leave your device.
     </p>
     <input type="file" accept={accept} multiple class="hidden" />
@@ -38,7 +38,7 @@ const { mode, accept, cta, prompt = 'Drag & drop files here' } = Astro.props;
   </button>
 
   <div data-results class="mt-4"></div>
-  <p data-status class="mt-4 text-sm text-slate-500"></p>
+  <p data-status class="mt-4 text-sm text-slate-500 dark:text-slate-500"></p>
 </div>
 
 <script>

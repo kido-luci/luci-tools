@@ -3,15 +3,15 @@ import { SITE } from '../consts';
 const hub = import.meta.env.BASE_URL; // /pdf/
 ---
 
-<header class="border-b border-slate-200 bg-white">
+<header class="border-b border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800">
   <div class="mx-auto flex max-w-[1600px] items-center justify-between px-4 py-[22px] sm:px-10">
     <a href={hub} class="flex items-center gap-[11px]">
       <span class="inline-flex h-[30px] w-[30px] items-center justify-center rounded-[9px] bg-brand text-[10px] font-extrabold tracking-tight text-white" aria-hidden="true">PDF</span>
-      <span class="whitespace-nowrap text-[21px] font-bold tracking-[-0.01em] text-slate-900">PDF Tools</span>
+      <span class="whitespace-nowrap text-[21px] font-bold tracking-[-0.01em] text-slate-900 dark:text-slate-100">PDF Tools</span>
     </a>
-    <nav class="flex items-center gap-6 text-[15.5px] font-medium text-slate-600 sm:gap-[34px]">
-      <a href={hub} class="hover:text-slate-900">All PDF tools</a>
-      <a href={`${SITE.url}/`} class="hover:text-slate-900">{SITE.name}</a>
+    <nav class="flex items-center gap-6 text-[15.5px] font-medium text-slate-600 dark:text-slate-400 sm:gap-[34px]">
+      <a href={hub} class="hover:text-slate-900 dark:hover:text-slate-100">All PDF tools</a>
+      <a href={`${SITE.url}/`} class="hover:text-slate-900 dark:hover:text-slate-100">{SITE.name}</a>
     </nav>
   </div>
 </header>
