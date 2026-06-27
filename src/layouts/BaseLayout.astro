@@ -16,6 +16,14 @@ const { title, description, jsonLd } = Astro.props;
 <!doctype html>
 <html lang="en">
   <head>
+    <script is:inline>
+      (() => {
+        const saved = localStorage.getItem('theme');
+        const dark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', dark);
+        document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+      })();
+    </script>
     <SeoHead title={title} description={description} jsonLd={jsonLd} />
   </head>
   <body class="flex min-h-screen flex-col bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
