@@ -1,2 +1,6 @@
 .DS_Store
 *.log
+
+# cloudflare / node (in case tooling runs at the workspace root)
+.wrangler/
+node_modules/
