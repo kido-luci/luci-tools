@@ -1,6 +1,0 @@
-{
-  "name": "tools-home",
-  "command": "npm",
-  "args": ["--prefix", "/Users/trunglaptieu/development/projects/luci-tools/tools-home", "run", "dev", "--", "--port", "4395"],
-  "port": 4395
-}
