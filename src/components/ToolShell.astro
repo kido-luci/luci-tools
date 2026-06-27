@@ -12,7 +12,7 @@ const { style, placeholder = 'Type or paste your text here…' } = Astro.props;
 ---
 
 <div data-fancy-tool data-style={style} class="mt-8">
-  <label class="block text-sm font-medium text-slate-700" for="fancy-input">
+  <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="fancy-input">
     Your text
   </label>
   <textarea
@@ -20,16 +20,16 @@ const { style, placeholder = 'Type or paste your text here…' } = Astro.props;
     data-input
     rows="3"
     placeholder={placeholder}
-    class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+    class="mt-1 w-full resize-y rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:placeholder:text-slate-500"
   ></textarea>
 
-  <p class="mt-2 text-xs text-slate-400">
+  <p class="mt-2 text-xs text-slate-400 dark:text-slate-500">
     100% in your browser — your text never leaves your device.
   </p>
 
   <div
     data-output
-    class="mt-4 min-h-[3rem] select-all whitespace-pre-wrap break-words rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-lg text-slate-900"
+    class="mt-4 min-h-[3rem] select-all whitespace-pre-wrap break-words rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-lg text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
   >
   </div>
 
