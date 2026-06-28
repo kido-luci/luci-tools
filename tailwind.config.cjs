@@ -4,15 +4,20 @@ module.exports = {
   content: ['./src/**/*.{astro,html,js,ts,jsx,tsx,md,mdx}'],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['"Plus Jakarta Sans Variable"', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['"JetBrains Mono Variable"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+      },
       colors: {
-        // Brand indigo (Option A). `tint`/`ring` are the soft fills used by
-        // the icon tiles, trust chips and card hover state.
+        // Brand indigo, sampled from the "Refined Indigo" design.
+        // `tint`/`ring` are the soft fills used by icon tiles, trust chips and
+        // the active mockup tile; `dark` is the hover/darker shade.
         brand: {
-          DEFAULT: '#4f52d9',
-          dark: '#3c40c7',
-          light: '#8f93e6',
-          tint: '#edeefb',
-          ring: '#c7c9f2',
+          DEFAULT: '#4f46e5',
+          dark: '#4338ca',
+          light: '#818cf8',
+          tint: '#eef0fe',
+          ring: '#e0e2fb',
         },
       },
     },

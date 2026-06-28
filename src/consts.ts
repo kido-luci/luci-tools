@@ -16,6 +16,8 @@ export interface ToolMeta {
   description: string;
   /** the single <h1> for the page */
   h1: string;
+  /** icon name (see Icon.astro registry) shown beside the page title */
+  icon: string;
 }
 
 export const TOOLS: ToolMeta[] = [
@@ -23,6 +25,7 @@ export const TOOLS: ToolMeta[] = [
     slug: 'heic-to-jpg',
     title: 'HEIC to JPG',
     h1: 'HEIC to JPG Converter',
+    icon: 'image',
     description:
       'Convert HEIC photos to JPG in your browser — fast, free and private. Nothing is uploaded; conversion happens 100% on your device.',
   },
@@ -30,6 +33,7 @@ export const TOOLS: ToolMeta[] = [
     slug: 'png-to-jpg',
     title: 'PNG to JPG',
     h1: 'PNG to JPG Converter',
+    icon: 'layers',
     description:
       'Convert PNG images to JPG in your browser — free, instant and private. Files never leave your device.',
   },
