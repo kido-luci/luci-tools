@@ -9,9 +9,10 @@ const { slot = 'placeholder' } = Astro.props;
 ---
 
 <div
-  class="my-8 flex h-[120px] items-center justify-center rounded-xl border-[1.5px] border-dashed border-slate-300 bg-slate-100 text-sm font-semibold uppercase tracking-[0.12em] text-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-600"
+  class="relative flex h-[118px] items-center justify-center rounded-[14px] border border-[#d6dae6] bg-[#f3f5fb] dark:border-slate-700 dark:bg-slate-900/60"
   data-ad-slot={slot}
   aria-hidden="true"
 >
-  Ad space
+  <span class="absolute left-5 top-4 font-mono text-[10px] uppercase tracking-[0.14em] text-[#aab2c5] dark:text-slate-600">Sponsored</span>
+  <span class="font-mono text-[12px] uppercase tracking-[0.2em] text-[#aeb6c8] dark:text-slate-600">Ad space</span>
 </div>
