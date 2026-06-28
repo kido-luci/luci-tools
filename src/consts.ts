@@ -16,6 +16,8 @@ export interface ToolMeta {
   description: string;
   /** the single <h1> for the page */
   h1: string;
+  /** icon name from Icon.astro used on the tool page badge */
+  icon: string;
 }
 
 export const TOOLS: ToolMeta[] = [
@@ -25,6 +27,7 @@ export const TOOLS: ToolMeta[] = [
     h1: 'JSON Formatter & Validator',
     description:
       'Paste messy JSON and get clean, indented output with clear validation errors — free, instant and private. Your data is processed in your browser and never uploaded.',
+    icon: 'braces',
   },
   {
     slug: 'json-minifier',
@@ -32,6 +35,7 @@ export const TOOLS: ToolMeta[] = [
     h1: 'JSON Minifier',
     description:
       'Strip whitespace from JSON to get the smallest valid output — free, instant and private. Everything runs in your browser; nothing is uploaded.',
+    icon: 'minimize',
   },
 ];
 
