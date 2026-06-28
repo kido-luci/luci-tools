@@ -24,12 +24,33 @@ npx npm@10.9.2 --prefix <repo> install --package-lock-only
 (Handled per repo via a small PR. The Worker repo `tools-router` deploys via local
 `wrangler`, not Cloudflare's npm, so it does not need this.)
 
-## Step 1 — deploy the 6 Pages projects (git integration, auto-deploy from `master`)
+## Step 1 — deploy the 6 Pages projects
 
-Repeat for each: `image-converter`, `fancy-text-generator`, `json-tools`, `qr-tools`,
-`pdf-tools`, `tools-home`.
+> **Status (2026-06-28):** all 6 projects are deployed via CLI (`wrangler pages deploy`).
+> Git integration (`Connect to Git`) is **not yet connected** — pushing to `master` does
+> NOT auto-deploy. Use the CLI workflow below until you connect Git in the dashboard.
 
-Dashboard → **Workers & Pages → Create → Pages → Connect to Git** → pick the repo, then:
+### Option A — CLI deploy (current method)
+
+Build and push each project manually:
+
+```sh
+# repeat for each repo: image-converter, fancy-text-generator, json-tools,
+#                        qr-tools, pdf-tools, tools-home
+cd <repo>
+npm run build
+npx wrangler pages deploy dist --project-name <repo> --branch master --commit-dirty=true
+```
+
+> The 6 projects were created with suffixed names by Cloudflare's uniqueness check —
+> project names are `image-converter-69t`, `fancy-text-generator-3oo`, etc. Check the
+> exact names with `wrangler pages project list` if in doubt; they're also hardcoded in
+> the Worker's `ORIGINS` map.
+
+### Option B — connect Git integration (recommended for long-term)
+
+Dashboard → **Workers & Pages → \<project\> → Settings → Build & deployments →
+Connect to Git** → pick the GitHub repo, then:
 
 | Setting | Value |
 |---|---|
@@ -39,11 +60,7 @@ Dashboard → **Workers & Pages → Create → Pages → Connect to Git** → pi
 | Build output directory | `dist` |
 | Env var | `NODE_VERSION` = `22` |
 
-**Save and Deploy** → you get `https://<repo>.pages.dev`.
-
-> The Pages **project name must equal the repo name** (`image-converter`, …,
-> `tools-home`) — the Worker maps `image → image-converter.pages.dev`, etc. Cloudflare
-> defaults the project name to the repo name, so leave it as-is.
+Once connected, every merge to `master` auto-deploys. Do this for all 6 projects.
 
 Smoke-test each: `https://image-converter.pages.dev/image/`, `https://tools-home.pages.dev/`.
 
@@ -80,7 +97,9 @@ Let the Worker own the whole hostname (auto DNS + SSL, all traffic → Worker). 
 - **Cloudflare Web Analytics:** enable per project (auto-inject).
 - **AdSense:** apply once there is real content + traffic; when approved, put the real
   publisher id into `tools-home/public/ads.txt` (replace `pub-0000…`).
-- From now on, **pushing `master` of any repo auto-redeploys** that Pages project.
+- **Deploying:** until Git integration is connected (see Step 1 Option B), each change
+  requires `npm run build && npx wrangler pages deploy dist --project-name <repo>`.
+  After connecting Git, pushing to `master` auto-redeploys.
 
 ## Doing the CLI steps via API token (optional)
 
