@@ -15,6 +15,8 @@ export interface CatalogTool {
   title: string;
   /** short one-line description for the hub card */
   description: string;
+  /** optional styled specimen shown as a chip on the card (e.g. fancy-text) */
+  specimen?: string;
 }
 
 export interface Engine {
@@ -42,9 +44,9 @@ export const ENGINES: Engine[] = [
     name: 'Fancy Text',
     blurb: 'Generate copy-paste Unicode text styles for bios and captions.',
     tools: [
-      { slug: 'bold-text-generator', title: 'Bold Text Generator', description: 'Make 𝗯𝗼𝗹𝗱 Unicode text for social bios.' },
-      { slug: 'italic-text-generator', title: 'Italic Text Generator', description: 'Create 𝘪𝘵𝘢𝘭𝘪𝘤 text that pastes anywhere.' },
-      { slug: 'strikethrough-text-generator', title: 'Strikethrough Text Generator', description: 'Add a s̶t̶r̶i̶k̶e̶ line through your text.' },
+      { slug: 'bold-text-generator', title: 'Bold Text Generator', description: 'Turn plain text into bold Unicode for bios and posts.', specimen: '𝗔𝗮' },
+      { slug: 'italic-text-generator', title: 'Italic Text Generator', description: 'Make slanted italic text for captions and titles.', specimen: '𝘈𝘢' },
+      { slug: 'strikethrough-text-generator', title: 'Strikethrough Text Generator', description: 'Add a strike through any text in one click.', specimen: 'A̶a̶' },
     ],
   },
   {

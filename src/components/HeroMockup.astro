@@ -1,7 +1,8 @@
 ---
 // Decorative hero illustration: a faux browser window showing the tool
 // categories as a tile grid. Purely visual (aria-hidden) — the six tiles are
-// illustrative and intentionally generic, not navigation.
+// illustrative and intentionally generic, not navigation. Tokens sampled
+// directly from the "Refined Indigo" design.
 const ICONS = {
   image:
     '<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0z" />',
@@ -27,16 +28,16 @@ const tiles: { label: string; icon: string; active?: boolean }[] = [
 ];
 ---
 
-<div aria-hidden="true" class="relative w-full max-w-[480px]">
+<div aria-hidden="true" class="relative w-full max-w-[432px]">
   <div
-    class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_60px_-15px_rgba(79,82,217,0.22)] dark:border-slate-800 dark:bg-slate-900"
+    class="overflow-hidden rounded-[18px] border border-[#e9ebf3] bg-white shadow-[0_30px_60px_-32px_rgba(15,23,42,0.40),0_20px_44px_-24px_rgba(79,70,229,0.22)] dark:border-slate-800 dark:bg-slate-900"
   >
     <!-- title bar -->
-    <div class="flex items-center gap-2 border-b border-slate-100 px-4 py-3.5 dark:border-slate-800">
-      <span class="h-3 w-3 rounded-full bg-[#ff5f57]"></span>
-      <span class="h-3 w-3 rounded-full bg-[#febc2e]"></span>
-      <span class="h-3 w-3 rounded-full bg-[#28c840]"></span>
-      <span class="ml-3 h-5 flex-1 rounded-full bg-slate-100 dark:bg-slate-800"></span>
+    <div class="flex items-center gap-[7px] border-b border-slate-100 px-5 py-[14px] dark:border-slate-800">
+      <span class="h-2.5 w-2.5 rounded-full bg-[#ff5f57]"></span>
+      <span class="h-2.5 w-2.5 rounded-full bg-[#febc2e]"></span>
+      <span class="h-2.5 w-2.5 rounded-full bg-[#28c840]"></span>
+      <span class="ml-[10px] h-[18px] flex-1 rounded-[6px] bg-[#f3f4f9] dark:bg-slate-800"></span>
     </div>
 
     <!-- category tiles -->
@@ -44,15 +45,17 @@ const tiles: { label: string; icon: string; active?: boolean }[] = [
       {
         tiles.map((t) => (
           <div
-            class={`flex flex-col items-center gap-2.5 rounded-xl px-3 py-4 ${
-              t.active ? 'bg-brand' : 'bg-slate-50 dark:bg-slate-800/60'
+            class={`flex flex-col items-center gap-[9px] rounded-[14px] border px-1.5 py-[15px] ${
+              t.active
+                ? 'border-brand-ring bg-brand-tint dark:border-brand/30 dark:bg-brand/15'
+                : 'border-[#eef0f6] bg-[#f7f8fc] dark:border-slate-800 dark:bg-slate-800/50'
             }`}
           >
             <span
-              class={`inline-flex h-9 w-9 items-center justify-center rounded-[10px] ${
+              class={`inline-flex h-[34px] w-[34px] items-center justify-center rounded-[10px] ${
                 t.active
-                  ? 'bg-white/20 text-white'
-                  : 'bg-brand-tint text-brand-dark dark:bg-brand/15 dark:text-brand-light'
+                  ? 'bg-brand text-white'
+                  : 'bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light'
               }`}
             >
               <svg
@@ -61,13 +64,13 @@ const tiles: { label: string; icon: string; active?: boolean }[] = [
                 viewBox="0 0 24 24"
                 stroke-width="1.7"
                 stroke="currentColor"
-                class="h-5 w-5"
+                class="h-[18px] w-[18px]"
                 set:html={t.icon}
               />
             </span>
             <span
-              class={`text-xs font-semibold ${
-                t.active ? 'text-white' : 'text-slate-500 dark:text-slate-400'
+              class={`text-[10.5px] ${
+                t.active ? 'font-bold text-brand dark:text-brand-light' : 'font-semibold text-slate-500 dark:text-slate-400'
               }`}
             >
               {t.label}
@@ -80,9 +83,9 @@ const tiles: { label: string; icon: string; active?: boolean }[] = [
 
   <!-- floating trust badge -->
   <div
-    class="absolute -bottom-3 right-5 inline-flex items-center gap-1.5 rounded-full bg-brand px-3.5 py-2 text-xs font-semibold text-white shadow-lg"
+    class="absolute -bottom-[14px] -right-[10px] inline-flex items-center gap-[7px] rounded-[12px] bg-brand px-[14px] py-[9px] text-[12.5px] font-bold text-white shadow-[0_12px_26px_-8px_rgba(79,70,229,0.60)]"
   >
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-3.5 w-3.5">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-[13px] w-[13px]">
       <path
         fill-rule="evenodd"
         d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z"
