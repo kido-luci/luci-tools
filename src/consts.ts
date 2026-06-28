@@ -16,6 +16,8 @@ export interface ToolMeta {
   description: string;
   /** the single <h1> for the page */
   h1: string;
+  /** Lucide-style icon name used on the tool page badge and hub card */
+  icon: string;
 }
 
 export const TOOLS: ToolMeta[] = [
@@ -25,6 +27,7 @@ export const TOOLS: ToolMeta[] = [
     h1: 'Merge PDF',
     description:
       'Combine multiple PDF files into one in your browser — free, fast and private. Nothing is uploaded; everything happens 100% on your device.',
+    icon: 'layers',
   },
   {
     slug: 'jpg-to-pdf',
@@ -32,6 +35,7 @@ export const TOOLS: ToolMeta[] = [
     h1: 'JPG to PDF Converter',
     description:
       'Turn JPG and PNG images into a single PDF in your browser — free, instant and private. Your images never leave your device.',
+    icon: 'file',
   },
 ];
 
