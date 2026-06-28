@@ -22,8 +22,6 @@ export interface Engine {
   prefix: string;
   /** category display name */
   name: string;
-  /** glyph shown in the category badge */
-  glyph: string;
   /** short category blurb */
   blurb: string;
   tools: CatalogTool[];
@@ -33,7 +31,6 @@ export const ENGINES: Engine[] = [
   {
     prefix: 'image',
     name: 'Image',
-    glyph: '⇄',
     blurb: 'Convert images right in your browser — no upload, nothing stored.',
     tools: [
       { slug: 'heic-to-jpg', title: 'HEIC to JPG', description: 'Convert iPhone HEIC photos to JPG, 100% on your device.' },
@@ -43,7 +40,6 @@ export const ENGINES: Engine[] = [
   {
     prefix: 'fancy-text',
     name: 'Fancy Text',
-    glyph: '✦',
     blurb: 'Generate copy-paste Unicode text styles for bios and captions.',
     tools: [
       { slug: 'bold-text-generator', title: 'Bold Text Generator', description: 'Make 𝗯𝗼𝗹𝗱 Unicode text for social bios.' },
@@ -54,7 +50,6 @@ export const ENGINES: Engine[] = [
   {
     prefix: 'json',
     name: 'JSON',
-    glyph: '{ }',
     blurb: 'Format, validate and minify JSON privately in your browser.',
     tools: [
       { slug: 'json-formatter', title: 'JSON Formatter', description: 'Pretty-print and validate messy JSON.' },
@@ -64,7 +59,6 @@ export const ENGINES: Engine[] = [
   {
     prefix: 'qr',
     name: 'QR Code',
-    glyph: 'QR',
     blurb: 'Generate QR codes for links and WiFi — download PNG or SVG.',
     tools: [
       { slug: 'qr-code-generator', title: 'QR Code Generator', description: 'Make a QR code from any text or URL.' },
@@ -74,7 +68,6 @@ export const ENGINES: Engine[] = [
   {
     prefix: 'pdf',
     name: 'PDF',
-    glyph: 'PDF',
     blurb: 'Merge and build PDFs in your browser — nothing is uploaded.',
     tools: [
       { slug: 'merge-pdf', title: 'Merge PDF', description: 'Combine several PDF files into one.' },

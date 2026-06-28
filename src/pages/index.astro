@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AdSlot from '../components/AdSlot.astro';
+import EngineIcon from '../components/EngineIcon.astro';
+import HeroMockup from '../components/HeroMockup.astro';
 import { SITE, ENGINES, engineUrl, toolUrl } from '../consts';
 
 const title = 'Free Online Tools — Image, PDF, JSON, QR & Text | Luci Tools';
@@ -20,28 +22,41 @@ const jsonLd = {
 
 <BaseLayout title={title} description={description} jsonLd={jsonLd}>
   <section class="mx-auto max-w-[1600px] px-4 pb-20 pt-14 sm:px-10">
-    <h1 class="text-[42px] font-extrabold leading-[1.1] tracking-[-0.025em] text-slate-900 dark:text-slate-100">
-      Free tools that run in your browser
-    </h1>
-    <p class="mt-[18px] max-w-[880px] text-[19px] leading-[1.55] text-slate-600 dark:text-slate-400">
-      {totalTools} fast, private tools for images, PDFs, code and text. Everything
-      runs entirely on your device — your files are never uploaded to a server.
-    </p>
+    <div class="grid items-center gap-12 lg:grid-cols-2">
+      <div>
+        <h1 class="text-[42px] font-extrabold leading-[1.1] tracking-[-0.025em] text-slate-900 dark:text-slate-100">
+          Free tools that run <span class="text-brand dark:text-brand-light">in your browser</span>
+        </h1>
+        <p class="mt-[18px] max-w-[880px] text-[19px] leading-[1.55] text-slate-600 dark:text-slate-400">
+          {totalTools} fast, private tools for images, PDFs, code and text. Everything
+          runs entirely on your device — your files are never uploaded to a server.
+        </p>
 
-    <div class="mt-6 flex flex-wrap gap-[30px]">
-      {
-        ['100% in your browser', 'Nothing uploaded', 'Free & instant'].map((label) => (
-          <div class="flex items-center gap-[9px]">
-            <span
-              class="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full bg-brand-tint text-xs font-extrabold text-brand-dark dark:bg-brand/15 dark:text-brand-light"
-              aria-hidden="true"
-            >
-              ✓
-            </span>
-            <span class="text-[14.5px] font-medium text-slate-600 dark:text-slate-400">{label}</span>
-          </div>
-        ))
-      }
+        <div class="mt-7 flex flex-wrap gap-3">
+          {
+            ['100% in your browser', 'Nothing uploaded', 'Free & instant'].map((label) => (
+              <div class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-2 dark:border-slate-800 dark:bg-slate-900">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2.5"
+                  stroke="currentColor"
+                  class="h-4 w-4 text-brand dark:text-brand-light"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                </svg>
+                <span class="text-[14px] font-medium text-slate-600 dark:text-slate-300">{label}</span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="hidden lg:flex lg:justify-end">
+        <HeroMockup />
+      </div>
     </div>
 
     <AdSlot />
@@ -51,10 +66,10 @@ const jsonLd = {
         <section id={engine.prefix} class="mt-16">
           <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
             <span
-              class="inline-flex h-[44px] w-[44px] flex-shrink-0 items-center justify-center rounded-[13px] bg-brand-tint text-[15px] font-bold text-brand-dark dark:bg-brand/15 dark:text-brand-light"
+              class="inline-flex h-[44px] w-[44px] flex-shrink-0 items-center justify-center rounded-[13px] bg-brand-tint text-brand-dark dark:bg-brand/15 dark:text-brand-light"
               aria-hidden="true"
             >
-              {engine.glyph}
+              <EngineIcon prefix={engine.prefix} class="h-[22px] w-[22px]" />
             </span>
             <h2 class="text-[27px] font-bold tracking-[-0.02em] text-slate-900 dark:text-slate-100">
               {engine.name}
@@ -76,7 +91,13 @@ const jsonLd = {
                   href={toolUrl(engine.prefix, t.slug)}
                   class="flex h-full flex-col rounded-xl border border-slate-200 bg-white px-6 py-[22px] text-slate-900 transition hover:-translate-y-0.5 hover:border-brand-ring hover:shadow-[0_8px_24px_rgba(79,82,217,0.10)] dark:border-slate-800 dark:bg-slate-900"
                 >
-                  <div class="text-[19px] font-bold text-slate-900 dark:text-slate-100">{t.title}</div>
+                  <span
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-[11px] bg-brand-tint text-brand-dark dark:bg-brand/15 dark:text-brand-light"
+                    aria-hidden="true"
+                  >
+                    <EngineIcon prefix={engine.prefix} class="h-5 w-5" />
+                  </span>
+                  <div class="mt-4 text-[19px] font-bold text-slate-900 dark:text-slate-100">{t.title}</div>
                   <div class="mt-1.5 flex-1 text-[15px] leading-[1.5] text-slate-500 dark:text-slate-400">
                     {t.description}
                   </div>
