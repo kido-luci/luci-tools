@@ -1,4 +1,6 @@
 ---
+import '@fontsource-variable/plus-jakarta-sans';
+import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
 import SeoHead from '../components/SeoHead.astro';
 import Header from '../components/Header.astro';
@@ -26,7 +28,7 @@ const { title, description, jsonLd } = Astro.props;
     </script>
     <SeoHead title={title} description={description} jsonLd={jsonLd} />
   </head>
-  <body class="flex min-h-screen flex-col bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+  <body class="flex min-h-screen flex-col bg-[#f8f9fc] font-sans text-slate-900 dark:bg-slate-950 dark:text-slate-100">
     <Header />
     <main class="w-full flex-1">
       <slot />

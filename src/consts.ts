@@ -16,6 +16,8 @@ export interface ToolMeta {
   description: string;
   /** the single <h1> for the page */
   h1: string;
+  /** icon name from Icon.astro registry, used for the badge above the page <h1> */
+  icon: string;
 }
 
 export const TOOLS: ToolMeta[] = [
@@ -25,6 +27,7 @@ export const TOOLS: ToolMeta[] = [
     h1: 'QR Code Generator',
     description:
       'Generate a QR code from any text or URL in your browser — free, instant and private. Download as PNG or SVG; nothing you enter is uploaded.',
+    icon: 'qr',
   },
   {
     slug: 'wifi-qr-code-generator',
@@ -32,6 +35,7 @@ export const TOOLS: ToolMeta[] = [
     h1: 'WiFi QR Code Generator',
     description:
       'Create a WiFi QR code so guests can join your network by scanning — no typing the password. Built entirely in your browser; download PNG or SVG.',
+    icon: 'wifi',
   },
 ];
 
