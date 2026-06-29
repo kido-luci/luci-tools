@@ -30,6 +30,8 @@ export interface Engine {
   icon: string;
   /** short category blurb */
   blurb: string;
+  /** hex color used for the gradient left-line accent on the home hub, e.g. `#f97316` */
+  accentHex: string;
   tools: CatalogTool[];
 }
 
@@ -39,6 +41,7 @@ export const ENGINES: Engine[] = [
     name: 'Image',
     icon: 'image',
     blurb: 'Convert images right in your browser — no upload, nothing stored.',
+    accentHex: '#f97316',
     tools: [
       { slug: 'heic-to-jpg', title: 'HEIC to JPG', description: 'Convert iPhone HEIC photos to JPG, 100% on your device.', icon: 'image' },
       { slug: 'png-to-jpg', title: 'PNG to JPG', description: 'Turn PNG images into smaller JPG files instantly.', icon: 'layers' },
@@ -49,6 +52,7 @@ export const ENGINES: Engine[] = [
     name: 'Fancy Text',
     icon: 'sparkle',
     blurb: 'Generate copy-paste Unicode text styles for bios and captions.',
+    accentHex: '#c026d3',
     tools: [
       { slug: 'bold-text-generator', title: 'Bold Text Generator', description: 'Turn plain text into bold Unicode for bios and posts.', icon: 'bold', specimen: '𝗔𝗮' },
       { slug: 'italic-text-generator', title: 'Italic Text Generator', description: 'Make slanted italic text for captions and titles.', icon: 'italic', specimen: '𝘈𝘢' },
@@ -60,6 +64,7 @@ export const ENGINES: Engine[] = [
     name: 'JSON',
     icon: 'braces',
     blurb: 'Format, validate and minify JSON privately in your browser.',
+    accentHex: '#059669',
     tools: [
       { slug: 'json-formatter', title: 'JSON Formatter', description: 'Pretty-print and validate messy JSON.', icon: 'braces' },
       { slug: 'json-minifier', title: 'JSON Minifier', description: 'Strip whitespace to the smallest valid JSON.', icon: 'minimize' },
@@ -70,6 +75,7 @@ export const ENGINES: Engine[] = [
     name: 'QR Code',
     icon: 'qr',
     blurb: 'Generate QR codes for links and WiFi — download PNG or SVG.',
+    accentHex: '#0284c7',
     tools: [
       { slug: 'qr-code-generator', title: 'QR Code Generator', description: 'Make a QR code from any text or URL.', icon: 'qr' },
       { slug: 'wifi-qr-code-generator', title: 'WiFi QR Code', description: 'Let guests join your WiFi by scanning.', icon: 'wifi' },
@@ -80,6 +86,7 @@ export const ENGINES: Engine[] = [
     name: 'PDF',
     icon: 'file',
     blurb: 'Merge and build PDFs in your browser — nothing is uploaded.',
+    accentHex: '#e11d48',
     tools: [
       { slug: 'merge-pdf', title: 'Merge PDF', description: 'Combine several PDF files into one.', icon: 'layers' },
       { slug: 'jpg-to-pdf', title: 'JPG to PDF', description: 'Turn JPG/PNG images into a single PDF.', icon: 'file' },
