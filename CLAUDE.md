@@ -55,8 +55,11 @@ tools.luci-studio.com
 - **Domain:** `tools.luci-studio.com`, engine-prefix paths.
 - **Ads:** Google AdSense — **one** site (`tools.luci-studio.com`), **one** root
   `ads.txt`.
-- **Analytics:** Cloudflare Web Analytics (auto-inject "Enable" mode). Do **not**
-  also add a manual beacon — it double-counts pageviews.
+- **Analytics:** Cloudflare Web Analytics, **single shared beacon** injected by the
+  `tools-router` Worker (HTMLRewriter, appended to every HTML response). Edge
+  auto-inject does NOT survive the Worker proxy, so per-Pages-project "Enable" was
+  abandoned. The one beacon token lives only in the Worker — do **not** also add a
+  manual beacon in any engine repo, or pageviews double-count.
 - **Legal:** Privacy / Terms / About live **once** at the root (`tools-home`);
   every tool links to them.
 
@@ -118,6 +121,10 @@ VN Decree 13/2023) and a selling point.
   running-model name (e.g. `Claude Opus 4.8`).
 - A release = merge to `master` **then** an annotated tag `vX.Y.Z` (each repo
   versioned independently).
+- **After a release (or after a topic branch is merged/landed), `git checkout`
+  back to the base branch (`master`) locally** so the working tree is clean and
+  not left sitting on a merged/deleted branch. Applies to submodules too — after
+  merging a submodule PR, switch that submodule back to `master`.
 
 ## Build / verify
 
