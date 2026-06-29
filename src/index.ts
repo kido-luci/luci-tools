@@ -16,15 +16,6 @@
 
 export const HOST = 'tools.luci-studio.com';
 
-/**
- * Cloudflare Web Analytics beacon. Injected here (once, at the host root) rather
- * than per engine: edge auto-inject does not survive this Worker proxy, so the
- * single shared token is appended to every HTML response instead.
- */
-const CF_BEACON =
-  `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" ` +
-  `data-cf-beacon='{"token":"af2d0f79084a4fa5a118b88ae59c2be3"}'></script>`;
-
 /** Engine URL prefix (first path segment) -> the real (suffixed) Pages origin host. */
 export const ORIGINS: Record<string, string> = {
   image: 'image-converter-69t.pages.dev',
@@ -101,16 +92,7 @@ export default {
 
     // Pass the response through, fixing only a leaking or unprefixed redirect.
     const location = originRes.headers.get('location');
-    if (!location) {
-      // Inject the Web Analytics beacon into HTML; leave assets/JSON untouched.
-      const contentType = originRes.headers.get('content-type') ?? '';
-      if (contentType.includes('text/html')) {
-        return new HTMLRewriter()
-          .on('body', { element(el) { el.append(CF_BEACON, { html: true }); } })
-          .transform(originRes);
-      }
-      return originRes;
-    }
+    if (!location) return originRes;
 
     const fixedHeaders = new Headers(originRes.headers);
     fixedHeaders.set('location', rewriteLocation(location, host, prefix));
