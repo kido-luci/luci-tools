@@ -39,6 +39,18 @@ const faqs: FaqItem[] = [
     q: 'How much text can a QR code hold?',
     a: 'A lot — thousands of characters in theory — but shorter content scans far more reliably. For links, a plain URL is ideal.',
   },
+  {
+    q: 'Is there a scan limit or any tracking?',
+    a: 'No. This is a plain static image — there is no redirect service, no analytics pixel, and nothing logged anywhere. Scans go directly to whatever content you encoded.',
+  },
+  {
+    q: 'Can I print it large without it going blurry?',
+    a: 'Yes. Download the SVG version and it will scale to any size — billboard or business card — without losing sharpness. The PNG is fixed resolution and is best kept at smaller print sizes.',
+  },
+  {
+    q: 'What makes a QR code scan reliably?',
+    a: 'Strong contrast (dark modules on a plain light background), a clear quiet-zone border around the code, and printing it large enough for a phone to focus on. Always test with your own phone before distributing a printed code.',
+  },
 ];
 ---
 
@@ -80,12 +92,39 @@ const faqs: FaqItem[] = [
         modern phones.
       </p>
 
-      <h2>PNG vs SVG</h2>
+      <h2>PNG or SVG — which to download</h2>
       <p>
-        PNG is a fixed-size image that works everywhere and is perfect for the
-        web. SVG is a vector that scales without ever getting blurry, so choose
-        it whenever the code will be printed large or resized.
+        PNG is a ready-to-use image that works in every email client, chat app
+        and document. SVG is a vector file, so it scales to any size without
+        blurring — the right choice for print, posters, signage or any
+        situation where the final size is unknown. When in doubt: PNG for
+        screens, SVG for print.
       </p>
+
+      <h2>What you can put in a QR code</h2>
+      <p>
+        Any plain text works: a website URL is the most common use, but you can
+        also encode a phone number, an email address, a calendar event link, a
+        payment page, a social-media profile, or even a short note. WiFi
+        credentials have their own format — use the{' '}
+        <a href={toolUrl('wifi-qr-code-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">WiFi QR code generator</a>
+        {' '}for that. Whatever you encode, shorter content produces a less
+        dense code that scans faster and more reliably.
+      </p>
+
+      <h2>Tips for QR codes that scan reliably</h2>
+      <ul>
+        <li><strong>Keep strong contrast</strong> — dark modules on a plain white or light background; avoid inverting colours or heavy tints.</li>
+        <li><strong>Preserve the quiet zone</strong> — the blank margin around the code is part of the standard; cropping it confuses scanners.</li>
+        <li><strong>Print it large enough</strong> — a code smaller than about 2 cm across can be hard for a phone camera to resolve.</li>
+        <li><strong>Avoid heavy distortion</strong> — stretching or skewing the code breaks its geometry; slight logo overlays are fine if they stay small.</li>
+        <li><strong>Test before distributing</strong> — scan it yourself on at least two devices before printing or publishing.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('wifi-qr-code-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">WiFi QR Code Generator</a> — create a scannable code that lets phones join your network without typing the password.</li>
+      </ul>
     </div>
 
     <FAQ items={faqs} />
