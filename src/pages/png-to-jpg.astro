@@ -25,19 +25,31 @@ const jsonLd = {
 const faqs: FaqItem[] = [
   {
     q: 'Are my images uploaded anywhere?',
-    a: 'No. The conversion happens locally on your device with the Canvas API. Nothing is sent to a server.',
+    a: 'No. The conversion happens locally on your device with the Canvas API. Nothing is sent to a server, so screenshots and private images stay on your machine.',
   },
   {
     q: 'What happens to transparent areas?',
-    a: 'JPG does not support transparency, so transparent pixels are filled with a white background during conversion.',
+    a: 'JPG does not support transparency, so any transparent pixels are filled with a solid white background during conversion. If you need to keep transparency, leave the file as PNG instead.',
   },
   {
-    q: 'Why convert PNG to JPG?',
-    a: 'JPG files are usually much smaller than PNG for photos, which makes them faster to upload, email and load on the web.',
+    q: 'Will the JPG actually be smaller than the PNG?',
+    a: 'For photographs and detailed images, almost always — JPG often cuts the size by 70% or more. For flat graphics with only a few colours the saving is smaller, and occasionally a simple PNG can even be lighter than its JPG version.',
   },
   {
     q: 'Can I convert multiple PNGs at once?',
-    a: 'Yes. Add several files and each is converted and offered as its own download.',
+    a: 'Yes. Add several files and each is converted and offered as its own download, so you can batch a whole folder of screenshots in one pass.',
+  },
+  {
+    q: 'Does converting reduce image quality?',
+    a: 'JPG is lossy, so there is some compression, but at the default quality it is hard to notice on photos. The original PNG on your device is left untouched, so you can always reconvert.',
+  },
+  {
+    q: 'Is PNG or JPG better for screenshots?',
+    a: 'Screenshots of text and sharp UI look crisper as PNG, but if your priority is a small file to email or upload, JPG is usually fine and much lighter. Choose based on whether sharpness or size matters more.',
+  },
+  {
+    q: 'Can I convert PNG to JPG without a white background?',
+    a: 'Because JPG cannot store transparency at all, a background colour is unavoidable — this tool uses white, which suits most photos and screenshots. To keep a see-through background you have to stay with PNG.',
   },
 ];
 ---
@@ -78,6 +90,38 @@ const faqs: FaqItem[] = [
         efficiently, so converting is a quick way to shrink a file before
         sharing or uploading it.
       </p>
+
+      <h2>PNG vs JPG: when to use each</h2>
+      <p>They are built for different jobs, so the "better" format depends on the image:</p>
+      <ul>
+        <li><strong>Photos</strong> — JPG wins. It compresses continuous tones efficiently, giving much smaller files at the same visual quality.</li>
+        <li><strong>Logos, icons, line art</strong> — PNG wins. It keeps sharp edges crisp and supports transparency, which JPG cannot.</li>
+        <li><strong>Screenshots</strong> — either works; pick PNG for the sharpest text, JPG when a small, easy-to-send file matters more.</li>
+        <li><strong>Transparency</strong> — only PNG supports it, so convert to JPG only when a solid background is acceptable.</li>
+      </ul>
+
+      <h2>Common reasons to convert PNG to JPG</h2>
+      <ul>
+        <li>Shrinking large screenshots or exported images before emailing them.</li>
+        <li>Meeting an upload limit on a form, marketplace or website that caps file size.</li>
+        <li>Turning design exports into lightweight images for a web page or blog post.</li>
+        <li>Standardising a mixed folder of images into one widely supported format.</li>
+      </ul>
+
+      <h2>What happens to transparency?</h2>
+      <p>
+        JPG has no concept of transparent pixels, so anything see-through in your
+        PNG is filled with a white background as it converts. That is perfect for
+        photos and most screenshots, but if your image needs a transparent
+        background — say a logo to drop onto a coloured design — keep it as PNG.
+        Everything here runs in your browser, so your images are never uploaded.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('heic-to-jpg')} class="text-brand underline hover:no-underline dark:text-brand-light">HEIC to JPG converter</a> — turn iPhone photos into shareable JPGs.</li>
+        <li><a href={`${SITE.url}/pdf/jpg-to-pdf/`} class="text-brand underline hover:no-underline dark:text-brand-light">JPG to PDF</a> — combine your JPGs into a single PDF document.</li>
+      </ul>
     </div>
 
     <FAQ items={faqs} />
