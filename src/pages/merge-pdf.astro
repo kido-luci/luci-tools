@@ -32,12 +32,24 @@ const faqs: FaqItem[] = [
     a: 'Files are merged in the order you add them. Add them in the order you want, or remove a file and add it again to move it to the end.',
   },
   {
-    q: 'Is there a limit on how many PDFs I can combine?',
-    a: 'There is no fixed limit. Because everything runs locally, the practical limit is your device’s memory — very large files simply take a little longer.',
+    q: "Is there a limit on how many PDFs I can combine?",
+    a: "There is no fixed limit. Because everything runs locally, the practical limit is your device’s memory — very large files simply take a little longer.",
   },
   {
-    q: 'Does merging reduce the quality of my PDFs?',
-    a: 'No. Pages are copied as-is into the new document, so text stays selectable and images keep their original resolution.',
+    q: "Does merging reduce the quality of my PDFs?",
+    a: "No. Pages are copied as-is into the new document, so text stays selectable and images keep their original resolution.",
+  },
+  {
+    q: "Does it work with scanned PDFs?",
+    a: "Yes. A scanned PDF is just a standard PDF whose pages happen to contain images rather than text. The tool copies those pages into the merged document exactly as they are.",
+  },
+  {
+    q: "What about password-protected PDFs?",
+    a: "Password-protected files cannot be read by the browser without the password. Remove the password protection first (using a tool that knows the password), then add the unlocked file here.",
+  },
+  {
+    q: "In what order are the files combined?",
+    a: "The files are combined in the order they appear in the list — top to bottom. To change the order, remove a file and add it again so it lands at the bottom of the list.",
   },
 ];
 ---
@@ -81,6 +93,40 @@ const faqs: FaqItem[] = [
         statements never travel across the internet — a real advantage over
         upload-based services.
       </p>
+
+      <h2>What you can do</h2>
+      <p>
+        Drop two or more PDF files onto the box above and the tool combines every
+        page from each file into a single new document. The files are joined in
+        the order you add them — top to bottom in the list. There is no page
+        limit and no file-count cap beyond what your device can hold in memory.
+      </p>
+
+      <h2>Common reasons to merge PDFs</h2>
+      <ul>
+        <li>Join scanned pages that came out as separate files into one complete document.</li>
+        <li>Bundle a set of invoices or receipts into a single attachment for an expense report.</li>
+        <li>Assemble a multi-section contract, application, or onboarding pack into one file before sending it.</li>
+        <li>Combine individual chapters or sections of a report so readers get one download.</li>
+        <li>Archive related correspondence or forms together so they are easy to find later.</li>
+      </ul>
+
+      <h2>Why browser-based merging keeps your files private</h2>
+      <p>
+        Many "merge PDF" websites require you to upload your files to their
+        servers before processing them. That means your contracts, bank
+        statements, medical records and IDs pass through a third-party computer
+        you do not control. Here, everything is handled by <strong>pdf-lib</strong>
+        running directly in your browser — your files are never sent anywhere.
+        Once the merged PDF is downloaded you can close the tab and nothing
+        persists: no copy on a server, no account required, no waiting for a
+        deletion email.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('jpg-to-pdf')} class="text-brand underline hover:no-underline dark:text-brand-light">JPG to PDF converter</a> — turn photos or screenshots into a PDF you can then merge here.</li>
+      </ul>
     </div>
 
     <FAQ items={faqs} />

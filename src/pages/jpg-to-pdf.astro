@@ -39,6 +39,14 @@ const faqs: FaqItem[] = [
     q: 'Does converting reduce image quality?',
     a: 'No. Your images are embedded at their original resolution, so the PDF looks exactly like the source photos.',
   },
+  {
+    q: 'In what order do the images appear in the PDF?',
+    a: 'Pages appear in the order you add the images — top to bottom in the list. To change the order, remove an image and add it again so it lands at the end.',
+  },
+  {
+    q: 'Can I use this for iPhone photos in HEIC format?',
+    a: 'This tool accepts JPG and PNG only. If your iPhone photos are in HEIC format, convert them to JPG first using the HEIC to JPG tool, then come back here to build your PDF.',
+  },
 ];
 ---
 
@@ -80,6 +88,40 @@ const faqs: FaqItem[] = [
         pictures you want to keep together. Since the conversion runs entirely in
         your browser, even personal documents stay on your own device.
       </p>
+
+      <h2>When to turn images into a PDF</h2>
+      <ul>
+        <li>Submit photos of a document — an ID, signed form, or receipt — as one tidy attachment instead of several loose image files.</li>
+        <li>Share a multi-page phone scan with someone who expects a single file they can open on any device.</li>
+        <li>Collect a set of screenshots or diagrams into one PDF that a colleague can annotate or print.</li>
+        <li>Build a small photo portfolio or sample pack that stays in page order and is easy to attach to an email.</li>
+        <li>Archive a series of related images — product shots, event photos, progress pictures — in a single file that opens without special software.</li>
+      </ul>
+
+      <h2>Page size &amp; orientation</h2>
+      <p>
+        Each image becomes its own page in the PDF. The page is sized to exactly
+        match the pixel dimensions of the image, so a landscape photo produces a
+        landscape page and a portrait photo produces a portrait page. Nothing is
+        cropped, scaled down or padded with white margins — what you see in the
+        image is what you get on the page.
+      </p>
+
+      <h2>Private by design</h2>
+      <p>
+        Your images are converted to PDF entirely inside your browser using
+        <strong>pdf-lib</strong>, a JavaScript library that runs locally with no
+        server calls. Photos of passports, receipts, signed contracts or anything
+        else you would rather keep private never leave your device. There is no
+        account to sign up for, no file size cap imposed by a server, and nothing
+        stored once you close the tab.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('merge-pdf')} class="text-brand underline hover:no-underline dark:text-brand-light">Merge PDF</a> — combine the PDF you just created with other PDF files into one document.</li>
+        <li><a href={`${SITE.url}/image/heic-to-jpg/`} class="text-brand underline hover:no-underline dark:text-brand-light">HEIC to JPG converter</a> — convert iPhone photos to JPG first, then use this tool to build your PDF.</li>
+      </ul>
     </div>
 
     <FAQ items={faqs} />
