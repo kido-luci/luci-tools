@@ -9,15 +9,13 @@ module.exports = {
         mono: ['"JetBrains Mono Variable"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       colors: {
-        // Brand indigo, sampled from the "Refined Indigo" design.
-        // `tint`/`ring` are the soft fills used by icon tiles, trust chips and
-        // the active mockup tile; `dark` is the hover/darker shade.
+        // Engine accent — orange. `tint`/`ring` are soft fills; `dark` is hover shade.
         brand: {
-          DEFAULT: '#4f46e5',
-          dark: '#4338ca',
-          light: '#818cf8',
-          tint: '#eef0fe',
-          ring: '#e0e2fb',
+          DEFAULT: '#f97316',
+          dark: '#ea580c',
+          light: '#fdba74',
+          tint: '#fff7ed',
+          ring: '#fed7aa',
         },
       },
     },
