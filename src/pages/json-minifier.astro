@@ -39,6 +39,22 @@ const faqs: FaqItem[] = [
     q: 'Is minified JSON still valid?',
     a: 'Yes. Whitespace is not significant in JSON, so a minified document parses exactly the same as its formatted version.',
   },
+  {
+    q: 'Does minifying change my data?',
+    a: 'No. Keys, values, and structure are untouched — only whitespace characters are removed. The resulting JSON is semantically identical to the original.',
+  },
+  {
+    q: 'Could the minifier break my JSON?',
+    a: "It parses the input before minifying, so invalid JSON is reported as an error rather than silently passed through. If the output is produced, it is valid and complete.",
+  },
+  {
+    q: 'Can I expand it again later?',
+    a: 'Yes. Paste the minified output into the JSON Formatter to pretty-print it with indentation whenever you need to read or edit it again.',
+  },
+  {
+    q: 'How much space will I save?',
+    a: 'It depends on how much whitespace is in the original. A heavily indented file may shrink by 30–50 %; a file that was already compact will barely change.',
+  },
 ];
 ---
 
@@ -79,6 +95,39 @@ const faqs: FaqItem[] = [
         document, which means quicker transfers and smaller files — without
         touching the data itself.
       </p>
+
+      <h2>Why minify JSON for production</h2>
+      <ul>
+        <li><strong>Smaller API payloads</strong> — every byte you remove from a JSON response is one fewer byte transferred over the network, which adds up across millions of requests.</li>
+        <li><strong>Environment variables &amp; config fields</strong> — some platforms impose character limits on environment variable values; minified JSON fits where pretty-printed JSON does not.</li>
+        <li><strong>Embedded config in a bundle</strong> — if your build tool inlines a JSON config into JavaScript, starting from minified JSON keeps the bundle smaller from the start.</li>
+        <li><strong>Cache efficiency</strong> — smaller payloads are more likely to fit within a CDN cache unit and are cheaper to store and serve.</li>
+      </ul>
+
+      <h2>How much smaller will it get?</h2>
+      <p>
+        The minifier removes all spaces, tabs, newlines, and indentation characters
+        that are not part of a string value. A file formatted with 4-space indentation
+        and many deeply nested objects can shrink noticeably, while a file that was
+        already compact will change very little. The actual saving depends on how much
+        whitespace the original contains — not on the size or complexity of the data itself.
+      </p>
+
+      <h2>Minify vs gzip</h2>
+      <p>
+        Minifying and compression are two separate steps that work at different levels.
+        Minifying removes redundant characters from the text itself — the resulting file
+        is shorter before any compression is applied. Gzip and Brotli are server-side
+        compression algorithms that then work on that text, encoding repeated patterns
+        even more efficiently. The two approaches stack: minified JSON still compresses
+        well because its structure is repetitive. Minifying is not a substitute for
+        gzip, and gzip is not a reason to skip minifying.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('json-formatter')} class="text-brand underline hover:no-underline dark:text-brand-light">JSON Formatter &amp; Validator</a> — pretty-print minified JSON and catch syntax errors.</li>
+      </ul>
     </div>
 
     <FAQ items={faqs} />

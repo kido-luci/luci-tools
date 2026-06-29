@@ -39,6 +39,22 @@ const faqs: FaqItem[] = [
     q: 'Does formatting change my data?',
     a: 'No. Only whitespace and key ordering as written are affected — the values and structure stay exactly the same. Reformatting is lossless.',
   },
+  {
+    q: 'Does it just format, or does it also validate?',
+    a: 'Both. The formatter always parses the input first. If the JSON is invalid, it reports an error with the position; only valid JSON produces formatted output.',
+  },
+  {
+    q: 'What is the largest file I can format?',
+    a: "There is no fixed limit — nothing is uploaded, so the only constraint is your device's available memory. Extremely large files may take a moment to process.",
+  },
+  {
+    q: 'Does it sort or reorder my keys?',
+    a: 'No. Key order is preserved exactly as you wrote it. The formatter only adjusts whitespace and indentation.',
+  },
+  {
+    q: 'Does it accept comments or JSON5?',
+    a: 'No. It expects strict, standard JSON as defined by the JSON specification. Comments, trailing commas, and unquoted keys are not valid JSON and will be reported as errors.',
+  },
 ];
 ---
 
@@ -82,6 +98,39 @@ const faqs: FaqItem[] = [
         and validating it first catches the missing comma or stray bracket that
         would otherwise crash your app or API call.
       </p>
+
+      <h2>What the formatter does</h2>
+      <p>
+        The formatter parses your JSON using the browser's built-in JSON parser,
+        then re-serialises it with your chosen indentation — 2 spaces, 4 spaces,
+        or a tab. Because it parses first, it also validates the structure and
+        points you to the exact character position of the first error, so invalid
+        JSON is quick to diagnose and fix rather than silently passing through.
+      </p>
+
+      <h2>Common JSON errors it catches</h2>
+      <ul>
+        <li><strong>Trailing commas</strong> — a comma after the last item in an object or array is not allowed in standard JSON.</li>
+        <li><strong>Single quotes</strong> — JSON requires double quotes around both keys and string values; single quotes cause a parse error.</li>
+        <li><strong>Missing or extra commas</strong> — a missing comma between two items, or an extra comma in an unexpected position, breaks the structure.</li>
+        <li><strong>Unquoted keys</strong> — unlike JavaScript object literals, JSON keys must always be quoted strings.</li>
+        <li><strong>Unbalanced braces or brackets</strong> — every opening <code>{`{`}</code> or <code>[</code> must have a matching closing character, in the right order.</li>
+      </ul>
+
+      <h2>Formatter vs minifier</h2>
+      <p>
+        Formatting (pretty-printing) makes JSON human-readable by adding indentation
+        and line breaks, which is ideal while you are debugging or reviewing a
+        response. Minifying does the opposite — it strips all insignificant
+        whitespace to produce the smallest valid document for use in production
+        or network transfers. If you need to shrink JSON instead of expanding it,
+        use the <a href={toolUrl('json-minifier')} class="text-brand underline hover:no-underline dark:text-brand-light">JSON Minifier</a>.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('json-minifier')} class="text-brand underline hover:no-underline dark:text-brand-light">JSON Minifier</a> — strip whitespace from JSON to get the smallest valid output.</li>
+      </ul>
     </div>
 
     <FAQ items={faqs} />
