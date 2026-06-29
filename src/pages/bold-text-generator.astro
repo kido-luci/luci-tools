@@ -39,6 +39,22 @@ const faqs: FaqItem[] = [
     q: 'Why are some characters not bold?',
     a: 'Only letters A–Z, a–z and digits 0–9 have bold Unicode versions. Spaces, emoji and punctuation are left exactly as you typed them.',
   },
+  {
+    q: 'Is this real bold or fake bold?',
+    a: "It is Unicode bold — the characters genuinely look bold in every font that supports the Mathematical Sans-Serif Bold block. However, it is not the same as HTML <strong> or a word processor's bold button, which tell the software to render a heavier weight of your chosen typeface.",
+  },
+  {
+    q: 'Will screen readers read it correctly?',
+    a: "Screen readers may read the bold Unicode characters letter by letter, mispronounce them, or skip them entirely — because they are technically different code points from ordinary Latin letters. Avoid using this for long passages or anything that must stay fully accessible.",
+  },
+  {
+    q: 'Will bold text hurt my searchability or hashtags?',
+    a: 'Platform search engines treat these characters as different from the standard alphabet, so a bold hashtag like #𝗠𝗮𝗿𝗸𝗲𝘁𝗶𝗻𝗴 will not match searches for #Marketing. Keep important keywords or hashtags in normal text.',
+  },
+  {
+    q: 'Can I use it in my username or legal name field?',
+    a: 'Usually not. Username and legal-name fields on most platforms restrict input to standard ASCII letters and digits. Bold Unicode characters are likely to be rejected or stripped in those fields.',
+  },
 ];
 ---
 
@@ -76,6 +92,45 @@ const faqs: FaqItem[] = [
         pasted — no formatting required. It is a quick way to make a name, a
         headline or a key line stand out in feeds full of plain text.
       </p>
+
+      <h2>Where bold text works (and where it doesn't)</h2>
+      <ul>
+        <li><strong>Instagram, TikTok, Twitter/X, Discord</strong> — bios and captions render bold Unicode well on these platforms. It is the most reliable use case.</li>
+        <li><strong>LinkedIn &amp; Facebook</strong> — bold Unicode generally renders correctly in posts and bios, though some older app versions may display plain squares.</li>
+        <li><strong>WhatsApp &amp; Telegram</strong> — these apps have their own native bold syntax (<strong>**word**</strong>), but Unicode bold also pastes visually correctly in most cases.</li>
+        <li><strong>Search boxes &amp; hashtags</strong> — bold characters are treated as different code points, so they will not match normal-text searches. Keep hashtags and searchable keywords in standard text.</li>
+        <li><strong>Username &amp; legal-name fields</strong> — most platforms restrict these to ASCII letters; bold Unicode will be rejected or silently stripped.</li>
+        <li><strong>Email clients &amp; some older apps</strong> — rendering depends on font support. If the platform uses a font that lacks the Mathematical Bold block, characters may appear as boxes.</li>
+      </ul>
+
+      <h2>A note on accessibility and SEO</h2>
+      <p>
+        The characters produced here belong to Unicode's "Mathematical Sans-Serif
+        Bold" block — they are separate code points from ordinary Latin letters,
+        not a text-decoration applied on top of them. This matters in two ways.
+        First, screen readers may read each character individually, mispronounce
+        it, or skip the block entirely, making bold Unicode a poor choice for
+        anything that needs to stay fully accessible. Second, search engines and
+        platform search index these as different characters from the standard
+        alphabet, so a bold word will not rank for or match its plain-text
+        equivalent. Use bold Unicode for short visual accents — a display name,
+        a single headline line — rather than for whole paragraphs or
+        keyword-critical content.
+      </p>
+
+      <h2>Tips for using bold text well</h2>
+      <ul>
+        <li><strong>Use it sparingly.</strong> A single bold word or phrase draws the eye; a whole paragraph in bold loses that effect and becomes harder to read.</li>
+        <li><strong>Keep important keywords in normal text too.</strong> If a phrase needs to be findable via search or a hashtag, write it once in plain text as well.</li>
+        <li><strong>Test on the target app before posting.</strong> Paste the bold text into a draft or preview to confirm it renders as expected on your specific platform and device.</li>
+        <li><strong>Mix bold with normal text for readability.</strong> Use bold for the one word or name you want to emphasise, and keep the rest of the sentence in plain text so the contrast actually works.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('italic-text-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">Italic Text Generator</a> — add a slanted, stylish look to your text</li>
+        <li><a href={toolUrl('strikethrough-text-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">Strikethrough Text Generator</a> — cross out text for humour, corrections or sale prices</li>
+      </ul>
     </div>
 
     <FAQ items={faqs} />

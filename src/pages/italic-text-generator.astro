@@ -32,12 +32,20 @@ const faqs: FaqItem[] = [
     a: 'Most places that take plain text — Instagram, TikTok, Twitter/X, Facebook, Discord and WhatsApp bios and captions. Some platforms filter unusual characters, so it is worth a quick test first.',
   },
   {
-    q: 'Why do numbers stay normal?',
-    a: 'Unicode does not include a sans-serif italic set for digits, so 0–9 are left as-is. Only the letters A–Z and a–z are converted; spaces and punctuation are unchanged.',
-  },
-  {
     q: 'Is my text uploaded anywhere?',
     a: 'No. Everything happens locally in your browser. Your text never leaves your device.',
+  },
+  {
+    q: 'Is this real italic formatting?',
+    a: "No — it is Unicode italic. The characters come from the Mathematical Italic block and look slanted in any font that supports them, but they are different code points from ordinary letters. Unlike real italic (set by HTML or a word processor), a screen reader or search engine does not recognise these as styled versions of the plain letters.",
+  },
+  {
+    q: 'Why do some characters stay normal?',
+    a: 'Only A–Z and a–z have italic Unicode equivalents. Spaces, digits, emoji and punctuation have no italic form in Unicode, so they pass through unchanged.',
+  },
+  {
+    q: 'Will it work in search or hashtags?',
+    a: "Italic Unicode characters are distinct code points, so a platform's search engine will not match them against the same word typed normally. If you need a hashtag to be discoverable, write it in plain text.",
   },
 ];
 ---
@@ -75,6 +83,44 @@ const faqs: FaqItem[] = [
         characters that keep their slant anywhere you paste them, so you can add
         emphasis or a softer, stylish tone without any markup or screenshots.
       </p>
+
+      <h2>Where italic text works</h2>
+      <ul>
+        <li><strong>Instagram &amp; TikTok bios and captions</strong> — italic Unicode renders reliably here and gives a bio a cleaner, more refined look.</li>
+        <li><strong>Twitter/X posts &amp; display names</strong> — Mathematical Italic characters display correctly across the web and mobile apps.</li>
+        <li><strong>Discord &amp; Telegram</strong> — these apps support their own native italic syntax, but Unicode italic also pastes visually correctly.</li>
+        <li><strong>LinkedIn &amp; Facebook</strong> — generally works in posts and bios, though rendering can vary on older app versions.</li>
+        <li><strong>Search boxes &amp; hashtags</strong> — italic code points are not the same as plain letters, so they will not surface in standard text searches. Write searchable terms normally.</li>
+        <li><strong>Username or legal-name fields</strong> — most platforms only accept standard ASCII in those fields; italic Unicode is typically rejected.</li>
+      </ul>
+
+      <h2>Accessibility and search caveats</h2>
+      <p>
+        Italic Unicode characters belong to a separate block in the Unicode
+        standard — they are not the ordinary Latin alphabet with a slant applied.
+        Assistive technology such as screen readers may announce them character by
+        character, read them with the wrong pronunciation, or skip them entirely.
+        Search engines and platform search treat them as different glyphs, so
+        italic text will not rank for — or be found by — a query using the
+        equivalent plain letters. Keep italic Unicode to short decorative stretches
+        (a pull-quote, an aesthetic bio line, a single word of emphasis) rather
+        than using it for passages that need to be read aloud or discovered
+        through search.
+      </p>
+
+      <h2>When italic text fits best</h2>
+      <ul>
+        <li><strong>Pull-quotes and song lyrics</strong> — a lyric or a favourite quote in italic immediately signals that it is a citation rather than original caption text.</li>
+        <li><strong>A softer bio aesthetic</strong> — swapping just your tagline or a job title to italic gives a profile a typographic polish that plain text cannot achieve.</li>
+        <li><strong>Subtle one-word emphasis</strong> — italicising a single word within a sentence draws the eye without the visual weight of bold.</li>
+        <li><strong>Caption sign-offs or credits</strong> — a photographer credit or a location tag in italic sits distinctly apart from the main caption copy.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('bold-text-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">Bold Text Generator</a> — make text heavier for stronger emphasis in bios and captions</li>
+        <li><a href={toolUrl('strikethrough-text-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">Strikethrough Text Generator</a> — cross out words for humour, corrections or before/after prices</li>
+      </ul>
     </div>
 
     <FAQ items={faqs} />

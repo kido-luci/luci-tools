@@ -39,6 +39,22 @@ const faqs: FaqItem[] = [
     q: 'Is anything sent to a server?',
     a: 'No. The strikethrough is added in your browser with JavaScript, and your text never leaves your device.',
   },
+  {
+    q: 'Will it show as crossed-out everywhere?',
+    a: 'On modern phones and browsers the line renders consistently across Instagram, TikTok, Twitter/X and Discord. Very old Android devices or niche apps that use basic system fonts may not position the combining mark correctly, but the text is still legible.',
+  },
+  {
+    q: 'Why does it sometimes look odd on older phones?',
+    a: 'The combining stroke overlay relies on a font rendering engine that knows how to layer a diacritic over each letter. Older Android system fonts handled this less consistently, which can cause the line to appear offset or doubled. Updating the device font or testing on a different app usually resolves it.',
+  },
+  {
+    q: 'Can I strike through prices for a sale post?',
+    a: 'Yes — that is one of the most popular uses. Paste the original price in strikethrough, follow it with the new price in normal text, and the before/after comparison works in any plain-text caption or bio.',
+  },
+  {
+    q: 'Is my text uploaded anywhere?',
+    a: 'No. The combining marks are added entirely in your browser. Your text is never sent to any server.',
+  },
 ];
 ---
 
@@ -78,6 +94,44 @@ const faqs: FaqItem[] = [
         characters, so you can show a "before and after" price, mark something as
         done, or make a joke that lands — all in plain text that pastes anywhere.
       </p>
+
+      <h2>When to use strikethrough text</h2>
+      <ul>
+        <li><strong>Sale prices</strong> — cross out the original price next to the discounted one to make the saving immediately obvious in a caption or bio link.</li>
+        <li><strong>Corrections &amp; edits</strong> — show that you are revising an earlier statement without deleting it, keeping the context visible for readers who saw the original.</li>
+        <li><strong>Humour &amp; sarcasm</strong> — strike through a thought you are "definitely not" thinking, or add a self-deprecating aside that the reader is meant to notice.</li>
+        <li><strong>Ticking off to-do items</strong> — paste a task list in a post and use strikethrough on the completed items to show progress.</li>
+        <li><strong>Before/after comparisons</strong> — crossed-out old copy next to new copy tells a clear visual story without needing images or screenshots.</li>
+      </ul>
+
+      <h2>How strikethrough is made</h2>
+      <p>
+        Unlike bold or italic Unicode generators, this tool does not swap your
+        letters for characters from a different alphabet block. Instead, it inserts
+        a Unicode "combining long stroke overlay" (U+0336) after each character you
+        type. The overlay is a zero-width mark that your device's font engine draws
+        as a horizontal line layered on top of the preceding letter. Because the
+        mark is attached to the text itself rather than stored as a style attribute,
+        it travels with the characters when you copy and paste — no formatting is
+        needed at the destination.
+      </p>
+
+      <h2>Accessibility note</h2>
+      <p>
+        Combining marks can render inconsistently on older devices or fonts that
+        lack full Unicode diacritic support, so always test on your target platform
+        before publishing. Screen readers typically ignore combining overlay marks
+        and read the underlying text as normal — which means the visual
+        "crossed-out" meaning is invisible to users relying on assistive technology.
+        Use strikethrough for visual effect and decoration, not to convey meaning
+        that only makes sense if the line is seen.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('bold-text-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">Bold Text Generator</a> — make words stand out with Unicode bold characters</li>
+        <li><a href={toolUrl('italic-text-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">Italic Text Generator</a> — add a slanted, elegant style to bios and captions</li>
+      </ul>
     </div>
 
     <FAQ items={faqs} />
