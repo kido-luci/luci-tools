@@ -55,11 +55,15 @@ tools.luci-studio.com
 - **Domain:** `tools.luci-studio.com`, engine-prefix paths.
 - **Ads:** Google AdSense — **one** site (`tools.luci-studio.com`), **one** root
   `ads.txt`.
-- **Analytics:** Cloudflare Web Analytics, **single shared beacon** injected by the
-  `tools-router` Worker (HTMLRewriter, appended to every HTML response). Edge
-  auto-inject does NOT survive the Worker proxy, so per-Pages-project "Enable" was
-  abandoned. The one beacon token lives only in the Worker — do **not** also add a
-  manual beacon in any engine repo, or pageviews double-count.
+- **Analytics:** Cloudflare Web Analytics — **no setup needed in these repos.**
+  `tools.luci-studio.com` is a subdomain of the proxied `luci-studio.com` zone,
+  whose **automatic** Web Analytics already edge-injects its beacon onto every
+  tools page (it DOES survive the `tools-router` Worker — verify with real
+  browser headers, not a bot UA: Cloudflare skips the auto-beacon for bots). So
+  do **not** inject a manual beacon (Worker or engine repo) — a second beacon
+  double-counts and its dedicated site stays empty (the zone beacon inits first).
+  View tools traffic in the `luci-studio.com` Web Analytics site, filtered by
+  hostname `tools.luci-studio.com`.
 - **Legal:** Privacy / Terms / About live **once** at the root (`tools-home`);
   every tool links to them.
 
