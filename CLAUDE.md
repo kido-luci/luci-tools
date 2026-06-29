@@ -121,6 +121,10 @@ VN Decree 13/2023) and a selling point.
   running-model name (e.g. `Claude Opus 4.8`).
 - A release = merge to `master` **then** an annotated tag `vX.Y.Z` (each repo
   versioned independently).
+- **After a release (or after a topic branch is merged/landed), `git checkout`
+  back to the base branch (`master`) locally** so the working tree is clean and
+  not left sitting on a merged/deleted branch. Applies to submodules too — after
+  merging a submodule PR, switch that submodule back to `master`.
 
 ## Build / verify
 
