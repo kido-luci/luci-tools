@@ -4,3 +4,7 @@
 # cloudflare / node (in case tooling runs at the workspace root)
 .wrangler/
 node_modules/
+
+# codegraph local index + cursor rules (machine-local, not shared)
+.codegraph/
+.cursor/
