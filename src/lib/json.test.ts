@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatJson, minifyJson, validateJson } from './json';
+import { formatJson, minifyJson, validateJson, jsonToCsv, csvToJson } from './json';
 
 describe('formatJson', () => {
   it('formats with default indent of 2 spaces', () => {
@@ -210,5 +210,172 @@ describe('round-trip', () => {
   it('round-trips with tab indent', () => {
     const x = '{"key":"value","num":7}';
     expect(minifyJson(formatJson(x, '\t'))).toBe(minifyJson(x));
+  });
+});
+
+describe('jsonToCsv', () => {
+  it('converts a simple array of objects with a CRLF-joined body', () => {
+    const input = '[{"a":1,"b":2},{"a":3,"b":4}]';
+    expect(jsonToCsv(input)).toBe('a,b\r\n1,2\r\n3,4');
+  });
+
+  it('wraps a single object as one row', () => {
+    expect(jsonToCsv('{"a":1,"b":2}')).toBe('a,b\r\n1,2');
+  });
+
+  it('uses the union of keys across rows in first-seen order', () => {
+    const input = '[{"a":1,"b":2},{"a":3,"c":4}]';
+    // header = a,b (first row) then c (new in second row); missing cells empty
+    expect(jsonToCsv(input)).toBe('a,b,c\r\n1,2,\r\n3,,4');
+  });
+
+  it('leaves missing keys as empty cells', () => {
+    const input = '[{"a":1},{"b":2}]';
+    expect(jsonToCsv(input)).toBe('a,b\r\n1,\r\n,2');
+  });
+
+  it('quotes a field that contains a comma', () => {
+    const input = '[{"name":"Smith, John"}]';
+    expect(jsonToCsv(input)).toBe('name\r\n"Smith, John"');
+  });
+
+  it('quotes and doubles embedded double quotes', () => {
+    const input = '[{"quote":"She said \\"hi\\""}]';
+    // internal " becomes "" and the field is wrapped in quotes
+    expect(jsonToCsv(input)).toBe('quote\r\n"She said ""hi"""');
+  });
+
+  it('quotes a field that contains a newline', () => {
+    const input = '[{"note":"line1\\nline2"}]';
+    expect(jsonToCsv(input)).toBe('note\r\n"line1\nline2"');
+  });
+
+  it('quotes a field that contains a CRLF', () => {
+    const input = '[{"note":"line1\\r\\nline2"}]';
+    expect(jsonToCsv(input)).toBe('note\r\n"line1\r\nline2"');
+  });
+
+  it('JSON-stringifies nested object cell values', () => {
+    const input = '[{"a":{"x":1}}]';
+    expect(jsonToCsv(input)).toBe('a\r\n"{""x"":1}"');
+  });
+
+  it('JSON-stringifies nested array cell values', () => {
+    const input = '[{"tags":["x","y"]}]';
+    expect(jsonToCsv(input)).toBe('tags\r\n"[""x"",""y""]"');
+  });
+
+  it('renders boolean, null and number primitives as plain cells', () => {
+    const input = '[{"b":true,"n":null,"num":3.14}]';
+    expect(jsonToCsv(input)).toBe('b,n,num\r\ntrue,,3.14');
+  });
+
+  it('quotes a header key that itself contains a comma', () => {
+    const input = '[{"a,b":1}]';
+    expect(jsonToCsv(input)).toBe('"a,b"\r\n1');
+  });
+
+  it('throws when the JSON is a bare primitive', () => {
+    expect(() => jsonToCsv('42')).toThrow();
+  });
+
+  it('throws on invalid JSON', () => {
+    expect(() => jsonToCsv('{bad')).toThrow();
+  });
+
+  it('throws when an array item is not an object', () => {
+    expect(() => jsonToCsv('[1,2,3]')).toThrow();
+  });
+});
+
+describe('csvToJson', () => {
+  it('parses a simple CSV into an array of string objects', () => {
+    const csv = 'a,b\r\n1,2\r\n3,4';
+    expect(JSON.parse(csvToJson(csv))).toEqual([
+      { a: '1', b: '2' },
+      { a: '3', b: '4' },
+    ]);
+  });
+
+  it('parses LF line endings', () => {
+    const csv = 'a,b\n1,2\n3,4';
+    expect(JSON.parse(csvToJson(csv))).toEqual([
+      { a: '1', b: '2' },
+      { a: '3', b: '4' },
+    ]);
+  });
+
+  it('parses CRLF line endings', () => {
+    const csv = 'a,b\r\n1,2';
+    expect(JSON.parse(csvToJson(csv))).toEqual([{ a: '1', b: '2' }]);
+  });
+
+  it('handles a comma inside a quoted field', () => {
+    const csv = 'name,city\r\n"Smith, John",NYC';
+    expect(JSON.parse(csvToJson(csv))).toEqual([{ name: 'Smith, John', city: 'NYC' }]);
+  });
+
+  it('handles escaped double quotes inside a quoted field', () => {
+    const csv = 'quote\r\n"She said ""hi"""';
+    expect(JSON.parse(csvToJson(csv))).toEqual([{ quote: 'She said "hi"' }]);
+  });
+
+  it('handles a newline inside a quoted field', () => {
+    const csv = 'note\r\n"line1\nline2"';
+    expect(JSON.parse(csvToJson(csv))).toEqual([{ note: 'line1\nline2' }]);
+  });
+
+  it('handles a CRLF inside a quoted field', () => {
+    const csv = 'note\r\n"line1\r\nline2"';
+    expect(JSON.parse(csvToJson(csv))).toEqual([{ note: 'line1\r\nline2' }]);
+  });
+
+  it('ignores a single trailing newline (no blank last row)', () => {
+    const csv = 'a,b\r\n1,2\r\n';
+    expect(JSON.parse(csvToJson(csv))).toEqual([{ a: '1', b: '2' }]);
+  });
+
+  it('ignores a trailing LF newline', () => {
+    const csv = 'a,b\n1,2\n';
+    expect(JSON.parse(csvToJson(csv))).toEqual([{ a: '1', b: '2' }]);
+  });
+
+  it('fills missing trailing fields with empty strings', () => {
+    const csv = 'a,b,c\r\n1,2';
+    expect(JSON.parse(csvToJson(csv))).toEqual([{ a: '1', b: '2', c: '' }]);
+  });
+
+  it('drops extra fields beyond the header width', () => {
+    const csv = 'a,b\r\n1,2,3';
+    // only header keys are emitted; the extra 3 has no key
+    expect(JSON.parse(csvToJson(csv))).toEqual([{ a: '1', b: '2' }]);
+  });
+
+  it('returns an empty array for header-only CSV', () => {
+    expect(JSON.parse(csvToJson('a,b'))).toEqual([]);
+  });
+
+  it('returns an empty array for empty input', () => {
+    expect(JSON.parse(csvToJson(''))).toEqual([]);
+  });
+
+  it('preserves an empty quoted field', () => {
+    const csv = 'a,b\r\n"",x';
+    expect(JSON.parse(csvToJson(csv))).toEqual([{ a: '', b: 'x' }]);
+  });
+});
+
+describe('CSV round-trip', () => {
+  it('jsonToCsv then csvToJson preserves a simple case', () => {
+    const json = '[{"a":"1","b":"2"},{"a":"3","b":"4"}]';
+    const csv = jsonToCsv(json);
+    expect(JSON.parse(csvToJson(csv))).toEqual(JSON.parse(json));
+  });
+
+  it('round-trips fields with commas, quotes and newlines', () => {
+    const json =
+      '[{"text":"a, b","quote":"say \\"hi\\"","note":"l1\\nl2"}]';
+    const csv = jsonToCsv(json);
+    expect(JSON.parse(csvToJson(csv))).toEqual(JSON.parse(json));
   });
 });

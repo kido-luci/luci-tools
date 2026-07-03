@@ -45,6 +45,22 @@ export const TOOLS: ToolMeta[] = [
       'Check if your JSON is valid and get the exact syntax error and position if it is not — free, instant and private. Runs entirely in your browser.',
     icon: 'check',
   },
+  {
+    slug: 'json-to-csv',
+    title: 'JSON to CSV',
+    h1: 'JSON to CSV',
+    description:
+      'Convert a JSON array of objects into clean, spreadsheet-ready CSV — free, instant and private. Everything runs in your browser; nothing is uploaded.',
+    icon: 'convert',
+  },
+  {
+    slug: 'csv-to-json',
+    title: 'CSV to JSON',
+    h1: 'CSV to JSON',
+    description:
+      'Convert CSV rows into a pretty-printed JSON array of objects — free, instant and private. Everything runs in your browser; nothing is uploaded.',
+    icon: 'convert',
+  },
 ];
 
 /** Base-aware, trailing-slash URL for a tool slug (e.g. `/json/json-formatter/`). */

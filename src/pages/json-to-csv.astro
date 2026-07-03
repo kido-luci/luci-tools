@@ -1,0 +1,120 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'json-to-csv')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my JSON uploaded to a server?',
+    a: 'No. The conversion runs entirely in your browser — the JSON is parsed and the CSV is built locally. Your data never leaves your device.',
+  },
+  {
+    q: 'What JSON shape does it expect?',
+    a: 'An array of objects, where each object is one row and its keys become columns. A single object is also accepted and treated as one row. The column header is the union of every object’s keys, in the order they first appear.',
+  },
+  {
+    q: 'How are nested objects and arrays handled?',
+    a: 'A cell whose value is itself an object or array is written as its compact JSON text (for example {"x":1}), then quoted and escaped like any other field. Only the top level is flattened into columns; deeper structure is preserved as JSON inside the cell.',
+  },
+  {
+    q: 'How are commas, quotes and newlines inside values handled?',
+    a: 'The output follows RFC 4180. Any value containing a comma, double quote, or line break is wrapped in double quotes, and inner double quotes are doubled (" becomes ""), so the CSV opens correctly in Excel, Google Sheets, and Numbers.',
+  },
+  {
+    q: 'What if some objects are missing a key?',
+    a: 'Missing keys become empty cells. The header always covers every key seen across all rows, so rows stay aligned even when objects have different fields.',
+  },
+  {
+    q: 'What delimiter and line endings does it use?',
+    a: 'Fields are separated by commas and rows by CRLF (\\r\\n), which is the RFC 4180 default that spreadsheet apps expect. The header row is emitted first, followed by one line per object.',
+  },
+  {
+    q: 'Can it handle large files?',
+    a: 'Yes, within your device’s memory. Because nothing is uploaded, the only limit is how much your browser can hold and process; very large arrays may take a moment to convert.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <ToolShell mode="json-to-csv" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert JSON to CSV</h2>
+      <ol>
+        <li>Paste a JSON array of objects into the input box on the left.</li>
+        <li>The CSV is built instantly in the output panel, with a header row from your keys.</li>
+        <li>
+          If the JSON is invalid or not an array of objects, an error message
+          appears below so you can fix it first.
+        </li>
+        <li>Click <strong>Copy</strong> for the clipboard, or <strong>Download CSV</strong> to save a <code>.csv</code> file.</li>
+      </ol>
+
+      <h2>Converting API and export data into a spreadsheet</h2>
+      <p>
+        JSON is how most APIs and modern tools hand you data, but spreadsheets,
+        BI dashboards, and bulk-import forms almost always want CSV. Converting a
+        JSON array of records into CSV lets you open an API response in Excel or
+        Google Sheets, hand a data extract to a non-technical colleague, or feed a
+        product catalogue into a tool that only accepts comma-separated files.
+        Each object becomes a row and each key becomes a column, so the tabular
+        shape that was implicit in the JSON becomes explicit.
+      </p>
+
+      <h2>How nested values and special characters are handled</h2>
+      <p>
+        The converter collects the union of keys across every object as the header,
+        preserving the order they first appear, so rows with different fields still
+        line up. Missing keys become empty cells. Values that are themselves objects
+        or arrays are written as their JSON text inside a single cell rather than
+        being flattened into more columns, keeping the structure intact. All output
+        follows RFC 4180: any field containing a comma, double quote, or line break
+        is wrapped in quotes with inner quotes doubled, and rows are separated by
+        CRLF — the format spreadsheet applications expect.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('csv-to-json')} class="text-brand underline hover:no-underline dark:text-brand-light">CSV to JSON</a> — turn spreadsheet rows back into a JSON array of objects.</li>
+        <li><a href={toolUrl('json-formatter')} class="text-brand underline hover:no-underline dark:text-brand-light">JSON Formatter &amp; Validator</a> — pretty-print and validate JSON before converting it.</li>
+        <li><a href={toolUrl('json-validator')} class="text-brand underline hover:no-underline dark:text-brand-light">JSON Validator</a> — check your JSON is well-formed and catch syntax errors.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
