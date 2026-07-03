@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CodecTool from '../components/CodecTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'url-decode')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my text uploaded anywhere?',
+    a: 'No. The decoding happens locally in your browser using the standard decodeURIComponent function. Nothing is sent to a server.',
+  },
+  {
+    q: 'What does URL decoding actually do?',
+    a: 'It reverses percent-encoding: every %XX sequence is converted back to the byte it represents, and the bytes are read as UTF-8 text — so %20 becomes a space, %26 becomes &, and so on.',
+  },
+  {
+    q: 'What happens if I paste an invalid percent-encoded string?',
+    a: 'The tool shows a clear error message instead of garbage output. This usually means a stray % that is not followed by two valid hex digits.',
+  },
+  {
+    q: 'Does this decode a plus sign as a space?',
+    a: 'No. This tool follows strict URL-component decoding, where + is a literal plus sign. If your text came from a form body (application/x-www-form-urlencoded), replace + with a space before decoding to get the original value.',
+  },
+  {
+    q: 'Can I decode a full URL, not just one value?',
+    a: 'Yes, pasting a full URL works fine — only the percent-escaped parts change, so protocol, slashes and unencoded characters pass through unchanged.',
+  },
+  {
+    q: 'Is URL decoding reversible?',
+    a: 'Yes. Use the URL Encode tool to turn the plain text back into a percent-encoded string.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <span
+      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light"
+      aria-hidden="true"
+    >
+      <Icon name={meta.icon} class="h-7 w-7" />
+    </span>
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <CodecTool op="url-decode" inputLabel="Percent-encoded text" inputPlaceholder="Paste a URL-encoded string here…" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to URL decode text</h2>
+      <ol>
+        <li>Paste your percent-encoded text into the input box above.</li>
+        <li>The decoded plain text appears instantly in the output box.</li>
+        <li>Click <strong>Copy</strong> to copy the decoded text to your clipboard.</li>
+      </ol>
+
+      <h2>What this tool does</h2>
+      <p>
+        This tool reverses percent-encoding back to readable text. Every %XX
+        sequence is converted back to the byte it represents and the result is
+        decoded as UTF-8, so accented letters and other non-ASCII characters
+        come back intact.
+      </p>
+
+      <h2>Common reasons to URL decode text</h2>
+      <ul>
+        <li>Reading a query string parameter while debugging a request or a link.</li>
+        <li>Inspecting a redirect URL that has another URL embedded as a parameter.</li>
+        <li>Recovering the original search term or free-text value a user typed into a form.</li>
+        <li>Checking that your own encoding logic round-trips correctly.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('url-encode')} class="text-brand underline hover:no-underline dark:text-brand-light">URL Encode</a> — convert plain text into a percent-encoded string.</li>
+        <li><a href={toolUrl('base64-decode')} class="text-brand underline hover:no-underline dark:text-brand-light">Base64 Decode</a> — decode Base64 text instead of percent-encoding.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

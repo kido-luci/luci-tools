@@ -1,0 +1,100 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CodecTool from '../components/CodecTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'url-encode')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my text uploaded anywhere?',
+    a: 'No. The encoding happens locally in your browser using the standard encodeURIComponent function. Nothing is sent to a server.',
+  },
+  {
+    q: 'What characters does URL encoding change?',
+    a: 'Anything outside the small set of URL-safe characters (letters, digits, and - _ . ! ~ * \' ( )) is replaced with a % followed by its hex byte value, so spaces become %20, & becomes %26, and so on.',
+  },
+  {
+    q: 'When do I need to URL encode text?',
+    a: 'Whenever a value is going into a URL query string, path segment or form field and might contain reserved characters like spaces, &, =, ? or #, which would otherwise break the URL or be parsed as a separate parameter.',
+  },
+  {
+    q: 'Does this encode the whole URL or just a value?',
+    a: 'This encodes a single component — a value you plan to insert into a query string or path segment — not a full URL. Encoding an entire URL the same way would also escape the protocol and slashes, breaking it.',
+  },
+  {
+    q: 'Why does a space become %20 and not a plus sign?',
+    a: 'The % 20 form is the standard encodeURIComponent behaviour for a percent-encoded component. The + shorthand for a space is specific to the older application/x-www-form-urlencoded format used in form bodies, not general URL encoding.',
+  },
+  {
+    q: 'Is URL encoding reversible?',
+    a: 'Yes, completely. Use the URL Decode tool to turn the percent-encoded string back into the original text with no data loss.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <span
+      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light"
+      aria-hidden="true"
+    >
+      <Icon name={meta.icon} class="h-7 w-7" />
+    </span>
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <CodecTool op="url-encode" inputLabel="Text to encode" inputPlaceholder="Type or paste text here…" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to URL encode text</h2>
+      <ol>
+        <li>Type or paste your text into the input box above.</li>
+        <li>The percent-encoded result appears instantly in the output box.</li>
+        <li>Click <strong>Copy</strong> to copy the encoded string to your clipboard.</li>
+      </ol>
+
+      <h2>What this tool does</h2>
+      <p>
+        This tool percent-encodes text so it can be safely used as a value
+        inside a URL — for example a query string parameter or a path
+        segment. Reserved and non-ASCII characters are replaced with a %
+        followed by their hex byte value; letters, digits and the small set
+        of URL-safe punctuation are left untouched.
+      </p>
+
+      <h2>Common reasons to URL encode text</h2>
+      <ul>
+        <li>Building a query string parameter that contains spaces, &amp;, = or other reserved characters.</li>
+        <li>Passing user-entered search terms or free text as part of a link.</li>
+        <li>Constructing an API request URL from dynamic values in code, or debugging one by hand.</li>
+        <li>Sharing a link that embeds another full URL as a parameter (for example a redirect target).</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('url-decode')} class="text-brand underline hover:no-underline dark:text-brand-light">URL Decode</a> — reverse this conversion back to plain text.</li>
+        <li><a href={toolUrl('html-entity-encoder')} class="text-brand underline hover:no-underline dark:text-brand-light">HTML Entity Encoder</a> — escape text for safe use inside HTML instead of a URL.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
