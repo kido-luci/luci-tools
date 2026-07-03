@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HashTool from '../components/HashTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'md5-hash-generator')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my text uploaded to a server?',
+    a: 'No. The MD5 hash is computed entirely in your browser using JavaScript. Whatever you type or paste never leaves your device, so it is safe to hash passwords, tokens or private notes here.',
+  },
+  {
+    q: 'What is MD5 used for today?',
+    a: 'MD5 is still widely used for quick, non-security tasks like checking that a downloaded file was not corrupted, generating cache keys, or de-duplicating records. It is fast and produces a short, consistent 32-character fingerprint for any input.',
+  },
+  {
+    q: 'Is MD5 secure for passwords?',
+    a: 'No. MD5 is cryptographically broken — collisions (two different inputs producing the same hash) can be generated cheaply, and modern hardware can brute-force short inputs in seconds. Use a purpose-built password hash like bcrypt or Argon2 for storing passwords, not MD5.',
+  },
+  {
+    q: 'Why does the same input always give the same hash?',
+    a: 'Hashing is deterministic: the same bytes in always produce the same 128-bit output. That is exactly what makes hashes useful for verification — you can hash a file on both ends and compare the two 32-character strings to confirm they match.',
+  },
+  {
+    q: 'Can I reverse an MD5 hash back to the original text?',
+    a: 'Not directly. Hashing is one-way by design — there is no mathematical operation that turns a hash back into the input. In practice, short or common inputs (like dictionary words) can sometimes be found using precomputed lookup tables, which is another reason MD5 is unsuitable for protecting passwords.',
+  },
+  {
+    q: 'Does capitalization or whitespace change the hash?',
+    a: 'Yes. MD5 hashes the exact bytes you give it, so "Hello" and "hello" produce completely different hashes, and even a trailing space changes the result entirely.',
+  },
+  {
+    q: 'Why is my hash always 32 characters long?',
+    a: 'MD5 always produces a 128-bit digest, shown here as 32 hexadecimal characters, no matter how long or short the input text is — hashing one letter or an entire book produces a fixed-length output.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <span
+      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light"
+      aria-hidden="true"
+    >
+      <Icon name={meta.icon} class="h-7 w-7" />
+    </span>
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <HashTool algo="MD5" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to generate an MD5 hash</h2>
+      <ol>
+        <li>Type or paste your text into the box above.</li>
+        <li>The MD5 hash updates instantly as you type — nothing is uploaded.</li>
+        <li>Click <strong>Copy</strong> to copy the hash to your clipboard.</li>
+      </ol>
+
+      <h2>What is MD5?</h2>
+      <p>
+        MD5 (Message-Digest Algorithm 5) is a hash function that takes any
+        amount of text and produces a fixed 128-bit fingerprint, shown here as
+        32 hexadecimal characters. It was designed in 1991 and remains common
+        for checksums and cache keys, even though it is no longer considered
+        secure for cryptographic purposes.
+      </p>
+      <p>
+        <strong>Hashing is one-way, not encryption.</strong> Encryption is
+        reversible with the right key; hashing is not reversible at all. An
+        MD5 hash cannot be decrypted back into the original text — it can
+        only be compared against other hashes to check for a match.
+      </p>
+
+      <h2>When to use MD5 (and when not to)</h2>
+      <ul>
+        <li><strong>Good for</strong> — file integrity checks, cache keys, de-duplication, and other non-adversarial contexts where speed matters more than collision-resistance.</li>
+        <li><strong>Not for</strong> — passwords, authentication tokens, digital signatures, or anything where an attacker might try to forge a matching input. Use SHA-256 or a dedicated password hash instead.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('sha256-hash-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">SHA-256 hash generator</a> — the modern, collision-resistant standard.</li>
+        <li><a href={toolUrl('sha1-hash-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">SHA-1 hash generator</a> — another legacy hash, faster than MD5 to brute-force but still not secure.</li>
+        <li><a href={toolUrl('sha512-hash-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">SHA-512 hash generator</a> — a longer digest for stronger integrity guarantees.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AdSlot from '../components/AdSlot.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const title = 'Free Online Hash Generator — MD5, SHA-1, SHA-256, SHA-512 | Luci Tools';
+const description =
+  'Generate MD5, SHA-1, SHA-256 and SHA-512 hashes right in your browser. 100% client-side, fast, free, nothing uploaded.';
+
+const hubUrl = new URL(import.meta.env.BASE_URL, SITE.url).href;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Hash Generator Tools',
+  description,
+  url: hubUrl,
+};
+---
+
+<BaseLayout title={title} description={description} jsonLd={jsonLd}>
+  <section class="mx-auto max-w-[1600px] px-4 pb-20 pt-14 sm:px-10">
+    <h1 class="text-[42px] font-extrabold leading-[1.1] tracking-[-0.025em] text-slate-900 dark:text-slate-100">
+      Hash Generator Tools
+    </h1>
+    <p class="mt-[18px] max-w-[880px] text-[19px] leading-[1.55] text-slate-600 dark:text-slate-400">
+      Fast, free and private hash generation that runs entirely in your browser.
+      Your text is never uploaded to a server.
+    </p>
+
+    <div class="mt-6 flex flex-wrap gap-[30px]">
+      {
+        ['100% in your browser', 'Nothing uploaded', 'Free & instant'].map((label) => (
+          <div class="flex items-center gap-[9px]">
+            <span
+              class="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full bg-brand-tint text-xs font-extrabold text-brand-dark dark:bg-brand/15 dark:text-brand-light"
+              aria-hidden="true"
+            >
+              ✓
+            </span>
+            <span class="text-[14.5px] font-medium text-slate-600 dark:text-slate-400">{label}</span>
+          </div>
+        ))
+      }
+    </div>
+
+    <AdSlot />
+
+    <ul class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] gap-[26px]">
+      {
+        TOOLS.map((t) => (
+          <li>
+            <a
+              href={toolUrl(t.slug)}
+              class="flex h-full gap-[18px] rounded-xl border border-slate-200 bg-white px-7 py-[26px] text-slate-900 transition hover:-translate-y-0.5 hover:border-brand-ring hover:shadow-[0_8px_24px_rgba(249,115,22,0.10)] dark:bg-slate-900 dark:border-slate-800 dark:hover:border-brand"
+            >
+              <div class="flex h-[60px] w-[60px] flex-shrink-0 items-center justify-center rounded-[14px] bg-brand-tint text-brand-dark dark:bg-brand/15 dark:text-brand-light">
+                <Icon name={t.icon} class="h-7 w-7" />
+              </div>
+              <div>
+                <div class="text-[21px] font-bold text-slate-900 dark:text-slate-100">{t.title}</div>
+                <div class="mt-2 text-[16px] leading-[1.55] text-slate-500 dark:text-slate-400">{t.description}</div>
+                <div class="mt-[14px] text-sm font-bold text-brand dark:text-brand-light">Generate →</div>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>

@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HashTool from '../components/HashTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'sha256-hash-generator')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my text uploaded to a server?',
+    a: 'No. SHA-256 is computed entirely in your browser via the Web Crypto API. Your text never leaves your device, so it is safe to hash private notes, API keys or file contents here.',
+  },
+  {
+    q: 'What is SHA-256 used for today?',
+    a: 'SHA-256 is the current industry standard hash: it secures Bitcoin and other blockchains, backs TLS certificates, verifies software downloads and package integrity (SRI, checksums), and is the default choice for new systems that need a cryptographically strong digest.',
+  },
+  {
+    q: 'Is SHA-256 secure?',
+    a: 'Yes, as far as current cryptography knows. No practical collision or preimage attack against SHA-256 has been found, and it is part of the SHA-2 family recommended by NIST for security-sensitive use today.',
+  },
+  {
+    q: 'How is SHA-256 different from MD5 and SHA-1?',
+    a: 'SHA-256 produces a longer 256-bit digest (64 hex characters) versus MD5\'s 128 bits or SHA-1\'s 160 bits, and unlike those two, no practical way to forge a matching SHA-256 hash has been demonstrated — which is why it replaced them as the security-grade default.',
+  },
+  {
+    q: 'Can I reverse a SHA-256 hash back into the original text?',
+    a: 'No. Hashing is one-way by design — there is no operation that turns the 64-character hex output back into your original input. It is used to prove two pieces of data match, not to store or recover the data itself.',
+  },
+  {
+    q: 'Why does changing one character completely change the hash?',
+    a: 'This is the avalanche effect: SHA-256 is built so a single-bit change in the input flips roughly half the output bits. That means the hash cannot be used to detect "similar" text — only whether two inputs are exactly identical.',
+  },
+  {
+    q: 'Why is my SHA-256 hash always 64 characters?',
+    a: 'SHA-256 always produces a 256-bit digest, shown as 64 hexadecimal characters, no matter how long the input text is — a single character and an entire document both hash to the same fixed length.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <span
+      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light"
+      aria-hidden="true"
+    >
+      <Icon name={meta.icon} class="h-7 w-7" />
+    </span>
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <HashTool algo="SHA-256" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to generate a SHA-256 hash</h2>
+      <ol>
+        <li>Type or paste your text into the box above.</li>
+        <li>The SHA-256 hash updates instantly as you type — nothing is uploaded.</li>
+        <li>Click <strong>Copy</strong> to copy the hash to your clipboard.</li>
+      </ol>
+
+      <h2>What is SHA-256?</h2>
+      <p>
+        SHA-256 (Secure Hash Algorithm, 256-bit) is part of the SHA-2 family
+        designed by the NSA and published by NIST in 2001. It takes any
+        amount of text and produces a fixed 256-bit fingerprint, shown here
+        as 64 hexadecimal characters, and remains the de facto standard for
+        integrity checks and cryptographic signatures today.
+      </p>
+      <p>
+        <strong>Hashing is one-way, not encryption.</strong> Encryption is
+        reversible with the right key; hashing is not reversible at all. A
+        SHA-256 hash cannot be decrypted back into the original text — it can
+        only be compared against other hashes to check for a match.
+      </p>
+
+      <h2>When to use SHA-256</h2>
+      <ul>
+        <li><strong>Good for</strong> — verifying downloads and packages, blockchain and commit hashing, digital signatures, and any system where forging a matching hash must stay computationally infeasible.</li>
+        <li><strong>Note</strong> — for storing user passwords specifically, pair a hash with a dedicated password-hashing scheme (bcrypt, scrypt, Argon2) rather than hashing the raw password with SHA-256 alone, since those are deliberately slow to resist brute-force guessing.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('sha512-hash-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">SHA-512 hash generator</a> — an even longer digest from the same SHA-2 family.</li>
+        <li><a href={toolUrl('sha1-hash-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">SHA-1 hash generator</a> — the older, now-deprecated predecessor.</li>
+        <li><a href={toolUrl('md5-hash-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">MD5 hash generator</a> — a fast checksum hash for non-security use.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
