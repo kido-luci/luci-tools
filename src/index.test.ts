@@ -16,6 +16,7 @@ describe('resolveRoute', () => {
     expect(resolveRoute('/json/json-formatter/').host).toBe('json-tools-b17.pages.dev');
     expect(resolveRoute('/qr/qr-code-generator/').host).toBe('qr-tools-3u8.pages.dev');
     expect(resolveRoute('/pdf/merge-pdf/').host).toBe('pdf-tools-bh7.pages.dev');
+    expect(resolveRoute('/unit/cm-to-inches/').host).toBe('unit-converter-ebc.pages.dev');
   });
 
   it('maps an engine hub (prefix root, with or without trailing slash) to the origin root', () => {
@@ -73,7 +74,7 @@ describe('rewriteLocation', () => {
 });
 
 describe('ORIGINS', () => {
-  it('covers exactly the five engine prefixes', () => {
-    expect(Object.keys(ORIGINS).sort()).toEqual(['fancy-text', 'image', 'json', 'pdf', 'qr']);
+  it('covers exactly the six engine prefixes', () => {
+    expect(Object.keys(ORIGINS).sort()).toEqual(['fancy-text', 'image', 'json', 'pdf', 'qr', 'unit']);
   });
 });

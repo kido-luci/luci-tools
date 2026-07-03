@@ -23,6 +23,7 @@ export const ORIGINS: Record<string, string> = {
   json: 'json-tools-b17.pages.dev',
   qr: 'qr-tools-3u8.pages.dev',
   pdf: 'pdf-tools-bh7.pages.dev',
+  unit: 'unit-converter-ebc.pages.dev',
 };
 
 /** Everything not owned by an engine is served by the root project (base '/'). */
