@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import UnitConverter from '../components/UnitConverter.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'inches-to-cm')!;
+const [fromLabel, toLabel] = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How do I convert inches to centimeters?',
+    a: 'Multiply the number of inches by 2.54. For example, 5 inches × 2.54 = 12.7 cm. The tool above does it live as you type.',
+  },
+  {
+    q: 'How many centimeters are in an inch?',
+    a: 'Exactly 2.54 centimeters. This has been the official definition of the inch since 1959, so it is a precise figure, not a rounded one.',
+  },
+  {
+    q: 'What is 12 inches in cm?',
+    a: '12 inches (one foot) is exactly 30.48 cm, since 12 × 2.54 = 30.48.',
+  },
+  {
+    q: 'How do I convert a TV or screen size to centimeters?',
+    a: 'Screen sizes quote the diagonal in inches. Multiply that diagonal by 2.54 — for example a 55-inch TV is 55 × 2.54 = 139.7 cm across the diagonal.',
+  },
+  {
+    q: 'Why does the US still use inches?',
+    a: 'The United States kept imperial units for everyday use while most of the world moved to metric. Converting to centimeters makes measurements portable between the two systems.',
+  },
+  {
+    q: 'Is anything uploaded when I convert?',
+    a: 'No. Everything happens locally in your browser, so the numbers you enter never leave your device.',
+  },
+];
+
+const rows = [
+  ['1 in', '2.54 cm'],
+  ['2 in', '5.08 cm'],
+  ['6 in', '15.24 cm'],
+  ['12 in', '30.48 cm'],
+  ['24 in', '60.96 cm'],
+  ['36 in', '91.44 cm'],
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <FormatBadge from={fromLabel} to={toLabel} class="mb-5" />
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <UnitConverter dimension={meta.dimension} from={meta.from} to={meta.to} />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert inches to cm</h2>
+      <ol>
+        <li>Enter a value in inches in the box above.</li>
+        <li>Read the centimeter result immediately — it recalculates on every keystroke.</li>
+        <li>Use the dropdowns to convert to millimeters, meters or feet instead.</li>
+      </ol>
+
+      <h2>The formula</h2>
+      <p>Centimeters are found by multiplying inches by 2.54:</p>
+      <p><strong>centimeters = inches × 2.54</strong></p>
+      <p>To reverse it, divide centimeters by 2.54 to get back to inches.</p>
+
+      <h2>Common inches to cm values</h2>
+      <table>
+        <thead><tr><th>Inches</th><th>Centimeters</th></tr></thead>
+        <tbody>{rows.map((r) => <tr><td>{r[0]}</td><td>{r[1]}</td></tr>)}</tbody>
+      </table>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('cm-to-inches')} class="text-brand underline hover:no-underline dark:text-brand-light">CM to Inches converter</a> — go the other way.</li>
+        <li><a href={toolUrl('feet-to-meters')} class="text-brand underline hover:no-underline dark:text-brand-light">Feet to Meters converter</a> — for larger lengths.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

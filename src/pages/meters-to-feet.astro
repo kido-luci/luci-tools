@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import UnitConverter from '../components/UnitConverter.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'meters-to-feet')!;
+const [fromLabel, toLabel] = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How do I convert meters to feet?',
+    a: 'Multiply the number of meters by 3.28084. For example, 2 m × 3.28084 ≈ 6.5617 feet. The tool above updates as you type.',
+  },
+  {
+    q: 'How many feet are in a meter?',
+    a: 'One meter is about 3.28084 feet. Since a foot is exactly 0.3048 m, dividing 1 by 0.3048 gives that factor.',
+  },
+  {
+    q: 'What is 10 meters in feet?',
+    a: '10 meters is roughly 32.808 feet — a touch under 33 feet.',
+  },
+  {
+    q: 'How do I express meters as feet and inches?',
+    a: 'Convert to feet, keep the whole number, then multiply the leftover fraction by 12 for inches. For example 1.8 m ≈ 5.9055 ft, which is 5 feet and about 10.9 inches.',
+  },
+  {
+    q: 'Is a meter longer than a yard?',
+    a: 'Yes, slightly. A meter (3.28084 ft) is a little longer than a yard (3 ft), by roughly 0.28 feet or about 3.4 inches.',
+  },
+  {
+    q: 'Does the converter send my measurements anywhere?',
+    a: 'No. All math happens in your browser, so nothing you enter is uploaded or stored.',
+  },
+];
+
+const rows = [
+  ['1 m', '3.2808 ft'],
+  ['2 m', '6.5617 ft'],
+  ['5 m', '16.404 ft'],
+  ['10 m', '32.808 ft'],
+  ['50 m', '164.04 ft'],
+  ['100 m', '328.08 ft'],
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <FormatBadge from={fromLabel} to={toLabel} class="mb-5" />
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <UnitConverter dimension={meta.dimension} from={meta.from} to={meta.to} />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert meters to feet</h2>
+      <ol>
+        <li>Enter a length in meters in the box above.</li>
+        <li>The result in feet appears instantly.</li>
+        <li>Change either dropdown to convert meters to inches, yards or miles.</li>
+      </ol>
+
+      <h2>The formula</h2>
+      <p>Feet are found by multiplying meters by 3.28084:</p>
+      <p><strong>feet = meters × 3.28084</strong></p>
+      <p>Equivalently, feet = meters ÷ 0.3048, since a foot is exactly 0.3048 m.</p>
+
+      <h2>Common meters to feet values</h2>
+      <table>
+        <thead><tr><th>Meters</th><th>Feet</th></tr></thead>
+        <tbody>{rows.map((r) => <tr><td>{r[0]}</td><td>{r[1]}</td></tr>)}</tbody>
+      </table>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('feet-to-meters')} class="text-brand underline hover:no-underline dark:text-brand-light">Feet to Meters converter</a> — go the other way.</li>
+        <li><a href={toolUrl('km-to-miles')} class="text-brand underline hover:no-underline dark:text-brand-light">KM to Miles converter</a> — for long distances.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

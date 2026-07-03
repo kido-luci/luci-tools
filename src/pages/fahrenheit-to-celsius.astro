@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import UnitConverter from '../components/UnitConverter.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'fahrenheit-to-celsius')!;
+const [fromLabel, toLabel] = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How do I convert Fahrenheit to Celsius?',
+    a: 'Subtract 32, then multiply by 5/9. For example, (98.6°F − 32) × 5/9 = 37°C. The converter above computes this live as you type.',
+  },
+  {
+    q: 'What is the Fahrenheit to Celsius formula?',
+    a: '°C = (°F − 32) × 5/9. The −32 removes the Fahrenheit zero-point offset, and the 5/9 rescales the degree size to Celsius.',
+  },
+  {
+    q: 'What is a 98.6°F body temperature in Celsius?',
+    a: '98.6°F is exactly 37°C, the commonly cited average human body temperature.',
+  },
+  {
+    q: 'What is a 350°F oven temperature in Celsius?',
+    a: '350°F converts to about 176.7°C ((350 − 32) × 5/9), often rounded to 180°C on oven dials and recipes.',
+  },
+  {
+    q: 'At what temperature do Celsius and Fahrenheit match?',
+    a: 'At -40 degrees exactly — -40°F equals -40°C, the one point where both scales agree.',
+  },
+  {
+    q: 'Is any temperature I enter uploaded or saved?',
+    a: 'No. This tool runs entirely client-side in your browser — nothing you type is sent to a server.',
+  },
+];
+
+const rows = [
+  ['-40 °F', '-40 °C'],
+  ['32 °F', '0 °C'],
+  ['68 °F', '20 °C'],
+  ['98.6 °F', '37 °C'],
+  ['212 °F', '100 °C'],
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <FormatBadge from={fromLabel} to={toLabel} class="mb-5" />
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <UnitConverter dimension={meta.dimension} from={meta.from} to={meta.to} />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert Fahrenheit to Celsius</h2>
+      <ol>
+        <li>Enter the temperature in Fahrenheit into the box above.</li>
+        <li>The Celsius value updates live as you type.</li>
+        <li>Switch either dropdown to convert to Kelvin instead.</li>
+      </ol>
+
+      <h2>The formula</h2>
+      <p>Celsius is found by subtracting 32, then scaling by 5/9:</p>
+      <p><strong>°C = (°F − 32) × 5/9</strong></p>
+      <p>Reversed, °F = °C × 9/5 + 32.</p>
+
+      <h2>Common Fahrenheit to Celsius values</h2>
+      <table>
+        <thead><tr><th>Fahrenheit</th><th>Celsius</th></tr></thead>
+        <tbody>{rows.map((r) => <tr><td>{r[0]}</td><td>{r[1]}</td></tr>)}</tbody>
+      </table>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('celsius-to-fahrenheit')} class="text-brand underline hover:no-underline dark:text-brand-light">Celsius to Fahrenheit converter</a> — go the other way.</li>
+        <li><a href={toolUrl('lbs-to-kg')} class="text-brand underline hover:no-underline dark:text-brand-light">Lbs to KG converter</a> — for weight conversions.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

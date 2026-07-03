@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import UnitConverter from '../components/UnitConverter.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'lbs-to-kg')!;
+const [fromLabel, toLabel] = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How do I convert pounds to kilograms?',
+    a: 'Multiply the pound value by 0.45359237. For example, 150 lb × 0.45359237 ≈ 68.04 kg. The converter above shows the result as you type.',
+  },
+  {
+    q: 'How many kilograms are in a pound?',
+    a: 'Exactly 0.45359237 kilograms make up one pound — this is the internationally agreed definition, not an approximation.',
+  },
+  {
+    q: 'What is 200 lb in kg?',
+    a: '200 lb is about 90.72 kg (200 × 0.45359237).',
+  },
+  {
+    q: 'Why is 0.45359237 the exact conversion factor?',
+    a: 'Since a 1959 international agreement, the pound has been legally defined as exactly 0.45359237 kilograms, replacing older, slightly different national definitions.',
+  },
+  {
+    q: 'Is this useful for converting bodyweight or luggage weight?',
+    a: 'Yes — the same exact ratio applies whether you’re converting bodyweight, luggage allowances, or shipping weights between imperial and metric.',
+  },
+  {
+    q: 'Does this tool store or transmit my weight data?',
+    a: 'No. Everything is computed locally in your browser — nothing you enter is sent to a server or saved.',
+  },
+];
+
+const rows = [
+  ['1 lb', '0.4536 kg'],
+  ['10 lb', '4.5359 kg'],
+  ['50 lb', '22.6796 kg'],
+  ['100 lb', '45.3592 kg'],
+  ['150 lb', '68.0389 kg'],
+  ['200 lb', '90.7185 kg'],
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <FormatBadge from={fromLabel} to={toLabel} class="mb-5" />
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <UnitConverter dimension={meta.dimension} from={meta.from} to={meta.to} />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert lbs to kg</h2>
+      <ol>
+        <li>Enter the weight in pounds into the box above.</li>
+        <li>The kilogram equivalent updates live as you type.</li>
+        <li>Switch either dropdown to convert between any weight unit on this site.</li>
+      </ol>
+
+      <h2>The formula</h2>
+      <p>Kilograms are found by multiplying pounds by 0.45359237:</p>
+      <p><strong>kilograms = pounds × 0.45359237</strong></p>
+      <p>Reversed, pounds = kilograms × 2.2046226218.</p>
+
+      <h2>Common lbs to kg values</h2>
+      <table>
+        <thead><tr><th>Pounds</th><th>Kilograms</th></tr></thead>
+        <tbody>{rows.map((r) => <tr><td>{r[0]}</td><td>{r[1]}</td></tr>)}</tbody>
+      </table>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('kg-to-lbs')} class="text-brand underline hover:no-underline dark:text-brand-light">KG to Lbs converter</a> — go the other way.</li>
+        <li><a href={toolUrl('inches-to-cm')} class="text-brand underline hover:no-underline dark:text-brand-light">Inches to CM converter</a> — for length conversions.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

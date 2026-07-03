@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import UnitConverter from '../components/UnitConverter.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'mm-to-inches')!;
+const [fromLabel, toLabel] = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How do I convert millimeters to inches?',
+    a: 'Divide the millimeters by 25.4. For instance, 50 mm ÷ 25.4 ≈ 1.9685 inches. The converter above shows the result instantly.',
+  },
+  {
+    q: 'How many millimeters are in an inch?',
+    a: 'There are exactly 25.4 millimeters in one inch (2.54 cm × 10).',
+  },
+  {
+    q: 'What is 10 mm in inches?',
+    a: '10 mm is about 0.3937 inches — a little over three-eighths of an inch.',
+  },
+  {
+    q: 'Why do so many specs use millimeters?',
+    a: 'Millimeters give fine resolution without decimals, which is why they dominate engineering drawings, phone dimensions, and hardware like screws and bolts.',
+  },
+  {
+    q: 'How do I read a millimeter value as a fraction of an inch?',
+    a: 'Convert to decimal inches first, then match to the nearest common fraction. For example 12.7 mm = 0.5 in exactly, which is one-half inch.',
+  },
+  {
+    q: 'Does this tool store what I enter?',
+    a: 'No — the calculation is done in your browser and nothing is transmitted or saved anywhere.',
+  },
+];
+
+const rows = [
+  ['1 mm', '0.0394 in'],
+  ['5 mm', '0.1969 in'],
+  ['10 mm', '0.3937 in'],
+  ['25.4 mm', '1 in'],
+  ['50 mm', '1.9685 in'],
+  ['100 mm', '3.937 in'],
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <FormatBadge from={fromLabel} to={toLabel} class="mb-5" />
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <UnitConverter dimension={meta.dimension} from={meta.from} to={meta.to} />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert mm to inches</h2>
+      <ol>
+        <li>Type a millimeter measurement into the box above.</li>
+        <li>The inch equivalent appears immediately.</li>
+        <li>Switch units with the dropdowns to convert mm to cm, meters or feet.</li>
+      </ol>
+
+      <h2>The formula</h2>
+      <p>Inches come from dividing millimeters by 25.4:</p>
+      <p><strong>inches = millimeters ÷ 25.4</strong></p>
+      <p>Going back, multiply inches by 25.4 to return to millimeters.</p>
+
+      <h2>Common mm to inches values</h2>
+      <table>
+        <thead><tr><th>Millimeters</th><th>Inches</th></tr></thead>
+        <tbody>{rows.map((r) => <tr><td>{r[0]}</td><td>{r[1]}</td></tr>)}</tbody>
+      </table>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('cm-to-inches')} class="text-brand underline hover:no-underline dark:text-brand-light">CM to Inches converter</a> — for centimeter measurements.</li>
+        <li><a href={toolUrl('inches-to-cm')} class="text-brand underline hover:no-underline dark:text-brand-light">Inches to CM converter</a> — the reverse direction.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
