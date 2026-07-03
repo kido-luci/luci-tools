@@ -45,6 +45,11 @@ export const ENGINES: Engine[] = [
     tools: [
       { slug: 'heic-to-jpg', title: 'HEIC to JPG', description: 'Convert iPhone HEIC photos to JPG, 100% on your device.', icon: 'image' },
       { slug: 'png-to-jpg', title: 'PNG to JPG', description: 'Turn PNG images into smaller JPG files instantly.', icon: 'layers' },
+      { slug: 'webp-to-jpg', title: 'WebP to JPG', description: 'Convert WebP images to widely-supported JPG.', icon: 'convert' },
+      { slug: 'jpg-to-png', title: 'JPG to PNG', description: 'Convert JPG photos to lossless PNG.', icon: 'convert' },
+      { slug: 'png-to-webp', title: 'PNG to WebP', description: 'Shrink PNG images down to modern WebP.', icon: 'convert' },
+      { slug: 'jpg-to-webp', title: 'JPG to WebP', description: 'Compress JPG photos to smaller WebP files.', icon: 'convert' },
+      { slug: 'heic-to-png', title: 'HEIC to PNG', description: 'Convert iPhone HEIC photos to lossless PNG.', icon: 'convert' },
     ],
   },
   {
@@ -57,6 +62,11 @@ export const ENGINES: Engine[] = [
       { slug: 'bold-text-generator', title: 'Bold Text Generator', description: 'Turn plain text into bold Unicode for bios and posts.', icon: 'bold', specimen: '𝗔𝗮' },
       { slug: 'italic-text-generator', title: 'Italic Text Generator', description: 'Make slanted italic text for captions and titles.', icon: 'italic', specimen: '𝘈𝘢' },
       { slug: 'strikethrough-text-generator', title: 'Strikethrough Text Generator', description: 'Add a strike through any text in one click.', icon: 'strikethrough', specimen: 'A̶a̶' },
+      { slug: 'cursive-text-generator', title: 'Cursive Text Generator', description: 'Write flowing cursive script text for bios.', icon: 'sparkle', specimen: '𝓐𝓪' },
+      { slug: 'bubble-text-generator', title: 'Bubble Text Generator', description: 'Wrap letters in bubbles for cute captions.', icon: 'sparkle', specimen: 'Ⓐⓐ' },
+      { slug: 'wide-text-generator', title: 'Wide Text Generator', description: 'Make wide full-width vaporwave text.', icon: 'sparkle', specimen: 'Ａａ' },
+      { slug: 'monospace-text-generator', title: 'Monospace Text Generator', description: 'Fixed-width monospace text for a code look.', icon: 'sparkle', specimen: '𝙰𝚊' },
+      { slug: 'underline-text-generator', title: 'Underline Text Generator', description: 'Add an underline to any text in one click.', icon: 'sparkle', specimen: 'A̲a̲' },
     ],
   },
   {
@@ -68,6 +78,7 @@ export const ENGINES: Engine[] = [
     tools: [
       { slug: 'json-formatter', title: 'JSON Formatter', description: 'Pretty-print and validate messy JSON.', icon: 'braces' },
       { slug: 'json-minifier', title: 'JSON Minifier', description: 'Strip whitespace to the smallest valid JSON.', icon: 'minimize' },
+      { slug: 'json-validator', title: 'JSON Validator', description: 'Check JSON for syntax errors instantly.', icon: 'check' },
     ],
   },
   {
@@ -79,6 +90,9 @@ export const ENGINES: Engine[] = [
     tools: [
       { slug: 'qr-code-generator', title: 'QR Code Generator', description: 'Make a QR code from any text or URL.', icon: 'qr' },
       { slug: 'wifi-qr-code-generator', title: 'WiFi QR Code', description: 'Let guests join your WiFi by scanning.', icon: 'wifi' },
+      { slug: 'vcard-qr-code', title: 'vCard QR Code', description: 'Share your contact details as a QR code.', icon: 'file' },
+      { slug: 'email-qr-code', title: 'Email QR Code', description: 'Make a QR that opens a pre-filled email.', icon: 'text' },
+      { slug: 'url-qr-code', title: 'URL QR Code', description: 'Turn any link into a scannable QR code.', icon: 'convert' },
     ],
   },
   {
@@ -90,6 +104,7 @@ export const ENGINES: Engine[] = [
     tools: [
       { slug: 'merge-pdf', title: 'Merge PDF', description: 'Combine several PDF files into one.', icon: 'layers' },
       { slug: 'jpg-to-pdf', title: 'JPG to PDF', description: 'Turn JPG/PNG images into a single PDF.', icon: 'file' },
+      { slug: 'png-to-pdf', title: 'PNG to PDF', description: 'Turn PNG images into a single PDF.', icon: 'file' },
     ],
   },
 ];
