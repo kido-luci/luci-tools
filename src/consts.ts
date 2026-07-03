@@ -114,6 +114,26 @@ export const ENGINES: Engine[] = [
       { slug: 'split-pdf', title: 'Split PDF', description: 'Split a PDF into one file per page.', icon: 'layers' },
     ],
   },
+  {
+    prefix: 'unit',
+    name: 'Unit Converter',
+    icon: 'convert',
+    blurb: 'Convert length, weight and temperature units right in your browser.',
+    accentHex: '#d97706',
+    tools: [
+      { slug: 'cm-to-inches', title: 'CM to Inches', description: 'Convert centimetres to inches.', icon: 'convert' },
+      { slug: 'inches-to-cm', title: 'Inches to CM', description: 'Convert inches to centimetres.', icon: 'convert' },
+      { slug: 'mm-to-inches', title: 'MM to Inches', description: 'Convert millimetres to inches.', icon: 'convert' },
+      { slug: 'meters-to-feet', title: 'Meters to Feet', description: 'Convert metres to feet.', icon: 'convert' },
+      { slug: 'feet-to-meters', title: 'Feet to Meters', description: 'Convert feet to metres.', icon: 'convert' },
+      { slug: 'km-to-miles', title: 'KM to Miles', description: 'Convert kilometres to miles.', icon: 'convert' },
+      { slug: 'miles-to-km', title: 'Miles to KM', description: 'Convert miles to kilometres.', icon: 'convert' },
+      { slug: 'kg-to-lbs', title: 'KG to Lbs', description: 'Convert kilograms to pounds.', icon: 'convert' },
+      { slug: 'lbs-to-kg', title: 'Lbs to KG', description: 'Convert pounds to kilograms.', icon: 'convert' },
+      { slug: 'celsius-to-fahrenheit', title: 'Celsius to Fahrenheit', description: 'Convert °C to °F.', icon: 'convert' },
+      { slug: 'fahrenheit-to-celsius', title: 'Fahrenheit to Celsius', description: 'Convert °F to °C.', icon: 'convert' },
+    ],
+  },
 ];
 
 /** Trailing-slash hub URL for an engine category, e.g. `/image/`. */
