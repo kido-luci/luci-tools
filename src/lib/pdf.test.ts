@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { mergePdfs, imagesToPdf } from './pdf';
+import { mergePdfs, imagesToPdf, rotatePdf, splitPdf } from './pdf';
 
 // Build a minimal PDF file fixture with the given page count and page size.
 async function makePdfFile(
@@ -152,5 +152,64 @@ describe('imagesToPdf', () => {
     const result = await imagesToPdf([png, jpeg]);
     const doc = await PDFDocument.load(new Uint8Array(await result.arrayBuffer()));
     expect(doc.getPageCount()).toBe(2);
+  });
+});
+
+describe('rotatePdf', () => {
+  it('returns a non-empty Blob with type application/pdf', async () => {
+    const a = await makePdfFile(1, 'a.pdf');
+    const result = await rotatePdf(a, 90);
+    expect(result).toBeInstanceOf(Blob);
+    expect(result.type).toBe('application/pdf');
+    expect(result.size).toBeGreaterThan(0);
+  });
+
+  it('rotates every page by 90° added to the existing rotation', async () => {
+    const { PDFDocument } = await import('pdf-lib');
+    const a = await makePdfFile(2, 'a.pdf');
+    const result = await rotatePdf(a, 90);
+    const doc = await PDFDocument.load(new Uint8Array(await result.arrayBuffer()));
+    expect(doc.getPageCount()).toBe(2);
+    doc.getPages().forEach((p) => expect(p.getRotation().angle).toBe(90));
+  });
+
+  it('wraps past 360° (270 + 180 = 90)', async () => {
+    const { PDFDocument, degrees } = await import('pdf-lib');
+    const doc = await PDFDocument.create();
+    doc.addPage([612, 792]).setRotation(degrees(270));
+    const bytes = await doc.save();
+    const file = new File([new Uint8Array(bytes)], 'r.pdf', { type: 'application/pdf' });
+    const result = await rotatePdf(file, 180);
+    const out = await PDFDocument.load(new Uint8Array(await result.arrayBuffer()));
+    expect(out.getPage(0).getRotation().angle).toBe(90);
+  });
+});
+
+describe('splitPdf', () => {
+  it('returns one blob per page for an N-page PDF', async () => {
+    const a = await makePdfFile(3, 'doc.pdf');
+    const parts = await splitPdf(a);
+    expect(parts).toHaveLength(3);
+    parts.forEach((part) => {
+      expect(part.blob).toBeInstanceOf(Blob);
+      expect(part.blob.type).toBe('application/pdf');
+      expect(part.blob.size).toBeGreaterThan(0);
+    });
+  });
+
+  it('names each part <basename>-page-<n>.pdf', async () => {
+    const a = await makePdfFile(2, 'report.pdf');
+    const parts = await splitPdf(a);
+    expect(parts.map((p) => p.name)).toEqual(['report-page-1.pdf', 'report-page-2.pdf']);
+  });
+
+  it('each part is a valid single-page PDF', async () => {
+    const { PDFDocument } = await import('pdf-lib');
+    const a = await makePdfFile(2, 'doc.pdf');
+    const parts = await splitPdf(a);
+    for (const part of parts) {
+      const doc = await PDFDocument.load(new Uint8Array(await part.blob.arrayBuffer()));
+      expect(doc.getPageCount()).toBe(1);
+    }
   });
 });

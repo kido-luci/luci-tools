@@ -45,6 +45,22 @@ export const TOOLS: ToolMeta[] = [
       'Combine PNG screenshots and images into a single PDF in your browser — free, instant and private. Nothing is uploaded; everything happens on your device.',
     icon: 'file',
   },
+  {
+    slug: 'rotate-pdf',
+    title: 'Rotate PDF',
+    h1: 'Rotate PDF',
+    description:
+      'Rotate every page of a PDF by 90°, 180° or 270° in your browser — free, instant and private. Nothing is uploaded; everything happens on your device.',
+    icon: 'convert',
+  },
+  {
+    slug: 'split-pdf',
+    title: 'Split PDF',
+    h1: 'Split PDF',
+    description:
+      'Split a PDF into separate single-page files and download them as one ZIP — free, instant and private. Nothing is uploaded; everything happens in your browser.',
+    icon: 'layers',
+  },
 ];
 
 /** Base-aware, trailing-slash URL for a tool slug (e.g. `/pdf/merge-pdf/`). */

@@ -1,9 +1,9 @@
 // Wires the [data-pdf-tool] block rendered by ToolShell to the PDF engine. The
 // operation is read from `data-mode`, so both tool pages reuse this exact
 // script — only the attribute differs.
-import { mergePdfs, imagesToPdf } from '../lib/pdf';
+import { mergePdfs, imagesToPdf, rotatePdf, splitPdf } from '../lib/pdf';
 
-type Mode = 'merge' | 'images';
+type Mode = 'merge' | 'images' | 'rotate' | 'split';
 
 function formatBytes(n: number): string {
   if (n < 1024) return `${n} B`;
@@ -22,12 +22,16 @@ function init(): void {
   const action = root.querySelector<HTMLButtonElement>('[data-action]');
   const results = root.querySelector<HTMLElement>('[data-results]');
   const status = root.querySelector<HTMLElement>('[data-status]');
+  const rotateSelect = root.querySelector<HTMLSelectElement>('[data-rotate-degrees]');
   if (!input || !fileList || !action || !results || !status) return;
+
+  // Rotate & split operate on a single file; merge & images queue several.
+  const single = mode === 'rotate' || mode === 'split';
 
   // Files accumulate across multiple picks/drops in user-visible order.
   let files: File[] = [];
 
-  // Merge needs at least two PDFs; images needs at least one.
+  // Merge needs at least two PDFs; every other tool needs at least one.
   const minFiles = mode === 'merge' ? 2 : 1;
 
   function refresh(): void {
@@ -61,7 +65,8 @@ function init(): void {
 
   function addFiles(list: FileList | null): void {
     if (!list || list.length === 0) return;
-    files = files.concat(Array.from(list));
+    // Single-file tools keep only the most recent pick; others accumulate.
+    files = single ? [Array.from(list).at(-1)!] : files.concat(Array.from(list));
     refresh();
   }
 
@@ -77,17 +82,37 @@ function init(): void {
     status.className = 'mt-4 text-sm text-slate-500';
     status.textContent = 'Processing…';
 
-    try {
-      const blob = mode === 'merge' ? await mergePdfs(files) : await imagesToPdf(files);
-      const url = URL.createObjectURL(blob);
-
+    function offerDownload(blob: Blob, filename: string, label: string): void {
       const link = document.createElement('a');
-      link.href = url;
-      link.download = mode === 'merge' ? 'merged.pdf' : 'images.pdf';
-      link.textContent = `Download PDF · ${formatBytes(blob.size)}`;
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.textContent = `${label} · ${formatBytes(blob.size)}`;
       link.className =
         'inline-block rounded-md bg-brand px-4 py-2 font-medium text-white hover:bg-brand-dark';
-      results.appendChild(link);
+      results!.appendChild(link);
+    }
+
+    function baseName(name: string): string {
+      return name.replace(/\.pdf$/i, '');
+    }
+
+    try {
+      if (mode === 'split') {
+        // Split returns one PDF per page; zip them into a single download.
+        const parts = await splitPdf(files[0]);
+        const { default: JSZip } = await import('jszip');
+        const zip = new JSZip();
+        for (const part of parts) zip.file(part.name, part.blob);
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        offerDownload(zipBlob, `${baseName(files[0].name)}-pages.zip`, `Download ZIP (${parts.length} pages)`);
+      } else if (mode === 'rotate') {
+        const deg = Number(rotateSelect?.value ?? 90) as 90 | 180 | 270;
+        const blob = await rotatePdf(files[0], deg);
+        offerDownload(blob, `${baseName(files[0].name)}-rotated.pdf`, 'Download PDF');
+      } else {
+        const blob = mode === 'merge' ? await mergePdfs(files) : await imagesToPdf(files);
+        offerDownload(blob, mode === 'merge' ? 'merged.pdf' : 'images.pdf', 'Download PDF');
+      }
 
       status.textContent = 'Done.';
     } catch (err) {
