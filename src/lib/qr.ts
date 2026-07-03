@@ -91,3 +91,34 @@ export function buildEmailPayload({ to, subject, body }: EmailParams): string {
   const query = params.length ? `?${params.join('&')}` : '';
   return `mailto:${to}${query}`;
 }
+
+export interface LogoLayout {
+  /** Logo square size in px. */
+  logoSize: number;
+  /** Logo top-left x/y, centered on the canvas. */
+  logoX: number;
+  logoY: number;
+  /** White backing pad square size in px (logo size + padding). */
+  padSize: number;
+  /** Pad top-left x/y, centered on the canvas. */
+  padX: number;
+  padY: number;
+  /** Corner radius for the rounded pad. */
+  padRadius: number;
+}
+
+/**
+ * Centered logo + white backing-pad geometry for a `canvasSize`×`canvasSize`
+ * QR code. `logoRatio` is the logo's width as a fraction of the QR width
+ * (default ~21%, within the ~20-22% that stays scannable at EC level H);
+ * `padRatio` is the pad's extra size over the logo (default ~9%).
+ */
+export function computeLogoLayout(canvasSize: number, logoRatio = 0.21, padRatio = 0.09): LogoLayout {
+  const logoSize = canvasSize * logoRatio;
+  const padSize = logoSize * (1 + padRatio);
+  const logoX = (canvasSize - logoSize) / 2;
+  const logoY = logoX;
+  const padX = (canvasSize - padSize) / 2;
+  const padY = padX;
+  return { logoSize, logoX, logoY, padSize, padX, padY, padRadius: padSize * 0.12 };
+}

@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import QrLogo from '../components/QrLogo.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'qr-code-with-logo')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Does my logo or text get uploaded to a server?',
+    a: 'No. The QR code and the logo compositing both happen entirely in your browser using the Canvas API. Nothing you type or upload is sent anywhere — you could disconnect from the internet after the page loads and it would still work.',
+  },
+  {
+    q: 'Will a QR code with a logo still scan reliably?',
+    a: 'Yes, as long as the logo stays small and centered. This tool always encodes at error-correction level H, the highest level the QR standard defines, which lets a scanner reconstruct the code even with roughly 30% of it obscured. The logo here covers well under that, leaving a comfortable margin.',
+  },
+  {
+    q: 'What size and format should my logo be?',
+    a: 'A square logo works best — this tool sizes it to about a fifth of the QR code\'s width and centers it automatically, so you do not need to pre-crop it. PNG or JPG both work fine; a simple, high-contrast mark reads better at small size than a busy or highly detailed image.',
+  },
+  {
+    q: 'Can I use a logo with a transparent background?',
+    a: 'Yes. Upload a PNG with transparency and the tool still draws an opaque white rounded pad behind it first, so the logo sits on a clean white square regardless of what is behind it in your source image — no transparent pixels blend into the QR pattern underneath.',
+  },
+  {
+    q: 'What file format does the download use?',
+    a: 'The finished QR code — with the white pad and your logo already composited in — downloads as a single PNG file, ready to drop into a document, a slide or a print layout.',
+  },
+  {
+    q: 'Is there a limit on the logo file size or dimensions?',
+    a: 'No hard limit is enforced, but this runs in your browser rather than on a server, so extremely large source images (many megabytes, very high resolution) may take a moment longer to decode. A typical logo export — well under a megabyte — loads instantly.',
+  },
+  {
+    q: 'Why does this use error correction level H instead of the default?',
+    a: 'Lower error-correction levels leave less redundancy in the code, so covering even a small area with a logo can make the code unreadable. Level H is the one level in the QR spec with enough built-in redundancy to survive a centered logo overlay, which is why this tool always generates at H rather than the M level used for plain text QR codes.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <QrLogo />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to add a logo to your QR code</h2>
+      <ol>
+        <li>Type or paste the text or URL you want the code to open.</li>
+        <li>Upload a logo image — a square PNG or JPG works best.</li>
+        <li>Your logo is centered on top automatically, behind a white pad.</li>
+        <li>Click <strong>Download PNG</strong> to save the finished, branded code.</li>
+      </ol>
+
+      <h2>Why put a logo in a QR code</h2>
+      <p>
+        A plain black-and-white QR code is anonymous — nobody can tell whose
+        code it is until they scan it. Dropping a company logo, app icon or
+        personal mark in the center turns the code into a recognizable piece
+        of branding in its own right: on packaging, a menu, a poster or a
+        business card, a branded code signals legitimacy before anyone even
+        scans it, and it reinforces the brand at the exact moment someone is
+        about to interact with it. It is a small design touch that a plain
+        generic code cannot offer.
+      </p>
+
+      <h2>Why high error correction keeps a logo-covered code scannable</h2>
+      <p>
+        A QR code stores the same data multiple times over using
+        Reed-Solomon error correction, so a scanner can rebuild the full
+        message even if part of the pattern is missing or covered. The QR
+        standard defines four error-correction levels, and level H — used
+        for every code this tool generates — reserves the most redundancy of
+        the four, tolerating roughly 30% damage or occlusion. Covering the
+        center with a small, centered logo eats into only a fraction of that
+        budget, which is why this tool never lowers the error-correction
+        level to save space: doing so would remove the very safety margin
+        that makes a logo overlay possible.
+      </p>
+
+      <h2>Keep the logo small and centered</h2>
+      <p>
+        The center of a QR code is the safest place to place an overlay
+        because the corner "finder" squares a scanner locks onto first stay
+        untouched. This tool sizes your logo to roughly a fifth of the code's
+        width and centers it for exactly that reason — enlarging it further
+        starts eating into the data modules a scanner needs, and pushing it
+        off-center risks overlapping a finder pattern. If you plan to print
+        the code small, keep the logo simple: a busy, high-detail mark
+        becomes an illegible smudge at business-card size even before you
+        add a QR pattern underneath it.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('qr-code-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">QR Code Generator</a> — generate a plain text or URL QR code without a logo.</li>
+        <li><a href={toolUrl('vcard-qr-code')} class="text-brand underline hover:no-underline dark:text-brand-light">vCard QR Code Generator</a> — encode full contact details instead of a single link.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

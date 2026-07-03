@@ -5,6 +5,7 @@ import {
   buildEmailPayload,
   toSvgString,
   toPngDataUrl,
+  computeLogoLayout,
 } from './qr';
 
 describe('buildWifiPayload', () => {
@@ -239,5 +240,52 @@ describe('toSvgString', () => {
     const a = await toSvgString('hello');
     const b = await toSvgString('world');
     expect(a).not.toBe(b);
+  });
+});
+
+describe('computeLogoLayout', () => {
+  it('sizes the logo at the default ~21% of the canvas', () => {
+    const result = computeLogoLayout(512);
+    expect(result.logoSize).toBeCloseTo(512 * 0.21);
+  });
+
+  it('sizes the pad larger than the logo by the default ~9%', () => {
+    const result = computeLogoLayout(512);
+    expect(result.padSize).toBeCloseTo(result.logoSize * 1.09);
+    expect(result.padSize).toBeGreaterThan(result.logoSize);
+  });
+
+  it('centers both the logo and the pad on the canvas', () => {
+    const size = 512;
+    const result = computeLogoLayout(size);
+    expect(result.logoX).toBeCloseTo((size - result.logoSize) / 2);
+    expect(result.logoY).toBeCloseTo(result.logoX);
+    expect(result.padX).toBeCloseTo((size - result.padSize) / 2);
+    expect(result.padY).toBeCloseTo(result.padX);
+  });
+
+  it('keeps the pad centered within the same center point as the logo', () => {
+    const result = computeLogoLayout(512);
+    const logoCenter = result.logoX + result.logoSize / 2;
+    const padCenter = result.padX + result.padSize / 2;
+    expect(padCenter).toBeCloseTo(logoCenter);
+  });
+
+  it('honors custom logoRatio and padRatio arguments', () => {
+    const result = computeLogoLayout(400, 0.2, 0.1);
+    expect(result.logoSize).toBeCloseTo(80);
+    expect(result.padSize).toBeCloseTo(88);
+  });
+
+  it('scales proportionally with canvas size', () => {
+    const small = computeLogoLayout(256);
+    const large = computeLogoLayout(512);
+    expect(large.logoSize).toBeCloseTo(small.logoSize * 2);
+    expect(large.padSize).toBeCloseTo(small.padSize * 2);
+  });
+
+  it('derives padRadius as a fraction of the pad size', () => {
+    const result = computeLogoLayout(512);
+    expect(result.padRadius).toBeCloseTo(result.padSize * 0.12);
   });
 });

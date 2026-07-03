@@ -61,6 +61,14 @@ export const TOOLS: ToolMeta[] = [
       'Turn any link into a QR code — website, landing page or social profile. Scanners open it instantly. Built in your browser; download PNG or SVG.',
     icon: 'convert',
   },
+  {
+    slug: 'qr-code-with-logo',
+    title: 'QR Code with Logo',
+    h1: 'QR Code Generator with Logo',
+    description:
+      'Add your logo to the center of a QR code without breaking its scannability. High error-correction, composited entirely in your browser; download as PNG.',
+    icon: 'image',
+  },
 ];
 
 /** Base-aware, trailing-slash URL for a tool slug (e.g. `/qr/qr-code-generator/`). */
