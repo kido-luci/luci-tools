@@ -1,0 +1,17 @@
+---
+// Legal pages live once at the root (tools-home), so link to them absolutely.
+import { SITE } from '../consts';
+---
+
+<footer class="mt-12 border-t border-[#eef0f4] bg-white dark:border-slate-800 dark:bg-slate-900">
+  <div
+    class="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-8 py-[22px] text-[13px] text-slate-400 dark:text-slate-500"
+  >
+    <p>© {SITE.name} — private by design, nothing leaves your browser.</p>
+    <nav class="flex gap-5">
+      <a href={`${SITE.url}/privacy/`} class="hover:text-slate-600 dark:hover:text-slate-300">Privacy</a>
+      <a href={`${SITE.url}/terms/`} class="hover:text-slate-600 dark:hover:text-slate-300">Terms</a>
+      <a href={`${SITE.url}/about/`} class="hover:text-slate-600 dark:hover:text-slate-300">About</a>
+    </nav>
+  </div>
+</footer>
