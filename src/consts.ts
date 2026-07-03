@@ -37,6 +37,14 @@ export const TOOLS: ToolMeta[] = [
       'Turn JPG and PNG images into a single PDF in your browser — free, instant and private. Your images never leave your device.',
     icon: 'file',
   },
+  {
+    slug: 'png-to-pdf',
+    title: 'PNG to PDF',
+    h1: 'PNG to PDF Converter',
+    description:
+      'Combine PNG screenshots and images into a single PDF in your browser — free, instant and private. Nothing is uploaded; everything happens on your device.',
+    icon: 'file',
+  },
 ];
 
 /** Base-aware, trailing-slash URL for a tool slug (e.g. `/pdf/merge-pdf/`). */
