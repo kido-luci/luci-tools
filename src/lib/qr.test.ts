@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildWifiPayload, toSvgString, toPngDataUrl } from './qr';
+import {
+  buildWifiPayload,
+  buildVcardPayload,
+  buildEmailPayload,
+  toSvgString,
+  toPngDataUrl,
+} from './qr';
 
 describe('buildWifiPayload', () => {
   it('produces the correct WIFI payload for a WPA network', () => {
@@ -109,6 +115,104 @@ describe('buildWifiPayload', () => {
   it('does not escape spaces in password', () => {
     const result = buildWifiPayload({ ssid: 'Net', password: 'my pass', encryption: 'WPA', hidden: false });
     expect(result).toBe('WIFI:T:WPA;S:Net;P:my pass;;');
+  });
+});
+
+describe('buildVcardPayload', () => {
+  const base = { firstName: 'Ada', lastName: 'Lovelace', phone: '', email: '', org: '', url: '' };
+
+  it('builds a minimal vCard with just a name', () => {
+    const result = buildVcardPayload(base);
+    expect(result).toBe(
+      'BEGIN:VCARD\r\nVERSION:3.0\r\nN:Lovelace;Ada;;;\r\nFN:Ada Lovelace\r\nEND:VCARD',
+    );
+  });
+
+  it('joins lines with CRLF', () => {
+    const result = buildVcardPayload(base);
+    expect(result.split('\r\n')[0]).toBe('BEGIN:VCARD');
+    expect(result).toContain('\r\n');
+    expect(result).not.toContain('\n\n');
+  });
+
+  it('includes all optional lines in the correct order when provided', () => {
+    const result = buildVcardPayload({
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+      phone: '+15550001',
+      email: 'ada@example.com',
+      org: 'Analytical Engines',
+      url: 'https://example.com',
+    });
+    expect(result).toBe(
+      'BEGIN:VCARD\r\nVERSION:3.0\r\nN:Lovelace;Ada;;;\r\nFN:Ada Lovelace\r\n' +
+        'ORG:Analytical Engines\r\nTEL;TYPE=CELL:+15550001\r\nEMAIL:ada@example.com\r\n' +
+        'URL:https://example.com\r\nEND:VCARD',
+    );
+  });
+
+  it('omits ORG when org is empty', () => {
+    const result = buildVcardPayload({ ...base, phone: '+15550001' });
+    expect(result).not.toContain('ORG:');
+    expect(result).toContain('TEL;TYPE=CELL:+15550001');
+  });
+
+  it('omits TEL, EMAIL and URL when their fields are empty', () => {
+    const result = buildVcardPayload({ ...base, org: 'Acme' });
+    expect(result).not.toContain('TEL');
+    expect(result).not.toContain('EMAIL:');
+    expect(result).not.toContain('URL:');
+    expect(result).toContain('ORG:Acme');
+  });
+
+  it('backslash-escapes semicolons, commas and backslashes in N and FN', () => {
+    const result = buildVcardPayload({ ...base, firstName: 'A;B', lastName: 'C,D\\E' });
+    expect(result).toContain('N:C\\,D\\\\E;A\\;B;;;');
+    expect(result).toContain('FN:A\\;B C\\,D\\\\E');
+  });
+
+  it('escapes commas in ORG', () => {
+    const result = buildVcardPayload({ ...base, org: 'Acme, Inc' });
+    expect(result).toContain('ORG:Acme\\, Inc');
+  });
+
+  it('trims FN when one name part is empty', () => {
+    const result = buildVcardPayload({ ...base, lastName: '' });
+    expect(result).toContain('N:;Ada;;;');
+    expect(result).toContain('FN:Ada');
+  });
+});
+
+describe('buildEmailPayload', () => {
+  it('builds a bare mailto when only the address is given', () => {
+    const result = buildEmailPayload({ to: 'hi@example.com', subject: '', body: '' });
+    expect(result).toBe('mailto:hi@example.com');
+  });
+
+  it('appends an encoded subject param', () => {
+    const result = buildEmailPayload({ to: 'hi@example.com', subject: 'Hello there', body: '' });
+    expect(result).toBe('mailto:hi@example.com?subject=Hello%20there');
+  });
+
+  it('appends an encoded body param', () => {
+    const result = buildEmailPayload({ to: 'hi@example.com', subject: '', body: 'a & b' });
+    expect(result).toBe('mailto:hi@example.com?body=a%20%26%20b');
+  });
+
+  it('joins subject and body with & in that order', () => {
+    const result = buildEmailPayload({ to: 'hi@example.com', subject: 'Hi', body: 'Body' });
+    expect(result).toBe('mailto:hi@example.com?subject=Hi&body=Body');
+  });
+
+  it('omits empty params', () => {
+    const result = buildEmailPayload({ to: 'hi@example.com', subject: 'Only', body: '' });
+    expect(result).toBe('mailto:hi@example.com?subject=Only');
+    expect(result).not.toContain('body=');
+  });
+
+  it('percent-encodes reserved characters in the subject', () => {
+    const result = buildEmailPayload({ to: 'hi@example.com', subject: 'a?b=c&d', body: '' });
+    expect(result).toBe('mailto:hi@example.com?subject=a%3Fb%3Dc%26d');
   });
 });
 

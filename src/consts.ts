@@ -37,6 +37,30 @@ export const TOOLS: ToolMeta[] = [
       'Create a WiFi QR code so guests can join your network by scanning — no typing the password. Built entirely in your browser; download PNG or SVG.',
     icon: 'wifi',
   },
+  {
+    slug: 'vcard-qr-code',
+    title: 'vCard QR Code',
+    h1: 'vCard QR Code Generator',
+    description:
+      'Turn your contact details into a scannable vCard QR code — perfect for business cards and email signatures. Built in your browser; download PNG or SVG.',
+    icon: 'file',
+  },
+  {
+    slug: 'email-qr-code',
+    title: 'Email QR Code',
+    h1: 'Email QR Code Generator',
+    description:
+      'Make an email QR code that opens a pre-filled message when scanned. Great for capturing enquiries on posters and cards. In-browser; download PNG or SVG.',
+    icon: 'text',
+  },
+  {
+    slug: 'url-qr-code',
+    title: 'URL QR Code',
+    h1: 'URL QR Code Generator',
+    description:
+      'Turn any link into a QR code — website, landing page or social profile. Scanners open it instantly. Built in your browser; download PNG or SVG.',
+    icon: 'convert',
+  },
 ];
 
 /** Base-aware, trailing-slash URL for a tool slug (e.g. `/qr/qr-code-generator/`). */

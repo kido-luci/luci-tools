@@ -1,0 +1,129 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import QrVcard from '../components/QrVcard.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'vcard-qr-code')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Are my contact details uploaded anywhere?',
+    a: 'No. The vCard QR code is assembled entirely in your browser with JavaScript. Your name, phone number and email never leave your device and are never sent to a server — you can even generate the code with the internet disconnected.',
+  },
+  {
+    q: 'What happens when someone scans a vCard QR code?',
+    a: 'Their phone recognises the encoded contact and offers to add it straight to the address book — name, phone, email, company and website in one tap, with no manual typing.',
+  },
+  {
+    q: 'Does a vCard QR code ever expire?',
+    a: 'No. It is a static image that encodes the contact details directly, so it keeps working forever — even if this site disappears. There is no account, no redirect and no subscription to keep it alive.',
+  },
+  {
+    q: 'Can I print it on a business card?',
+    a: 'Yes — that is one of the most popular uses. Download the SVG so the code stays razor-sharp at business-card size, or use the PNG for on-screen signatures. Always test the printed card with your own phone before ordering a batch.',
+  },
+  {
+    q: 'Should I download the PNG or the SVG?',
+    a: 'PNG is a fixed-resolution image, ideal for email signatures, slides and web pages. SVG is a vector that scales to any size without blurring — the right pick for printed business cards, name badges or event signage.',
+  },
+  {
+    q: 'Which fields should I include?',
+    a: 'A first and last name are enough to generate a code. Phone, email, organization and website are optional — add only the ones you want shared, and empty fields are simply left out of the vCard.',
+  },
+  {
+    q: 'Is there any tracking or scan limit?',
+    a: 'None. The code is a plain static image with the contact baked in — no redirect service, no analytics, no cap on how many people scan it.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <QrVcard />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to create a vCard QR code</h2>
+      <ol>
+        <li>Fill in your name, then add any of phone, email, organization and website.</li>
+        <li>The QR code updates instantly — assembled only in your browser.</li>
+        <li>
+          Download it as <strong>PNG</strong> for signatures and slides, or
+          <strong>SVG</strong> for sharp printing.
+        </li>
+        <li>Add it to a business card, badge or email footer so contacts save you in one scan.</li>
+      </ol>
+
+      <h2>What is a vCard QR code?</h2>
+      <p>
+        A vCard QR code encodes a digital business card — the vCard (.vcf)
+        format that phones and address books understand. Instead of typing your
+        details, someone points their camera at the code and their phone offers
+        to save your name, number, email, company and website as a new contact
+        in a single tap. It bundles everything a paper card carries into one
+        scannable square, and because the data is embedded directly there is no
+        app to install and no link that can rot.
+      </p>
+
+      <h2>Where a contact QR code earns its keep</h2>
+      <p>
+        Printed business cards are the obvious home for one, but a vCard code is
+        just as useful in an email signature, on a conference name badge, a
+        trade-show banner, a shop window or the back of a delivery van. Sales
+        reps put them on slides so prospects can save their details mid-meeting;
+        freelancers add them to invoices; event organisers print them on
+        lanyards so attendees swap contacts without fumbling with typing. Any
+        time you would hand over a card or read out a phone number, a contact QR
+        code does it faster and without transcription errors.
+      </p>
+
+      <h2>PNG or SVG for a vCard code</h2>
+      <p>
+        Use the <strong>PNG</strong> for anything on a screen — email
+        signatures, presentation slides, web pages — where a ready-made image
+        just works. Use the <strong>SVG</strong> whenever the code will be
+        printed and the final size is large or uncertain: it is a vector, so it
+        stays perfectly crisp on a business card, a poster or an exhibition
+        stand. When unsure, SVG for print and PNG for screens.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('email-qr-code')} class="text-brand underline hover:no-underline dark:text-brand-light">Email QR Code Generator</a> — create a code that opens a pre-filled email to your address.</li>
+        <li><a href={toolUrl('url-qr-code')} class="text-brand underline hover:no-underline dark:text-brand-light">URL QR Code Generator</a> — turn a website or profile link into a scannable code.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
