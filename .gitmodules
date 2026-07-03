@@ -19,3 +19,6 @@
 [submodule "tools-router"]
 	path = tools-router
 	url = https://github.com/kido-luci/tools-router.git
+[submodule "unit-converter"]
+	path = unit-converter
+	url = https://github.com/kido-luci/unit-converter.git
