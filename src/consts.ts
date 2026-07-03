@@ -134,6 +134,71 @@ export const ENGINES: Engine[] = [
       { slug: 'fahrenheit-to-celsius', title: 'Fahrenheit to Celsius', description: 'Convert °F to °C.', icon: 'convert' },
     ],
   },
+  {
+    prefix: 'hash',
+    name: 'Hash Generator',
+    icon: 'code',
+    blurb: 'Generate MD5, SHA-1, SHA-256 and SHA-512 hashes in your browser.',
+    accentHex: '#6366f1',
+    tools: [
+      { slug: 'md5-hash-generator', title: 'MD5 Hash', description: 'Generate an MD5 hash from any text.', icon: 'code' },
+      { slug: 'sha256-hash-generator', title: 'SHA-256 Hash', description: 'Generate a SHA-256 hash from text.', icon: 'code' },
+      { slug: 'sha1-hash-generator', title: 'SHA-1 Hash', description: 'Generate a SHA-1 hash from text.', icon: 'code' },
+      { slug: 'sha512-hash-generator', title: 'SHA-512 Hash', description: 'Generate a SHA-512 hash from text.', icon: 'code' },
+    ],
+  },
+  {
+    prefix: 'time',
+    name: 'Timestamp',
+    icon: 'convert',
+    blurb: 'Convert between Unix timestamps and human-readable dates.',
+    accentHex: '#0891b2',
+    tools: [
+      { slug: 'unix-timestamp-converter', title: 'Unix Timestamp Converter', description: 'Convert Unix timestamps to dates and back.', icon: 'convert' },
+      { slug: 'epoch-to-date', title: 'Epoch to Date', description: 'Convert an epoch to a readable date.', icon: 'convert' },
+      { slug: 'date-to-unix-timestamp', title: 'Date to Unix Timestamp', description: 'Convert a date to a Unix timestamp.', icon: 'convert' },
+    ],
+  },
+  {
+    prefix: 'encode',
+    name: 'Encode / Decode',
+    icon: 'code',
+    blurb: 'Base64, URL and HTML entity encoders, plus a JWT decoder.',
+    accentHex: '#7c3aed',
+    tools: [
+      { slug: 'base64-encode', title: 'Base64 Encode', description: 'Encode text to Base64.', icon: 'code' },
+      { slug: 'base64-decode', title: 'Base64 Decode', description: 'Decode Base64 back to text.', icon: 'code' },
+      { slug: 'url-encode', title: 'URL Encode', description: 'Percent-encode text for URLs.', icon: 'code' },
+      { slug: 'url-decode', title: 'URL Decode', description: 'Decode percent-encoded URLs.', icon: 'code' },
+      { slug: 'html-entity-encoder', title: 'HTML Entity Encoder', description: 'Encode and decode HTML entities.', icon: 'code' },
+      { slug: 'jwt-decoder', title: 'JWT Decoder', description: 'Decode a JWT header and payload.', icon: 'code' },
+    ],
+  },
+  {
+    prefix: 'color',
+    name: 'Color Tools',
+    icon: 'sparkle',
+    blurb: 'Convert HEX, RGB and HSL colors and check WCAG contrast.',
+    accentHex: '#db2777',
+    tools: [
+      { slug: 'hex-to-rgb', title: 'HEX to RGB', description: 'Convert HEX colors to RGB.', icon: 'sparkle' },
+      { slug: 'rgb-to-hex', title: 'RGB to HEX', description: 'Convert RGB colors to HEX.', icon: 'sparkle' },
+      { slug: 'hex-to-hsl', title: 'HEX to HSL', description: 'Convert HEX colors to HSL.', icon: 'sparkle' },
+      { slug: 'color-contrast-checker', title: 'Contrast Checker', description: 'Check WCAG contrast ratios.', icon: 'sparkle' },
+    ],
+  },
+  {
+    prefix: 'password',
+    name: 'Password Tools',
+    icon: 'lock',
+    blurb: 'Generate strong passwords and passphrases, 100% in your browser.',
+    accentHex: '#16a34a',
+    tools: [
+      { slug: 'password-generator', title: 'Password Generator', description: 'Generate strong random passwords.', icon: 'lock' },
+      { slug: 'strong-password-generator', title: 'Strong Password Generator', description: 'Create long, high-entropy passwords.', icon: 'lock' },
+      { slug: 'passphrase-generator', title: 'Passphrase Generator', description: 'Generate memorable word passphrases.', icon: 'lock' },
+    ],
+  },
 ];
 
 /** Trailing-slash hub URL for an engine category, e.g. `/image/`. */
