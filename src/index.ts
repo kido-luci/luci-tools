@@ -24,6 +24,11 @@ export const ORIGINS: Record<string, string> = {
   qr: 'qr-tools-3u8.pages.dev',
   pdf: 'pdf-tools-bh7.pages.dev',
   unit: 'unit-converter-ebc.pages.dev',
+  hash: 'hash-tools.pages.dev',
+  time: 'timestamp-converter-anq.pages.dev',
+  encode: 'encode-decode-9qm.pages.dev',
+  color: 'color-tools-8h2.pages.dev',
+  password: 'password-tools.pages.dev',
 };
 
 /** Everything not owned by an engine is served by the root project (base '/'). */

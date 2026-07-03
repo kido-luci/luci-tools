@@ -17,6 +17,11 @@ describe('resolveRoute', () => {
     expect(resolveRoute('/qr/qr-code-generator/').host).toBe('qr-tools-3u8.pages.dev');
     expect(resolveRoute('/pdf/merge-pdf/').host).toBe('pdf-tools-bh7.pages.dev');
     expect(resolveRoute('/unit/cm-to-inches/').host).toBe('unit-converter-ebc.pages.dev');
+    expect(resolveRoute('/hash/md5-hash-generator/').host).toBe('hash-tools.pages.dev');
+    expect(resolveRoute('/time/unix-timestamp-converter/').host).toBe('timestamp-converter-anq.pages.dev');
+    expect(resolveRoute('/encode/base64-encode/').host).toBe('encode-decode-9qm.pages.dev');
+    expect(resolveRoute('/color/hex-to-rgb/').host).toBe('color-tools-8h2.pages.dev');
+    expect(resolveRoute('/password/password-generator/').host).toBe('password-tools.pages.dev');
   });
 
   it('maps an engine hub (prefix root, with or without trailing slash) to the origin root', () => {
@@ -74,7 +79,9 @@ describe('rewriteLocation', () => {
 });
 
 describe('ORIGINS', () => {
-  it('covers exactly the six engine prefixes', () => {
-    expect(Object.keys(ORIGINS).sort()).toEqual(['fancy-text', 'image', 'json', 'pdf', 'qr', 'unit']);
+  it('covers exactly the eleven engine prefixes', () => {
+    expect(Object.keys(ORIGINS).sort()).toEqual([
+      'color', 'encode', 'fancy-text', 'hash', 'image', 'json', 'password', 'pdf', 'qr', 'time', 'unit',
+    ]);
   });
 });
