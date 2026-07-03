@@ -11,3 +11,13 @@ export function formatJson(input: string, indent: number | '\t' = 2): string {
 export function minifyJson(input: string): string {
   return JSON.stringify(JSON.parse(input));
 }
+
+/** Check whether input is valid JSON without transforming it. */
+export function validateJson(input: string): { valid: boolean; error?: string } {
+  try {
+    JSON.parse(input);
+    return { valid: true };
+  } catch (e) {
+    return { valid: false, error: (e as Error).message };
+  }
+}

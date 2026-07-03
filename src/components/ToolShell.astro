@@ -2,11 +2,12 @@
 // The interactive JSON widget. `mode` selects format vs minify and is read back
 // by the client script, so both tool pages reuse this component.
 interface Props {
-  mode: 'format' | 'minify';
+  mode: 'format' | 'minify' | 'validate';
 }
 
 const { mode } = Astro.props;
 const isFormat = mode === 'format';
+const runLabel = mode === 'format' ? 'Format' : mode === 'validate' ? 'Validate' : 'Minify';
 ---
 
 <div data-json-tool data-mode={mode} class="mt-8">
@@ -35,7 +36,7 @@ const isFormat = mode === 'format';
       type="button"
       class="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark"
     >
-      {isFormat ? 'Format' : 'Minify'}
+      {runLabel}
     </button>
 
     {

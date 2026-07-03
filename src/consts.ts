@@ -37,6 +37,14 @@ export const TOOLS: ToolMeta[] = [
       'Strip whitespace from JSON to get the smallest valid output — free, instant and private. Everything runs in your browser; nothing is uploaded.',
     icon: 'minimize',
   },
+  {
+    slug: 'json-validator',
+    title: 'JSON Validator',
+    h1: 'JSON Validator',
+    description:
+      'Check if your JSON is valid and get the exact syntax error and position if it is not — free, instant and private. Runs entirely in your browser.',
+    icon: 'check',
+  },
 ];
 
 /** Base-aware, trailing-slash URL for a tool slug (e.g. `/json/json-formatter/`). */

@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'json-validator')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my JSON uploaded to a server?',
+    a: 'No. Validation runs entirely in your browser with the native JSON parser. Your data never leaves your device.',
+  },
+  {
+    q: 'What errors does the validator catch?',
+    a: 'Anything that makes the text invalid JSON: trailing commas, unquoted or single-quoted keys, mismatched or missing brackets, unescaped control characters, and truncated input. The exact parser message and character position are shown.',
+  },
+  {
+    q: 'Does it validate against a schema?',
+    a: 'No — this checks syntax only, not structure. It confirms the text is well-formed JSON; it does not check that specific fields, types, or values match a schema like JSON Schema.',
+  },
+  {
+    q: 'How large a file can I validate?',
+    a: "There is no fixed limit — nothing is uploaded, so the only constraint is your device's available memory. Very large files may take a moment to parse.",
+  },
+  {
+    q: "What's the difference between this and the JSON Formatter?",
+    a: 'Both parse your JSON to check it, but the formatter also pretty-prints valid input with indentation. The validator is a quicker path when you just want a yes/no answer and the error, without needing the reformatted output.',
+  },
+  {
+    q: 'Why validate JSON before shipping it?',
+    a: 'A single stray comma or unquoted key in a config file, API response, or request body can crash a parser at runtime. Validating first catches that during development instead of in production.',
+  },
+  {
+    q: 'Does it modify my JSON?',
+    a: 'No. The validator only checks the input — it never reformats, reorders, or strips anything from what you pasted.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <ToolShell mode="validate" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to validate JSON</h2>
+      <ol>
+        <li>Paste your JSON into the input box on the left.</li>
+        <li>
+          It is checked instantly — the status line shows <strong>Valid JSON ✓</strong>{' '}
+          or the exact parser error.
+        </li>
+        <li>
+          If it's invalid, the error message includes the character position so
+          you can jump straight to the problem.
+        </li>
+        <li>Fix the issue and re-check until the status turns green.</li>
+      </ol>
+
+      <h2>What JSON validation catches</h2>
+      <p>
+        JSON has a strict grammar, and small slips are easy to make by hand or
+        when copying from a non-JSON source. A validator parses the text with a
+        real JSON parser and reports the first place it breaks the spec —
+        common culprits include a <strong>trailing comma</strong> after the last
+        item in an object or array, an <strong>unquoted key</strong> (valid in
+        JavaScript object literals but not in JSON), a <strong>mismatched or
+        missing bracket</strong> — every <code>{`{`}</code> or <code>[</code>{' '}
+        needs a matching close in the right order — and stray single quotes
+        where JSON requires double quotes.
+      </p>
+
+      <h2>Why validate before shipping config or API payloads</h2>
+      <p>
+        Invalid JSON usually isn't caught until something downstream tries to
+        parse it — a deploy fails on a broken config file, an API call throws
+        on a malformed request body, or a build pipeline halts on a bad
+        manifest. Running a quick validation pass before you commit, deploy, or
+        send a payload catches the error while it's still cheap to fix, instead
+        of debugging a cryptic runtime failure later.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('json-formatter')} class="text-brand underline hover:no-underline dark:text-brand-light">JSON Formatter &amp; Validator</a> — pretty-print valid JSON with your choice of indentation.</li>
+        <li><a href={toolUrl('json-minifier')} class="text-brand underline hover:no-underline dark:text-brand-light">JSON Minifier</a> — strip whitespace from JSON to get the smallest valid output.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

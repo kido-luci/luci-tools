@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatJson, minifyJson } from './json';
+import { formatJson, minifyJson, validateJson } from './json';
 
 describe('formatJson', () => {
   it('formats with default indent of 2 spaces', () => {
@@ -147,6 +147,18 @@ describe('minifyJson', () => {
 
   it('throws on plain text', () => {
     expect(() => minifyJson('hello')).toThrow();
+  });
+});
+
+describe('validateJson', () => {
+  it('returns valid:true for valid input', () => {
+    expect(validateJson('{"a":1,"b":[1,2]}')).toEqual({ valid: true });
+  });
+
+  it('returns valid:false with a non-empty error for malformed input', () => {
+    const result = validateJson('{bad');
+    expect(result.valid).toBe(false);
+    expect(result.error).toBeTruthy();
   });
 });
 

@@ -1,9 +1,9 @@
 // Wires the [data-json-tool] block rendered by ToolShell to the JSON engine.
 // The mode is read from `data-mode`, so both tool pages reuse this exact
 // script — only the attribute (and the optional indent selector) differs.
-import { formatJson, minifyJson } from '../lib/json';
+import { formatJson, minifyJson, validateJson } from '../lib/json';
 
-type Mode = 'format' | 'minify';
+type Mode = 'format' | 'minify' | 'validate';
 
 function parseIndent(value: string): number | '\t' {
   return value === 'tab' ? '\t' : Number(value);
@@ -29,6 +29,20 @@ function init(): void {
       status!.textContent = '';
       return;
     }
+    if (mode === 'validate') {
+      const result = validateJson(text);
+      if (result.valid) {
+        output!.textContent = text;
+        status!.textContent = 'Valid JSON ✓';
+        status!.className = 'mt-2 text-sm text-green-600';
+      } else {
+        output!.textContent = '';
+        status!.textContent = result.error ?? 'Invalid JSON';
+        status!.className = 'mt-2 text-sm text-red-600';
+      }
+      return;
+    }
+
     try {
       const result =
         mode === 'minify'
