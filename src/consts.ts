@@ -77,6 +77,22 @@ export const TOOLS: ToolMeta[] = [
     description:
       'Convert HEIC photos to PNG in your browser — free, instant and private. Lossless, transparency-safe conversion with nothing uploaded.',
   },
+  {
+    slug: 'avif-to-jpg',
+    title: 'AVIF to JPG',
+    h1: 'AVIF to JPG Converter',
+    icon: 'image',
+    description:
+      'Convert AVIF images to JPG in your browser — free, instant and private. Nothing is uploaded; conversion happens 100% on your device.',
+  },
+  {
+    slug: 'svg-to-png',
+    title: 'SVG to PNG',
+    h1: 'SVG to PNG Converter',
+    icon: 'layers',
+    description:
+      'Convert SVG vector graphics to PNG in your browser — free, instant and private. Rasterize at any size with transparency preserved.',
+  },
 ];
 
 /** Base-aware, trailing-slash URL for a tool slug (e.g. `/image/heic-to-jpg/`). */

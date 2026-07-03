@@ -4,7 +4,7 @@
 // are unit-tested here.
 
 import { describe, it, expect } from 'vitest';
-import { isHeic, outputFilename } from './image';
+import { isHeic, isSvg, outputFilename } from './image';
 
 describe('isHeic', () => {
   it('returns true for image/heic mime type', () => {
@@ -45,6 +45,24 @@ describe('isHeic', () => {
 
   it('returns true when name has .heic extension even if type is image/png', () => {
     expect(isHeic(new File([], 'photo.heic', { type: 'image/png' }))).toBe(true);
+  });
+});
+
+describe('isSvg', () => {
+  it('returns true for image/svg+xml mime type', () => {
+    expect(isSvg(new File([], 'icon.svg', { type: 'image/svg+xml' }))).toBe(true);
+  });
+
+  it('returns true for .svg extension (case-insensitive) when type is empty', () => {
+    expect(isSvg(new File([], 'ICON.SVG', { type: '' }))).toBe(true);
+  });
+
+  it('returns false for image/png', () => {
+    expect(isSvg(new File([], 'photo.png', { type: 'image/png' }))).toBe(false);
+  });
+
+  it('returns false for a .png file even with an empty type', () => {
+    expect(isSvg(new File([], 'photo.png', { type: '' }))).toBe(false);
   });
 });
 

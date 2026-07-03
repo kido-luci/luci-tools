@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'svg-to-png')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Are my SVG files uploaded anywhere?',
+    a: 'No. The conversion happens locally on your device — the SVG is drawn onto a canvas and encoded as PNG entirely in your browser. Nothing is sent to a server.',
+  },
+  {
+    q: 'What size will the PNG be?',
+    a: "If your SVG specifies its own width and height (or a viewBox), the PNG is rendered at that size. If the SVG has no intrinsic size at all, it falls back to a 1024px-wide square so you still get a usable image.",
+  },
+  {
+    q: 'Will the PNG lose any quality compared to the SVG?',
+    a: 'SVG is a vector format that scales infinitely, while PNG is a fixed-size grid of pixels — so converting always "locks in" a resolution. Rendered at a reasonable size, the PNG looks identical to the SVG; it just can no longer be scaled up without blurring.',
+  },
+  {
+    q: 'Does the PNG keep transparency?',
+    a: "Yes. Unlike JPG, PNG fully supports transparency, so any transparent background or see-through areas in your SVG carry over exactly as they appear in the vector.",
+  },
+  {
+    q: 'Why would I convert SVG to PNG?',
+    a: 'PNG is supported everywhere — every image editor, upload form, and social platform can open it, while some tools still reject SVG for security or compatibility reasons. Converting gives you a raster image that works anywhere the original vector might not.',
+  },
+  {
+    q: 'Can I convert multiple SVG files at once?',
+    a: 'Yes. Drop in as many SVG files as you like — each one is rendered and offered as its own PNG download, so you can batch a whole folder of icons or logos in one pass.',
+  },
+  {
+    q: 'Will animated or interactive SVGs still animate as PNG?',
+    a: "No. PNG is a static image format, so only a single frame — the SVG's initial rendered state — is captured. Any CSS animation, SMIL animation, or interactivity in the SVG is lost in the conversion.",
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span
+          class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light"
+          aria-hidden="true"
+        >
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <ToolShell to="png" accept=".svg,image/svg+xml" prompt="Drag & drop SVG files here" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert SVG to PNG</h2>
+      <ol>
+        <li>Drop your SVG files onto the box above, or click to browse.</li>
+        <li>Each vector is rasterized onto a canvas at its own size and encoded as PNG in your browser.</li>
+        <li>Click <strong>Download</strong> next to each result to save the PNG.</li>
+      </ol>
+
+      <h2>From vector to raster: what changes?</h2>
+      <p>
+        SVG describes an image as shapes and paths, so it can be scaled to
+        any size without losing sharpness. PNG, on the other hand, is a
+        fixed grid of pixels. Converting "bakes in" a resolution — the
+        output looks crisp at the size it was rendered, but won't scale up
+        cleanly the way the original SVG would.
+      </p>
+
+      <h2>Choosing an export size</h2>
+      <p>
+        Most SVGs carry an intrinsic width and height (or a viewBox that
+        implies one), and this tool renders the PNG at that size by
+        default. If your SVG has no size information at all, it falls back
+        to a 1024px-wide image so the download is always usable —
+        icons and logos are typically small enough that this is larger
+        than you'll ever need.
+      </p>
+
+      <h2>Common reasons to convert SVG to PNG</h2>
+      <ul>
+        <li>Uploading a logo or icon to a platform, CMS, or form that only accepts raster formats.</li>
+        <li>Embedding an SVG illustration somewhere that doesn't render vector graphics correctly.</li>
+        <li>Sharing a design export with someone whose software can't open SVG files.</li>
+        <li>Generating a fixed-size thumbnail or preview image from a scalable vector asset.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('jpg-to-png')} class="text-brand underline hover:no-underline dark:text-brand-light">JPG to PNG converter</a> — get a lossless PNG from an existing photo.</li>
+        <li><a href={toolUrl('png-to-webp')} class="text-brand underline hover:no-underline dark:text-brand-light">PNG to WebP converter</a> — shrink your rendered PNG further for the web.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
