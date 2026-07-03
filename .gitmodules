@@ -22,3 +22,18 @@
 [submodule "unit-converter"]
 	path = unit-converter
 	url = https://github.com/kido-luci/unit-converter.git
+[submodule "hash-tools"]
+	path = hash-tools
+	url = https://github.com/kido-luci/hash-tools.git
+[submodule "timestamp-converter"]
+	path = timestamp-converter
+	url = https://github.com/kido-luci/timestamp-converter.git
+[submodule "encode-decode"]
+	path = encode-decode
+	url = https://github.com/kido-luci/encode-decode.git
+[submodule "color-tools"]
+	path = color-tools
+	url = https://github.com/kido-luci/color-tools.git
+[submodule "password-tools"]
+	path = password-tools
+	url = https://github.com/kido-luci/password-tools.git
