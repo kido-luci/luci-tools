@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ColorTool from '../components/ColorTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'hex-to-rgb')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DesignApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How do I convert HEX to RGB?',
+    a: 'Split the hex string into three 2-digit pairs (red, green, blue) and convert each pair from base 16 to base 10. For example, #3b82f6 splits into 3b, 82, f6 — which are 59, 130 and 246 in decimal, giving rgb(59, 130, 246).',
+  },
+  {
+    q: 'What is a HEX color code?',
+    a: 'A HEX code is a six-digit (or three-digit shorthand) base-16 number representing red, green and blue light intensity, written as #rrggbb. It is the most common way to write colors in CSS, design tools and image editors.',
+  },
+  {
+    q: 'What is the difference between HEX and RGB?',
+    a: 'They describe exactly the same color — HEX packs the three channels into a compact base-16 string, while RGB writes them out as three base-10 numbers from 0–255. Some tools and APIs expect one format over the other, which is why converting between them comes up often.',
+  },
+  {
+    q: 'Does this tool support 3-digit shorthand hex codes?',
+    a: 'Yes. A shorthand like #fff is expanded automatically (each digit is duplicated) to the equivalent full form, #ffffff, before conversion.',
+  },
+  {
+    q: 'Do I need to type the # symbol?',
+    a: 'No — the # is optional. Typing 3b82f6 or #3b82f6 produces the same result.',
+  },
+  {
+    q: 'Is my color data sent to a server?',
+    a: 'No. The conversion is plain arithmetic that runs entirely in your browser with JavaScript — nothing is uploaded or logged.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <FormatBadge from="HEX" to="RGB" class="mb-5" />
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <ColorTool mode="hex-to-rgb" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert HEX to RGB</h2>
+      <ol>
+        <li>Type or paste a hex color code into the box above (with or without the #).</li>
+        <li>The RGB, and HSL values update live as you type.</li>
+        <li>Use the color picker next to the input to pick a color visually instead.</li>
+      </ol>
+
+      <h2>How the conversion works</h2>
+      <p>
+        A hex color packs three channels — red, green and blue — into a single
+        base-16 string. Each pair of hex digits (00–ff) maps to a decimal value
+        from 0–255, so <strong>#3b82f6</strong> becomes <strong>rgb(59, 130, 246)</strong>.
+        Shorthand 3-digit codes like <strong>#fff</strong> are expanded by
+        duplicating each digit before the same math applies.
+      </p>
+
+      <h2>Where you'll need this</h2>
+      <ul>
+        <li>Reading a hex value out of a design tool or brand guide and needing the RGB equivalent for a canvas, SVG or image-processing API.</li>
+        <li>Porting CSS colors into a language or library that expects RGB tuples instead of hex strings.</li>
+        <li>Debugging a color discrepancy between two systems that report colors differently.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('rgb-to-hex')} class="text-brand underline hover:no-underline dark:text-brand-light">RGB to HEX converter</a> — go the other way.</li>
+        <li><a href={toolUrl('hex-to-hsl')} class="text-brand underline hover:no-underline dark:text-brand-light">HEX to HSL converter</a> — get hue, saturation and lightness instead.</li>
+        <li><a href={toolUrl('color-contrast-checker')} class="text-brand underline hover:no-underline dark:text-brand-light">Color contrast checker</a> — check WCAG accessibility between two colors.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
