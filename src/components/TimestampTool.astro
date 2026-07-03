@@ -1,0 +1,89 @@
+---
+// Live client-side two-way converter: an epoch field and a date field, each
+// keeping the other in sync as you type. The client script reads the seed
+// values off the dataset and recomputes on every input, so every page reuses
+// this exact component.
+interface Props {
+  /** Seed epoch value (seconds). */
+  epoch: number;
+  /** Seed ISO date string. */
+  date: string;
+}
+
+const { epoch, date } = Astro.props;
+---
+
+<div
+  data-timestamp-tool
+  data-epoch={epoch}
+  data-date={date}
+  class="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:p-8"
+>
+  <div class="grid grid-cols-1 items-end gap-4 sm:grid-cols-2">
+    <!-- Epoch -->
+    <div>
+      <label class="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-400" for="ts-epoch">
+        Unix timestamp
+      </label>
+      <div class="flex gap-2">
+        <input
+          id="ts-epoch"
+          data-epoch-input
+          type="number"
+          inputmode="numeric"
+          value={epoch}
+          class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 font-mono text-lg text-slate-900 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/30 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+        />
+        <select
+          data-epoch-unit
+          aria-label="Timestamp unit"
+          class="rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/30 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+        >
+          <option value="s" selected>seconds</option>
+          <option value="ms">ms</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Date -->
+    <div>
+      <label class="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-400" for="ts-date">
+        Date &amp; time (UTC)
+      </label>
+      <input
+        id="ts-date"
+        data-date-input
+        type="text"
+        value={date}
+        placeholder="2023-11-14T22:13:20.000Z"
+        class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 font-mono text-lg text-slate-900 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/30 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+      />
+    </div>
+  </div>
+
+  <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
+    <p data-error class="text-sm text-red-600 dark:text-red-400"></p>
+    <button
+      type="button"
+      data-now
+      class="ml-auto inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-brand-tint hover:text-brand-dark dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-brand/15"
+    >
+      Now
+    </button>
+  </div>
+
+  <dl class="mt-5 grid grid-cols-1 gap-3 border-t border-slate-200 pt-5 text-sm dark:border-slate-700 sm:grid-cols-2">
+    <div>
+      <dt class="text-slate-500 dark:text-slate-400">ISO 8601</dt>
+      <dd data-result-iso class="mt-0.5 select-all font-mono text-slate-900 dark:text-slate-100"></dd>
+    </div>
+    <div>
+      <dt class="text-slate-500 dark:text-slate-400">UTC string</dt>
+      <dd data-result-utc class="mt-0.5 select-all font-mono text-slate-900 dark:text-slate-100"></dd>
+    </div>
+  </dl>
+</div>
+
+<script>
+  import '../scripts/timestamp-tool.ts';
+</script>

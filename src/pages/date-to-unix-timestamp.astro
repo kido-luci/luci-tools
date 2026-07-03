@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TimestampTool from '../components/TimestampTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'date-to-unix-timestamp')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How do I convert a date to a Unix timestamp?',
+    a: 'Type or paste a date into the date field above, in a format like 2023-11-14T22:13:20.000Z or even just 2023-11-14. The equivalent Unix timestamp — in both seconds and milliseconds — appears immediately.',
+  },
+  {
+    q: 'What date formats are accepted?',
+    a: "The date field accepts anything JavaScript's Date parser understands: full ISO 8601 strings (2023-11-14T22:13:20.000Z), date-only strings (2023-11-14), and most common human-readable formats. ISO 8601 is the most reliable choice since it has no ambiguity.",
+  },
+  {
+    q: 'Why does a date-only input give midnight as the time?',
+    a: 'When you enter a date without a time component, it is interpreted as midnight UTC on that day (00:00:00). This is standard JavaScript date-parsing behaviour, not a limitation of this tool.',
+  },
+  {
+    q: 'Do I get seconds or milliseconds as the result?',
+    a: 'Both. The epoch field shows whichever unit is selected in the dropdown, and the ISO/UTC results underneath confirm the exact instant, so you can copy whichever value your project needs.',
+  },
+  {
+    q: 'Does the timezone of my browser affect the result?',
+    a: 'No — the conversion is always computed against the parsed instant, and the resulting epoch value is the same regardless of your local timezone. Only the display of the reconstructed date is shown in UTC.',
+  },
+  {
+    q: 'Is this useful for setting expiry times or scheduling?',
+    a: 'Yes. Converting a target date to its epoch value is exactly what many APIs, cron-like schedulers, and token expiry fields (e.g. JWT `exp`) expect — a plain epoch integer rather than a formatted date string.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <span
+      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light"
+      aria-hidden="true"
+    >
+      <Icon name={meta.icon} class="h-7 w-7" />
+    </span>
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <TimestampTool epoch={1700000000} date="2023-11-14T22:13:20.000Z" />
+    <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">
+      Runs entirely in your browser — nothing you enter is uploaded or stored.
+    </p>
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert a date to a Unix timestamp</h2>
+      <ol>
+        <li>Type a date into the date field above (ISO 8601 works best).</li>
+        <li>Read the resulting epoch value in the timestamp field.</li>
+        <li>Switch the unit selector to get seconds or milliseconds.</li>
+      </ol>
+
+      <h2>Why convert dates to epoch time?</h2>
+      <p>
+        Many systems — databases, APIs, JWT tokens, cron-like schedulers —
+        expect a plain integer rather than a formatted date string. Converting
+        a human-readable date to its Unix timestamp is the standard way to
+        feed a specific point in time into that kind of system.
+      </p>
+
+      <h2>Seconds vs. milliseconds</h2>
+      <p>
+        Unix time is traditionally counted in seconds, but JavaScript and many
+        web APIs work in milliseconds instead. This tool shows both, so you
+        can copy whichever unit your target system expects without doing the
+        ×1000 or ÷1000 conversion by hand.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('epoch-to-date')} class="text-brand underline hover:no-underline dark:text-brand-light">Epoch to Date converter</a> — convert the other way.</li>
+        <li><a href={toolUrl('unix-timestamp-converter')} class="text-brand underline hover:no-underline dark:text-brand-light">Unix Timestamp Converter</a> — the full two-way tool.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

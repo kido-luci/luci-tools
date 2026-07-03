@@ -1,0 +1,103 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TimestampTool from '../components/TimestampTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'epoch-to-date')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How do I convert an epoch timestamp to a date?',
+    a: 'Type the number into the timestamp field above and pick whether it is in seconds or milliseconds. The equivalent ISO 8601 and UTC date appear immediately, with no page reload or button press.',
+  },
+  {
+    q: 'My epoch value has 13 digits — is that a mistake?',
+    a: "No — 13-digit values are milliseconds, not seconds. A 10-digit value like 1700000000 is seconds; the same instant in milliseconds is 1700000000000. Select 'ms' in the unit dropdown and the conversion adjusts automatically.",
+  },
+  {
+    q: 'What does the ISO 8601 result mean?',
+    a: "ISO 8601 is the standard, unambiguous date format used across APIs and databases, e.g. 2023-11-14T22:13:20.000Z. The trailing 'Z' means the time is in UTC (zero offset).",
+  },
+  {
+    q: 'What is the UTC string format used here?',
+    a: 'It follows RFC 1123, the format used in HTTP headers and many log files — e.g. "Tue, 14 Nov 2023 22:13:20 GMT". It represents the exact same instant as the ISO string, just in a more human-readable layout.',
+  },
+  {
+    q: 'Can I convert an epoch value from before 1970?',
+    a: 'Yes. A negative epoch value represents a date before 1 January 1970, and this converter handles it correctly, producing the matching pre-epoch UTC date.',
+  },
+  {
+    q: 'Is this conversion done on a server?',
+    a: 'No — everything runs client-side in your browser using standard JavaScript date handling. No epoch value you enter is ever sent anywhere.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <span
+      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light"
+      aria-hidden="true"
+    >
+      <Icon name={meta.icon} class="h-7 w-7" />
+    </span>
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <TimestampTool epoch={1700000000} date="2023-11-14T22:13:20.000Z" />
+    <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">
+      Runs entirely in your browser — nothing you enter is uploaded or stored.
+    </p>
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert epoch to date</h2>
+      <ol>
+        <li>Enter your epoch value in the timestamp field above.</li>
+        <li>Choose whether the value is in seconds or milliseconds.</li>
+        <li>Read the resulting ISO 8601 and UTC date instantly.</li>
+      </ol>
+
+      <h2>Epoch seconds vs. milliseconds</h2>
+      <p>
+        The Unix epoch is measured in seconds by convention, but JavaScript,
+        many web APIs and most log timestamps use milliseconds instead. Picking
+        the wrong unit shifts the resulting date by a factor of 1000 — this
+        tool's unit selector makes the choice explicit so the conversion is
+        always correct.
+      </p>
+
+      <h2>Why convert epoch to date?</h2>
+      <p>
+        Logs, databases and APIs commonly store timestamps as raw epoch
+        numbers because they're compact and easy to compare, but they're not
+        readable at a glance. Converting to a date lets you quickly check when
+        an event, record or token actually happened.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('date-to-unix-timestamp')} class="text-brand underline hover:no-underline dark:text-brand-light">Date to Unix Timestamp</a> — convert the other way.</li>
+        <li><a href={toolUrl('unix-timestamp-converter')} class="text-brand underline hover:no-underline dark:text-brand-light">Unix Timestamp Converter</a> — the full two-way tool.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
