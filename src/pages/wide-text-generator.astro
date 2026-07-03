@@ -1,0 +1,123 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'wide-text-generator')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Copy & Paste ｗｉｄｅ / Vaporwave Text | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'What makes wide text "wide"?',
+    a: 'It swaps each letter, digit and space for its Unicode "Fullwidth Forms" equivalent — characters that were originally designed to line up in a fixed-width grid alongside CJK text, so they render noticeably wider than normal ASCII. That extra width is what gives it the spaced-out, vaporwave look.',
+  },
+  {
+    q: 'Is this the same as vaporwave or aesthetic text?',
+    a: 'Yes — "vaporwave text", "aesthetic text" and "wide text" all commonly refer to the same Fullwidth Unicode trick. It became popular through vaporwave album art and aesthetic social media posts because of the stretched, retro look.',
+  },
+  {
+    q: 'Where can I paste wide text?',
+    a: 'Instagram, TikTok, Twitter/X, Discord and Facebook bios and captions all render it well. As with any Unicode style, test on your target app first since spacing can look slightly different by font.',
+  },
+  {
+    q: 'Why is there extra space between the letters?',
+    a: 'Fullwidth characters — including the space character, which is mapped to an ideographic space — are all rendered at a wider, uniform width by design. That is what creates the signature spaced-out aesthetic look, not manual spacing.',
+  },
+  {
+    q: 'Is my text sent to a server?',
+    a: 'No. The conversion happens entirely in your browser with JavaScript. Nothing you type is uploaded anywhere.',
+  },
+  {
+    q: 'Will wide text still match hashtag or username searches?',
+    a: 'No. Fullwidth characters are different code points from the standard alphabet, so a wide-text hashtag will not match a plain-text search for the same word. Keep important keywords and hashtags in normal text.',
+  },
+  {
+    q: 'Can I use wide text in a username or legal name field?',
+    a: 'Usually not. Most username and legal-name fields restrict input to standard ASCII letters and digits, so fullwidth characters are typically rejected or stripped in those fields.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <ToolShell style="wide" placeholder="Type your text to make it ｗｉｄｅ…" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to make wide text</h2>
+      <ol>
+        <li>Type or paste your text into the box above.</li>
+        <li>The stretched, fullwidth version appears instantly underneath as you type.</li>
+        <li>Click <strong>Copy</strong>, then paste it into your bio, caption or post.</li>
+      </ol>
+
+      <h2>Why use a wide (vaporwave / aesthetic) text generator?</h2>
+      <p>
+        This tool gives your text the spaced-out, retro look popularized by
+        vaporwave art and "aesthetic" social posts, without needing any image
+        editor. Every character — including the space — is swapped for its
+        Fullwidth Unicode counterpart, so the whole line breathes wider than
+        normal text and instantly reads as stylized rather than accidental.
+      </p>
+
+      <h2>Where wide text works (and where it doesn't)</h2>
+      <ul>
+        <li><strong>Instagram, TikTok, Twitter/X, Discord</strong> — bios and captions render the fullwidth characters and spacing reliably on modern apps.</li>
+        <li><strong>Vaporwave &amp; aesthetic edits</strong> — a common companion to retro gradients and 80s-inspired visuals in caption text, since the wide spacing itself carries a lot of that mood.</li>
+        <li><strong>Facebook &amp; LinkedIn</strong> — generally renders correctly in posts and bios, though very old app versions may fall back to boxes.</li>
+        <li><strong>Search boxes &amp; hashtags</strong> — fullwidth characters are different code points from the plain alphabet, so a wide-text hashtag won't match a normal-text search.</li>
+        <li><strong>Username &amp; legal-name fields</strong> — most platforms restrict these to standard ASCII, so wide text is usually rejected or stripped there.</li>
+      </ul>
+
+      <h2>A note on accessibility and SEO</h2>
+      <p>
+        Fullwidth characters come from a Unicode block originally built for
+        East Asian typesetting — separate code points from ordinary Latin
+        letters and the regular space, not a font style layered on top of
+        them. Screen readers may read fullwidth characters individually,
+        mispronounce them, or pause oddly at the wider ideographic spaces, so
+        avoid wide text for anything that must stay fully accessible. Search
+        engines and in-app search also treat these as different from their
+        plain-text equivalents, so keep important keywords in normal text
+        alongside any decorative wide-text line.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('monospace-text-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">Monospace Text Generator</a> — a clean, fixed-width, code-inspired look</li>
+        <li><a href={toolUrl('bubble-text-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">Bubble Text Generator</a> — playful circled letters for usernames and titles</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

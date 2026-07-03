@@ -1,0 +1,133 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'underline-text-generator')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Copy & Paste U̲n̲d̲e̲r̲l̲i̲n̲e̲ Text | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How does the underline survive copy and paste?',
+    a: 'A combining "low line" mark is added after every character. Because the line is encoded as part of the text rather than as formatting, it stays underlined when you paste it into a chat, bio or post.',
+  },
+  {
+    q: 'Where can I use underline text?',
+    a: 'Plain-text fields across Instagram, TikTok, Twitter/X, Facebook, Discord and WhatsApp. Rendering depends on the font, so the line position may look slightly different from one app to another.',
+  },
+  {
+    q: 'Why does the line sometimes look uneven?',
+    a: 'The underline is a combining character that each font positions itself. On a few fonts the line can sit a little closer or farther from the letters, but the text remains fully readable and clearly underlined.',
+  },
+  {
+    q: 'Is anything sent to a server?',
+    a: 'No. The underline is added in your browser with JavaScript, and your text never leaves your device.',
+  },
+  {
+    q: 'Is this the same as HTML underline or a text editor\'s underline button?',
+    a: "No. An HTML <u> tag or a word processor's underline button tells the software to draw a line under existing text as a style. This tool instead inserts a Unicode combining mark after each character, so the underline travels with the text itself into places that have no underline button, like a social bio.",
+  },
+  {
+    q: 'Will underline text show up correctly on older phones?',
+    a: 'On modern phones and browsers the line renders consistently across Instagram, TikTok, Twitter/X and Discord. Very old Android devices or apps using basic system fonts may not position the combining mark perfectly, but the text stays legible.',
+  },
+  {
+    q: 'Can I underline just part of a sentence?',
+    a: 'Yes — select and copy only the portion of the converted output you want underlined, then paste it alongside plain text. Because each character carries its own combining mark, you can mix underlined and normal text freely.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <ToolShell style="underline" placeholder="Type your text to underline it…" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to make underline text</h2>
+      <ol>
+        <li>Type or paste your text into the box above.</li>
+        <li>Each character gets a line underneath it instantly as you type.</li>
+        <li>Click <strong>Copy</strong>, then paste the underlined text anywhere.</li>
+      </ol>
+
+      <h2>Why use an underline text generator?</h2>
+      <p>
+        Most social apps have no underline button for bios and captions. This
+        tool adds an underline to your words using a Unicode combining
+        character, so you can emphasize a title, a key phrase or a link label
+        in plain text that pastes anywhere — no formatting menu required.
+      </p>
+
+      <h2>When to use underline text</h2>
+      <ul>
+        <li><strong>Titles &amp; headings in a bio</strong> — underline a section label like "Links" or "About" to visually separate parts of a plain-text bio.</li>
+        <li><strong>Emphasis without bold</strong> — underline gives a subtler emphasis than bold Unicode, useful when you want a word to stand out without shouting.</li>
+        <li><strong>Faux link styling</strong> — underlined text visually mimics a hyperlink, which can draw attention to a call-to-action phrase in a caption.</li>
+        <li><strong>Names &amp; labels</strong> — underline a name, brand or handle you want to make clearly distinct from the surrounding sentence.</li>
+        <li><strong>Correcting or highlighting a word</strong> — call out one specific word in a longer message without changing its meaning.</li>
+      </ul>
+
+      <h2>How underline text is made</h2>
+      <p>
+        Like the strikethrough generator, this tool does not swap your letters
+        for characters from a different alphabet block. Instead, it inserts a
+        Unicode "combining low line" (U+0332) after each character you type.
+        The mark is zero-width and drawn by your device's font engine as a
+        horizontal line directly beneath the preceding letter. Because the
+        mark is attached to the text itself rather than stored as a style
+        attribute, it travels with the characters when you copy and paste — no
+        formatting is needed at the destination.
+      </p>
+
+      <h2>Accessibility note</h2>
+      <p>
+        Combining marks can render inconsistently on older devices or fonts
+        that lack full Unicode diacritic support, so always test on your
+        target platform before publishing. Screen readers typically ignore
+        combining low-line marks and read the underlying text as normal —
+        which means the visual "underlined" meaning is invisible to users
+        relying on assistive technology. Use underline text for visual effect
+        and emphasis, not to convey meaning that only makes sense if the line
+        is seen.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('strikethrough-text-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">Strikethrough Text Generator</a> — cross out text for humour, corrections or sale prices</li>
+        <li><a href={toolUrl('bold-text-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">Bold Text Generator</a> — make words stand out with Unicode bold characters</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

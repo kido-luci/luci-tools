@@ -143,3 +143,139 @@ describe('styleText — strike', () => {
     expect(result).toBe(expected);
   });
 });
+
+describe('styleText — cursive', () => {
+  it('maps A to Mathematical Bold Script 𝓐 (0x1D4D0)', () => {
+    expect(styleText('A', 'cursive').codePointAt(0)).toBe(0x1d4d0);
+  });
+
+  it('maps a to Mathematical Bold Script 𝓪 (0x1D4EA)', () => {
+    expect(styleText('a', 'cursive').codePointAt(0)).toBe(0x1d4ea);
+  });
+
+  it('maps "Ab1" to 𝓐𝓫1 (digits unchanged)', () => {
+    expect(styleText('Ab1', 'cursive')).toBe('𝓐𝓫1');
+  });
+
+  it('boundary: Z maps to 0x1D4E9', () => {
+    expect(styleText('Z', 'cursive').codePointAt(0)).toBe(0x1d4e9);
+  });
+
+  it('boundary: z maps to 0x1D503', () => {
+    expect(styleText('z', 'cursive').codePointAt(0)).toBe(0x1d503);
+  });
+
+  it('leaves digits and punctuation unchanged', () => {
+    expect(styleText('0-9!', 'cursive')).toBe('0-9!');
+  });
+
+  it('returns empty string for empty input', () => {
+    expect(styleText('', 'cursive')).toBe('');
+  });
+});
+
+describe('styleText — wide', () => {
+  it('maps A to Fullwidth Ａ (0xFF21)', () => {
+    expect(styleText('A', 'wide').codePointAt(0)).toBe(0xff21);
+  });
+
+  it('maps a to Fullwidth ａ (0xFF41)', () => {
+    expect(styleText('a', 'wide').codePointAt(0)).toBe(0xff41);
+  });
+
+  it('maps 0 to Fullwidth ０ (0xFF10)', () => {
+    expect(styleText('0', 'wide').codePointAt(0)).toBe(0xff10);
+  });
+
+  it('maps ASCII space to ideographic space (0x3000)', () => {
+    expect(styleText(' ', 'wide').codePointAt(0)).toBe(0x3000);
+  });
+
+  it('"A z 0" fully maps to fullwidth incl. ideographic space', () => {
+    expect(styleText('A z 0', 'wide')).toBe('Ａ　ｚ　０');
+  });
+
+  it('returns empty string for empty input', () => {
+    expect(styleText('', 'wide')).toBe('');
+  });
+});
+
+describe('styleText — bubble', () => {
+  it('maps A to Ⓐ (0x24B6)', () => {
+    expect(styleText('A', 'bubble').codePointAt(0)).toBe(0x24b6);
+  });
+
+  it('maps a to ⓐ (0x24D0)', () => {
+    expect(styleText('a', 'bubble').codePointAt(0)).toBe(0x24d0);
+  });
+
+  it('maps 1 to ① (0x2460)', () => {
+    expect(styleText('1', 'bubble').codePointAt(0)).toBe(0x2460);
+  });
+
+  it('maps 0 to ⓪ (0x24EA, special-cased)', () => {
+    expect(styleText('0', 'bubble').codePointAt(0)).toBe(0x24ea);
+  });
+
+  it('"Ab1" maps to Ⓐⓑ①', () => {
+    expect(styleText('Ab1', 'bubble')).toBe('Ⓐⓑ①');
+  });
+
+  it('leaves punctuation and spaces unchanged', () => {
+    expect(styleText(' !', 'bubble')).toBe(' !');
+  });
+
+  it('returns empty string for empty input', () => {
+    expect(styleText('', 'bubble')).toBe('');
+  });
+});
+
+describe('styleText — monospace', () => {
+  it('maps A to Mathematical Monospace 𝙰 (0x1D670)', () => {
+    expect(styleText('A', 'monospace').codePointAt(0)).toBe(0x1d670);
+  });
+
+  it('maps a to Mathematical Monospace 𝚊 (0x1D68A)', () => {
+    expect(styleText('a', 'monospace').codePointAt(0)).toBe(0x1d68a);
+  });
+
+  it('maps 0 to Mathematical Monospace 𝟶 (0x1D7F6)', () => {
+    expect(styleText('0', 'monospace').codePointAt(0)).toBe(0x1d7f6);
+  });
+
+  it('"A" maps to 𝙰', () => {
+    expect(styleText('A', 'monospace')).toBe('𝙰');
+  });
+
+  it('leaves punctuation and spaces unchanged', () => {
+    expect(styleText(' !', 'monospace')).toBe(' !');
+  });
+
+  it('returns empty string for empty input', () => {
+    expect(styleText('', 'monospace')).toBe('');
+  });
+});
+
+describe('styleText — underline', () => {
+  it('appends combining low line overlay after each character', () => {
+    const result = styleText('Hi', 'underline');
+    // Each character gets the combining low line appended → "H̲i̲"
+    expect(result).toBe('H̲i̲');
+  });
+
+  it('returns empty string for empty input', () => {
+    expect(styleText('', 'underline')).toBe('');
+  });
+
+  it('applies underline to space and punctuation: "a b"', () => {
+    expect(styleText('a b', 'underline')).toBe('a̲ ̲b̲');
+  });
+
+  it('applies underline to every character matching combining mark', () => {
+    const COMBINING_LOW_LINE = '̲';
+    const input = 'a b';
+    const result = styleText(input, 'underline');
+    const expected = [...input].map((ch) => ch + COMBINING_LOW_LINE).join('');
+    expect(result).toBe(expected);
+  });
+});

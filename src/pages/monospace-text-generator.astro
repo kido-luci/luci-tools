@@ -1,0 +1,123 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'monospace-text-generator')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Copy & Paste 𝚖𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎 Text | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How does this make text look like code without a code block?',
+    a: 'It swaps each letter and digit for its Mathematical Monospace Unicode equivalent — a full alphabet designed to look like a fixed-width, terminal-style typeface. Because the look is built into the characters themselves, it survives copy and paste into places with no code-formatting option, like a bio.',
+  },
+  {
+    q: 'Where can I paste monospace text?',
+    a: 'Instagram, TikTok, Twitter/X, Discord and Facebook bios and captions all render it well. Discord in particular is a natural fit since its community already associates fixed-width type with code and technical content.',
+  },
+  {
+    q: 'Is this the same as a Markdown code block?',
+    a: "No. A Markdown code block (triple backticks) tells the app to render your existing text in its own monospace font. This tool instead replaces the letters with different Unicode characters, so the monospace look travels with the text itself — it works even on platforms with no Markdown or code-formatting support.",
+  },
+  {
+    q: 'Is my text sent to a server?',
+    a: 'No. The conversion happens entirely in your browser with JavaScript, and nothing you type is uploaded anywhere.',
+  },
+  {
+    q: 'Does monospace text support numbers?',
+    a: 'Yes — digits 0–9 have their own Mathematical Monospace variants, alongside full A–Z and a–z coverage. Punctuation, spaces and emoji are left unchanged.',
+  },
+  {
+    q: 'Will screen readers read it correctly?',
+    a: 'Not reliably. Screen readers may read the monospace characters individually, mispronounce words, or skip them, since they are technically distinct code points from ordinary Latin letters and digits. Avoid using it for content that must stay fully accessible.',
+  },
+  {
+    q: 'Will monospace text still match hashtag or username searches?',
+    a: 'No. Search treats monospace characters as different from the standard alphabet, so a monospace hashtag will not match a plain-text search for the same word. Keep important keywords and hashtags in normal text.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <ToolShell style="monospace" placeholder="Type your text to make it 𝚖𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎…" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to make monospace text</h2>
+      <ol>
+        <li>Type or paste your text into the box above.</li>
+        <li>The fixed-width, code-style version appears instantly underneath as you type.</li>
+        <li>Click <strong>Copy</strong>, then paste it into your bio, caption or post.</li>
+      </ol>
+
+      <h2>Why use a monospace text generator?</h2>
+      <p>
+        Monospace type reads as clean, technical and precise — the same
+        typeface family used in code editors and terminals. This tool lets you
+        bring that look into places that have no code-formatting button, like
+        a bio, a display name or a caption, which is a natural fit for
+        developer profiles, tech-focused accounts, or any post that wants a
+        no-nonsense, structured feel.
+      </p>
+
+      <h2>Where monospace text works (and where it doesn't)</h2>
+      <ul>
+        <li><strong>Discord, GitHub-adjacent bios, developer Twitter/X</strong> — monospace type fits naturally alongside code-related content and reads clearly there.</li>
+        <li><strong>Instagram &amp; TikTok</strong> — bios and captions render the fixed-width characters correctly on modern apps, giving a distinct look from the default font.</li>
+        <li><strong>Facebook &amp; LinkedIn</strong> — generally renders correctly in posts and bios, though very old app versions may fall back to boxes.</li>
+        <li><strong>Search boxes &amp; hashtags</strong> — monospace characters are different code points from the plain alphabet, so a monospace hashtag won't match a normal-text search.</li>
+        <li><strong>Username &amp; legal-name fields</strong> — most platforms restrict these to standard ASCII, so monospace Unicode is usually rejected or stripped there.</li>
+      </ul>
+
+      <h2>A note on accessibility and SEO</h2>
+      <p>
+        These characters come from Unicode's "Mathematical Alphanumeric
+        Symbols" range — separate code points from ordinary Latin letters and
+        digits, not a font style layered on top of them. Screen readers may
+        read monospace characters individually or skip them, so avoid using
+        this style for content that needs to stay fully accessible. Search
+        engines and in-app search also treat monospace words as different
+        from their plain-text equivalents, so keep important keywords in
+        normal text alongside any decorative monospace line.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('wide-text-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">Wide Text Generator</a> — a stretched, vaporwave-style fullwidth look</li>
+        <li><a href={toolUrl('bold-text-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">Bold Text Generator</a> — make a word stand out with Unicode bold characters</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
