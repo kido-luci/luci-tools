@@ -50,6 +50,8 @@ export const ENGINES: Engine[] = [
       { slug: 'png-to-webp', title: 'PNG to WebP', description: 'Shrink PNG images down to modern WebP.', icon: 'convert' },
       { slug: 'jpg-to-webp', title: 'JPG to WebP', description: 'Compress JPG photos to smaller WebP files.', icon: 'convert' },
       { slug: 'heic-to-png', title: 'HEIC to PNG', description: 'Convert iPhone HEIC photos to lossless PNG.', icon: 'convert' },
+      { slug: 'avif-to-jpg', title: 'AVIF to JPG', description: 'Convert modern AVIF images to JPG.', icon: 'convert' },
+      { slug: 'svg-to-png', title: 'SVG to PNG', description: 'Rasterize SVG vector files to PNG.', icon: 'convert' },
     ],
   },
   {
@@ -79,6 +81,8 @@ export const ENGINES: Engine[] = [
       { slug: 'json-formatter', title: 'JSON Formatter', description: 'Pretty-print and validate messy JSON.', icon: 'braces' },
       { slug: 'json-minifier', title: 'JSON Minifier', description: 'Strip whitespace to the smallest valid JSON.', icon: 'minimize' },
       { slug: 'json-validator', title: 'JSON Validator', description: 'Check JSON for syntax errors instantly.', icon: 'check' },
+      { slug: 'json-to-csv', title: 'JSON to CSV', description: 'Convert a JSON array into CSV rows.', icon: 'convert' },
+      { slug: 'csv-to-json', title: 'CSV to JSON', description: 'Turn CSV data into a JSON array.', icon: 'convert' },
     ],
   },
   {
@@ -93,6 +97,7 @@ export const ENGINES: Engine[] = [
       { slug: 'vcard-qr-code', title: 'vCard QR Code', description: 'Share your contact details as a QR code.', icon: 'file' },
       { slug: 'email-qr-code', title: 'Email QR Code', description: 'Make a QR that opens a pre-filled email.', icon: 'text' },
       { slug: 'url-qr-code', title: 'URL QR Code', description: 'Turn any link into a scannable QR code.', icon: 'convert' },
+      { slug: 'qr-code-with-logo', title: 'QR Code with Logo', description: 'Add your logo to the center of a QR.', icon: 'image' },
     ],
   },
   {
@@ -105,6 +110,8 @@ export const ENGINES: Engine[] = [
       { slug: 'merge-pdf', title: 'Merge PDF', description: 'Combine several PDF files into one.', icon: 'layers' },
       { slug: 'jpg-to-pdf', title: 'JPG to PDF', description: 'Turn JPG/PNG images into a single PDF.', icon: 'file' },
       { slug: 'png-to-pdf', title: 'PNG to PDF', description: 'Turn PNG images into a single PDF.', icon: 'file' },
+      { slug: 'rotate-pdf', title: 'Rotate PDF', description: 'Rotate PDF pages by 90, 180 or 270°.', icon: 'convert' },
+      { slug: 'split-pdf', title: 'Split PDF', description: 'Split a PDF into one file per page.', icon: 'layers' },
     ],
   },
 ];
