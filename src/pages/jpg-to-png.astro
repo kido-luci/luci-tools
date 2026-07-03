@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'jpg-to-png')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Are my JPG images uploaded anywhere?',
+    a: 'No. The conversion happens locally on your device with the Canvas API. Nothing is sent to a server, so your files stay on your machine the entire time.',
+  },
+  {
+    q: 'Will converting JPG to PNG shrink the file?',
+    a: "No — expect the opposite. PNG uses lossless compression, so a photographic JPG typically becomes noticeably larger as a PNG. Convert for compatibility or editing reasons, not to save space.",
+  },
+  {
+    q: 'Does converting to PNG improve image quality?',
+    a: "It stops any further quality loss, but it can't restore detail the JPG already lost during its own compression. The PNG will be pixel-for-pixel identical to how the JPG currently looks — just re-encoded losslessly from that point on.",
+  },
+  {
+    q: 'Can a JPG gain transparency after converting to PNG?',
+    a: "No. JPG never stores transparency data, so there's nothing to recover — the converted PNG will still have a fully opaque background. To add real transparency you'd need to manually erase the background in an image editor.",
+  },
+  {
+    q: 'Why would I need PNG instead of JPG?',
+    a: "PNG is the right choice when you need lossless quality for further editing, or when a tool specifically requires a .png file — some upload forms, icon generators, and design tools only accept PNG.",
+  },
+  {
+    q: 'Can I convert several JPGs to PNG at once?',
+    a: 'Yes. Add multiple files and each one is converted and offered as its own PNG download, so you can process a whole folder in a single pass.',
+  },
+  {
+    q: 'Does the PNG keep the same dimensions and colors as the JPG?',
+    a: "Yes. Conversion only changes the file format and compression method — the pixel dimensions and colors are carried over exactly as they appear in the source JPG.",
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span
+          class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light"
+          aria-hidden="true"
+        >
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <ToolShell to="png" accept=".jpg,.jpeg,image/jpeg" prompt="Drag & drop JPG images here" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert JPG to PNG</h2>
+      <ol>
+        <li>Drop your JPG files onto the box above, or click to browse.</li>
+        <li>Each image is redrawn on a canvas and encoded as PNG in your browser.</li>
+        <li>Click <strong>Download</strong> next to each result to save the PNG.</li>
+      </ol>
+
+      <h2>Why convert JPG to PNG?</h2>
+      <p>
+        JPG is great for compact photos, but some tools and workflows need a
+        lossless format instead — design software, icon generators, and
+        certain upload forms often only accept PNG. Converting wraps your
+        existing JPG in a lossless container so no further compression is
+        applied when you save, edit, or re-export it.
+      </p>
+
+      <h2>What converting to PNG does — and doesn't — fix</h2>
+      <p>
+        It's worth setting expectations before you convert:
+      </p>
+      <ul>
+        <li><strong>File size</strong> — PNG will almost always be larger than the original JPG, since lossless compression can't match JPG's aggressive photo compression.</li>
+        <li><strong>Quality</strong> — the PNG preserves exactly what the JPG already looks like; it cannot undo compression artifacts that are already baked in.</li>
+        <li><strong>Transparency</strong> — JPG never had any, so the PNG comes out fully opaque; transparency has to be added manually afterward.</li>
+        <li><strong>Editing safety</strong> — once converted, further edits and re-saves won't introduce new JPG-style artifacts, which matters if the file will be edited repeatedly.</li>
+      </ul>
+
+      <h2>Common reasons to convert JPG to PNG</h2>
+      <ul>
+        <li>Meeting a strict file-format requirement from an upload form, printing service, or design tool.</li>
+        <li>Preparing a photo for repeated editing where you want to avoid compounding JPG compression on every save.</li>
+        <li>Standardising a mixed batch of images into one lossless format for an archive.</li>
+        <li>Feeding a JPG into a tool (like an icon or favicon generator) that only accepts PNG input.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('png-to-jpg')} class="text-brand underline hover:no-underline dark:text-brand-light">PNG to JPG converter</a> — go the other way and shrink PNGs down.</li>
+        <li><a href={toolUrl('jpg-to-webp')} class="text-brand underline hover:no-underline dark:text-brand-light">JPG to WebP converter</a> — a smaller alternative for web use.</li>
+        <li><a href={`${SITE.url}/pdf/jpg-to-pdf/`} class="text-brand underline hover:no-underline dark:text-brand-light">JPG to PDF</a> — combine your JPGs into a single PDF document.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

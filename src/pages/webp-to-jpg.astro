@@ -1,0 +1,126 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'webp-to-jpg')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Are my WebP images uploaded anywhere?',
+    a: 'No. The conversion happens locally on your device with the Canvas API. Nothing is sent to a server, so your images never leave your computer or phone.',
+  },
+  {
+    q: 'Why would I convert WebP to JPG if WebP is smaller?',
+    a: "WebP usually produces smaller files, but plenty of older software, some email clients, and certain image editors still can't open it. Converting to JPG trades a bit of file size for guaranteed compatibility everywhere.",
+  },
+  {
+    q: 'Will the JPG look the same as the WebP?',
+    a: 'Visually, yes — at the default quality the difference is not noticeable for photos. Both formats use lossy compression, so re-encoding to JPG adds a small, generally imperceptible amount of extra compression on top.',
+  },
+  {
+    q: 'What happens to transparent WebP images?',
+    a: "JPG can't store transparency, so any transparent or semi-transparent pixels in the WebP are filled with a solid white background during conversion. If you need to keep transparency, convert to PNG instead.",
+  },
+  {
+    q: 'Can I convert multiple WebP files at once?',
+    a: 'Yes. Drop in as many WebP images as you like — each one is converted and offered as its own JPG download, so you can batch a whole folder in one pass.',
+  },
+  {
+    q: 'Will the JPG file be bigger than the WebP?',
+    a: "Usually, yes. WebP's compression is generally more efficient than JPG's, so converting often increases file size. Only convert when you specifically need JPG compatibility, not to save space.",
+  },
+  {
+    q: 'Does this work with animated WebP files?',
+    a: 'No — animated WebP files are converted using only their first frame, since JPG has no concept of animation. For animated images, keep the original WebP or convert to a video format instead.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span
+          class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light"
+          aria-hidden="true"
+        >
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+
+    <ToolShell to="jpeg" accept=".webp,image/webp" prompt="Drag & drop WebP images here" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert WebP to JPG</h2>
+      <ol>
+        <li>Drop your WebP files onto the box above, or click to browse.</li>
+        <li>Each image is redrawn on a canvas and encoded as JPG in your browser.</li>
+        <li>Click <strong>Download</strong> next to each result to save the JPG.</li>
+      </ol>
+
+      <h2>Why convert WebP to JPG?</h2>
+      <p>
+        WebP is a modern format that Google designed for the web, but its
+        support outside browsers is patchy — some older phones, desktop image
+        viewers, and photo-editing tools still can't open it directly.
+        Converting to JPG gives you a file that works absolutely everywhere,
+        which matters when you're sending an image somewhere you don't
+        control the software.
+      </p>
+
+      <h2>WebP vs JPG: what changes?</h2>
+      <p>
+        Both are lossy, photo-friendly formats, but they aim at different
+        goals:
+      </p>
+      <ul>
+        <li><strong>Compatibility</strong> — JPG is the safest choice for email, older apps, printing services, and any tool that predates WebP.</li>
+        <li><strong>File size</strong> — WebP is usually more efficient, so expect the JPG to be somewhat larger for the same visual quality.</li>
+        <li><strong>Transparency</strong> — WebP can support it; JPG cannot, so transparent areas become solid white after conversion.</li>
+        <li><strong>Animation</strong> — WebP can be animated; JPG is a single still frame, so only the first frame carries over.</li>
+      </ul>
+
+      <h2>Common reasons to convert WebP to JPG</h2>
+      <ul>
+        <li>Saving an image from a website that only serves WebP, for use in software that doesn't support it.</li>
+        <li>Attaching a downloaded WebP photo to an email or document that expects a standard image format.</li>
+        <li>Uploading to a marketplace, print shop, or CMS that rejects WebP files.</li>
+        <li>Opening a WebP image in an older editor, mobile app, or design tool that only reads JPG or PNG.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('png-to-jpg')} class="text-brand underline hover:no-underline dark:text-brand-light">PNG to JPG converter</a> — flatten screenshots and graphics into JPG.</li>
+        <li><a href={toolUrl('heic-to-jpg')} class="text-brand underline hover:no-underline dark:text-brand-light">HEIC to JPG converter</a> — turn iPhone photos into shareable JPGs.</li>
+        <li><a href={`${SITE.url}/pdf/jpg-to-pdf/`} class="text-brand underline hover:no-underline dark:text-brand-light">JPG to PDF</a> — combine your JPGs into a single PDF document.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
