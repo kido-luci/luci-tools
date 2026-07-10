@@ -1,15 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import AdSlot from '../components/AdSlot.astro';
-import Icon from '../components/Icon.astro';
-import HeroMockup from '../components/HeroMockup.astro';
-import { SITE, ENGINES, engineUrl, toolUrl } from '../consts';
+import { ENGINES, engineUrl, toolUrl, SITE } from '../consts';
 
 const title = 'Free Online Tools — Image, PDF, JSON, QR & Text | Luci Tools';
 const description =
   'A growing collection of fast, free, privacy-first web tools. Convert images and PDFs, format JSON, generate QR codes and fancy text — all 100% in your browser, nothing uploaded.';
 
-const totalTools = ENGINES.reduce((n, e) => n + e.tools.length, 0);
+const total = ENGINES.reduce((n, e) => n + e.tools.length, 0);
+const catCount = ENGINES.length;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -18,108 +16,415 @@ const jsonLd = {
   url: new URL('/', SITE.url).href,
   description,
 };
+
+// Per-category OKLCH tints (soft fill + foreground + dot), mirrored from the design.
+const tintBg = (h: number) => `oklch(0.955 0.045 ${h})`;
+const tintFg = (h: number) => `oklch(0.46 0.15 ${h})`;
+const dotColor = (h: number) => `oklch(0.63 0.15 ${h})`;
+const chipFont = (isSample: boolean) =>
+  isSample ? "'Space Grotesk Variable', sans-serif" : "'JetBrains Mono Variable', monospace";
+const chipSize = (isSample: boolean, glyph: string) =>
+  isSample ? '18px' : glyph.length <= 3 ? '13px' : glyph.length <= 4 ? '11.5px' : '10px';
+
+const pills = [{ id: 'all', label: 'All', count: total, name: 'All' }].concat(
+  ENGINES.map((e) => ({ id: e.prefix, label: e.name, count: e.tools.length, name: e.name })),
+);
+
+const gridStyle =
+  'display:grid;grid-template-columns:repeat(auto-fill, minmax(262px, 1fr));gap:13px';
 ---
 
 <BaseLayout title={title} description={description} jsonLd={jsonLd}>
-  <div class="mx-auto w-full max-w-6xl px-8 pb-20 pt-16">
-    <!-- hero -->
-    <section class="grid items-center gap-12 lg:grid-cols-[1fr_432px]">
-      <div>
-        <h1 class="text-[40px] font-extrabold leading-[1.07] tracking-[-0.03em] text-slate-900 dark:text-slate-100 sm:text-[56px] sm:leading-[1.05]">
-          Free tools that run <span class="text-brand dark:text-brand-light">in your browser</span>
-        </h1>
-        <p class="mt-[18px] max-w-[500px] text-[18px] leading-[1.6] text-slate-500 dark:text-slate-400">
-          {totalTools} fast, private tools for images, PDFs, code and text. Everything
-          runs entirely on your device — your files are never uploaded to a server.
-        </p>
+  <!-- HERO -->
+  <section style="position:relative;overflow:hidden">
+    <div
+      aria-hidden="true"
+      style="position:absolute;inset:0;background-image:radial-gradient(circle, rgba(28,26,22,.055) 1px, transparent 1.4px);background-size:24px 24px;-webkit-mask-image:linear-gradient(#000,transparent 88%);mask-image:linear-gradient(#000,transparent 88%)"
+    >
+    </div>
+    <div style="position:relative;max-width:1180px;margin:0 auto;padding:60px 24px 34px">
+      <div
+        style="display:inline-flex;align-items:center;gap:9px;padding:6px 12px;border:1px solid #CDE1D4;background:#EAF3EC;border-radius:999px;font-family:'JetBrains Mono Variable',monospace;font-size:12px;color:#1F7A55;margin-bottom:24px"
+      >
+        <span class="luci-pulse" style="width:8px;height:8px;border-radius:50%;background:#2F9E6B"></span>
+        Running locally · nothing uploaded
+      </div>
+      <h1
+        style="font-family:'Space Grotesk Variable',sans-serif;font-weight:600;font-size:58px;line-height:1.03;letter-spacing:-.028em;margin:0 0 18px;max-width:15ch"
+      >
+        Sharp little tools that never leave your browser.
+      </h1>
+      <p style="font-size:19px;line-height:1.55;color:#4B473E;margin:0 0 30px;max-width:600px">
+        A growing kit of <strong style="color:#1C1A16;font-weight:600">{total} utilities</strong> for
+        images, PDFs, code and text. Everything runs on your device — your files are never uploaded to a
+        server.
+      </p>
 
-        <div class="mt-7 flex flex-wrap gap-2.5">
-          {
-            ['100% in your browser', 'Nothing uploaded', 'Free & instant'].map((label) => (
-              <div class="inline-flex items-center gap-[9px] rounded-full border border-[#e9ebf3] bg-white px-[15px] py-[9px] dark:border-slate-800 dark:bg-slate-900">
-                <span class="inline-flex h-[18px] w-[18px] items-center justify-center rounded-full bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light" aria-hidden="true">
-                  <Icon name="check" stroke={3.6} class="h-[11px] w-[11px]" />
-                </span>
-                <span class="text-[14px] font-semibold text-slate-700 dark:text-slate-300">{label}</span>
-              </div>
-            ))
-          }
-        </div>
+      <div style="max-width:640px;position:relative;margin-bottom:20px">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#A7A192"
+          stroke-width="2"
+          stroke-linecap="round"
+          style="position:absolute;left:18px;top:50%;transform:translateY(-50%);pointer-events:none"
+        >
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+        </svg>
+        <input
+          id="tool-search"
+          type="text"
+          placeholder={`Search ${total} tools — try 'heic', 'json', 'qr'…`}
+          spellcheck="false"
+          autocomplete="off"
+          aria-label="Search tools"
+          style="width:100%;height:58px;padding:0 108px 0 48px;border:1px solid #E0D9CA;background:#FFFFFF;border-radius:14px;font-family:'Hanken Grotesk Variable',sans-serif;font-size:16.5px;color:#1C1A16;outline:none;box-shadow:0 1px 2px rgba(28,26,22,.03)"
+        />
+        <span
+          style="position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;gap:5px;pointer-events:none"
+        >
+          <span
+            style="font-family:'JetBrains Mono Variable',monospace;font-size:11px;color:#A7A192;border:1px solid #E4DDCF;border-radius:6px;padding:3px 7px;background:#FBF9F3"
+            >⌘K</span
+          >
+        </span>
       </div>
 
-      <div class="hidden lg:flex lg:justify-end">
-        <HeroMockup />
+      <div style="display:flex;flex-wrap:wrap;gap:9px">
+        {
+          ['100% in your browser', 'Nothing uploaded', 'Free & instant'].map((label) => (
+            <span style="display:inline-flex;align-items:center;gap:8px;padding:7px 13px;background:#FFFFFF;border:1px solid #E7E1D5;border-radius:999px;font-family:'JetBrains Mono Variable',monospace;font-size:12px;color:#3A362E">
+              <span style="width:7px;height:7px;border-radius:50%;background:#2F9E6B" />
+              {label}
+            </span>
+          ))
+        }
       </div>
-    </section>
+    </div>
+  </section>
 
-    <div class="mt-12">
-      <AdSlot />
+  <!-- STICKY CATEGORY FILTER -->
+  <div
+    style="position:sticky;top:64px;z-index:40;background:rgba(246,243,236,.92);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid #ECE6DA;border-bottom:1px solid #E7E1D5"
+  >
+    <div style="max-width:1180px;margin:0 auto;padding:0 24px">
+      <div data-noscroll style="display:flex;gap:8px;overflow-x:auto;padding:11px 0">
+        {
+          pills.map((p) => (
+            <button
+              class:list={['luci-pill', p.id === 'all' && 'is-active']}
+              data-pill={p.id}
+              data-name={p.name}
+            >
+              <span>{p.label}</span>
+              <span class="luci-pill-count">{p.count}</span>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- CATALOG -->
+  <main style="max-width:1180px;margin:0 auto;padding:0 24px 90px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 0 4px">
+      <div
+        id="count-label"
+        style="font-family:'JetBrains Mono Variable',monospace;font-size:12.5px;color:#6E6A5F;letter-spacing:.02em"
+      >
+        {total} tools across {catCount} categories
+      </div>
+      <button id="clear-btn" class="luci-clear">Clear ✕</button>
+    </div>
+
+    <div
+      style="display:flex;align-items:center;justify-content:center;gap:12px;margin:14px 0 6px;padding:15px;border:1px dashed #DBD3C3;border-radius:12px;background:#FBF9F3"
+    >
+      <span
+        style="font-family:'JetBrains Mono Variable',monospace;font-size:10.5px;letter-spacing:.14em;color:#B4AD9C;text-transform:uppercase"
+        >Sponsored</span
+      >
+      <span style="font-size:13.5px;color:#8C8677"
+        >A quiet, unobtrusive ad slot — never trackers, never your data.</span
+      >
     </div>
 
     {
       ENGINES.map((engine) => (
-        <section id={engine.prefix} class="relative mt-16 pl-5">
-          <div class="pointer-events-none absolute left-0 top-0 h-full w-[1.5px]" style={`background: linear-gradient(to bottom, ${engine.accentHex}33, ${engine.accentHex} 35%, transparent)`} aria-hidden="true"></div>
-          <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <span
-              class="inline-flex h-[46px] w-[46px] flex-shrink-0 items-center justify-center rounded-[13px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light"
-              aria-hidden="true"
-            >
-              <Icon name={engine.icon} class="h-6 w-6" />
-            </span>
-            <h2 class="text-[28px] font-bold tracking-[-0.02em] text-slate-900 dark:text-slate-100">
-              {engine.name}
-            </h2>
-            <a
-              href={engineUrl(engine.prefix)}
-              class="text-[14px] font-semibold text-brand hover:underline dark:text-brand-light"
-            >
+        <section id={`cat-${engine.prefix}`} data-cat-section={engine.prefix} style="padding:30px 0 4px">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px">
+            <div style="min-width:0">
+              <div style="display:flex;align-items:center;gap:11px">
+                <span style={`flex:none;width:10px;height:10px;border-radius:50%;background:${dotColor(engine.hue)}`} />
+                <h2 style="font-family:'Space Grotesk Variable',sans-serif;font-weight:600;font-size:23px;letter-spacing:-.015em;margin:0">
+                  {engine.name}
+                </h2>
+                <span
+                  class="cat-count"
+                  data-cat-count={engine.prefix}
+                  style="font-family:'JetBrains Mono Variable',monospace;font-size:11.5px;color:#A7A192;padding-top:3px"
+                >
+                  {engine.tools.length} tools
+                </span>
+              </div>
+              <p style="margin:8px 0 0;font-size:14.5px;color:#6E6A5F;max-width:60ch">{engine.blurb}</p>
+            </div>
+            <a href={engineUrl(engine.prefix)} class="luci-viewall">
               View all →
             </a>
           </div>
-          <p class="mt-2.5 max-w-[760px] text-[15px] leading-[1.5] text-slate-500 dark:text-slate-400">
-            {engine.blurb}
-          </p>
-          <ul class="mt-6 grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-5">
-            {engine.tools.map((t) => (
-              <li>
+
+          <div style={gridStyle}>
+            {engine.tools.map((t) => {
+              const glyph = t.specimen ?? t.chip ?? '';
+              const isSample = !!t.specimen;
+              const chipStyle = `flex:none;width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:${tintBg(engine.hue)};color:${tintFg(engine.hue)};font-family:${chipFont(isSample)};font-weight:600`;
+              const chipTextStyle = `font-size:${chipSize(isSample, glyph)};line-height:1;letter-spacing:${isSample ? '0' : '.01em'};white-space:nowrap`;
+              return (
                 <a
                   href={toolUrl(engine.prefix, t.slug)}
-                  class={`flex h-full flex-col rounded-[16px] border border-[#eceef4] bg-white transition hover:-translate-y-0.5 hover:border-brand-ring hover:shadow-[0_10px_28px_-6px_rgba(79,70,229,0.12)] dark:border-slate-800 dark:bg-slate-900 ${t.specimen ? 'p-6' : 'px-7 py-[26px]'}`}
+                  class="luci-card"
+                  data-cat={engine.prefix}
+                  data-name={t.title}
+                  data-desc={t.description}
                 >
-                  <div class="flex items-start justify-between">
-                    <span
-                      class="inline-flex h-[46px] w-[46px] items-center justify-center rounded-[12px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light"
-                      aria-hidden="true"
-                    >
-                      <Icon name={t.icon} class="h-[22px] w-[22px]" />
-                    </span>
-                    {t.specimen && (
-                      <span
-                        class="rounded-[8px] bg-[#f1f3f9] px-[11px] py-[5px] text-[16px] font-extrabold text-slate-400 dark:bg-slate-800 dark:text-slate-500"
-                        aria-hidden="true"
-                      >
-                        {t.specimen}
+                  <span style={chipStyle}>
+                    <span style={chipTextStyle}>{glyph}</span>
+                  </span>
+                  <span style="min-width:0;flex:1">
+                    <span style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                      <span style="font-family:'Hanken Grotesk Variable',sans-serif;font-weight:600;font-size:15px;color:#1C1A16;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                        {t.title}
                       </span>
-                    )}
-                  </div>
-                  <div
-                    class={`mt-4 font-bold text-slate-900 dark:text-slate-100 ${t.specimen ? 'text-[16px]' : 'text-[19px]'}`}
-                  >
-                    {t.title}
-                  </div>
-                  <div
-                    class={`mt-1.5 flex-1 leading-[1.55] text-slate-500 dark:text-slate-400 ${t.specimen ? 'text-[14px]' : 'text-[14.5px]'}`}
-                  >
-                    {t.description}
-                  </div>
-                  <div class="mt-4 text-[14px] font-semibold text-brand dark:text-brand-light">Open →</div>
+                      <span style="flex:none;color:#C6BFB0;font-size:14px">→</span>
+                    </span>
+                    <span style="display:block;margin-top:3px;font-size:13px;line-height:1.4;color:#807A6C">
+                      {t.description}
+                    </span>
+                  </span>
                 </a>
-              </li>
-            ))}
-          </ul>
+              );
+            })}
+          </div>
         </section>
       ))
     }
-  </div>
+
+    <div id="no-results" style="display:none;text-align:center;padding:70px 20px">
+      <div
+        style="font-family:'Space Grotesk Variable',sans-serif;font-weight:600;font-size:22px;color:#1C1A16;margin-bottom:8px"
+      >
+        No tools match your search
+      </div>
+      <p style="font-size:15px;color:#6E6A5F;margin:0 0 20px">
+        Try a different keyword, or browse everything.
+      </p>
+      <button
+        id="reset-btn"
+        style="height:40px;padding:0 18px;border:none;background:#1C1A16;color:#FBF9F3;border-radius:10px;cursor:pointer;font-family:'Hanken Grotesk Variable',sans-serif;font-weight:600;font-size:14px"
+      >
+        Reset filters
+      </button>
+    </div>
+  </main>
 </BaseLayout>
+
+<style>
+  @keyframes lucipulse {
+    0% { box-shadow: 0 0 0 0 rgba(47, 158, 107, 0.5); }
+    70% { box-shadow: 0 0 0 7px rgba(47, 158, 107, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(47, 158, 107, 0); }
+  }
+  .luci-pulse { animation: lucipulse 2.6s infinite; }
+
+  [data-noscroll] { scrollbar-width: none; }
+  [data-noscroll]::-webkit-scrollbar { height: 0; width: 0; }
+
+  #tool-search:focus {
+    border-color: #1f7a55;
+    box-shadow: 0 0 0 4px rgba(31, 122, 85, 0.12);
+    outline: none;
+  }
+  #tool-search::placeholder { color: #a7a192; }
+
+  .luci-pill {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 34px;
+    padding: 0 13px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    border: 1px solid #e4ddcf;
+    background: #fff;
+    color: #3a362e;
+    white-space: nowrap;
+    transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+  }
+  .luci-pill .luci-pill-count {
+    font-family: 'JetBrains Mono Variable', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: #a7a192;
+  }
+  .luci-pill:hover:not(.is-active) { border-color: #d6cebe; }
+  .luci-pill.is-active {
+    background: #1f7a55;
+    color: #fff;
+    border-color: transparent;
+  }
+  .luci-pill.is-active .luci-pill-count { color: rgba(255, 255, 255, 0.72); }
+
+  .luci-card {
+    display: flex;
+    gap: 13px;
+    align-items: flex-start;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #e9e3d7;
+    border-radius: 14px;
+    color: #1c1a16;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .luci-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px -16px rgba(28, 26, 22, 0.32);
+    border-color: #d6cebe;
+  }
+
+  .luci-viewall {
+    flex: none;
+    font-family: 'JetBrains Mono Variable', monospace;
+    font-size: 12.5px;
+    color: #1f7a55;
+    white-space: nowrap;
+    padding-bottom: 2px;
+  }
+  .luci-viewall:hover { color: #17603f; }
+
+  .luci-clear {
+    display: none;
+    align-items: center;
+    gap: 7px;
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid #e4ddcf;
+    background: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono Variable', monospace;
+    font-size: 12px;
+    color: #6e6a5f;
+  }
+  .luci-clear:hover { border-color: #d6cebe; color: #1c1a16; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .luci-pulse { animation: none; }
+    .luci-card { transition: none; }
+  }
+
+  @media (max-width: 640px) {
+    #tool-search { font-size: 16px; }
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const search = document.getElementById('tool-search');
+    const clearBtn = document.getElementById('clear-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const countLabel = document.getElementById('count-label');
+    const noResults = document.getElementById('no-results');
+    if (!search) return;
+
+    const pills = Array.from(document.querySelectorAll('[data-pill]'));
+    const sections = Array.from(document.querySelectorAll('[data-cat-section]'));
+    const cards = Array.from(document.querySelectorAll('[data-cat][data-name]'));
+    const catCounts = {};
+    document.querySelectorAll('[data-cat-count]').forEach((el) => {
+      catCounts[el.getAttribute('data-cat-count')] = el;
+    });
+    const catNames = {};
+    pills.forEach((p) => {
+      const id = p.getAttribute('data-pill');
+      if (id !== 'all') catNames[id] = p.getAttribute('data-name');
+    });
+
+    const TOTAL = cards.length;
+    let active = 'all';
+
+    function apply() {
+      const q = (search.value || '').trim().toLowerCase();
+      const perCat = {};
+      let shown = 0;
+
+      cards.forEach((card) => {
+        const cat = card.getAttribute('data-cat');
+        const hay = (
+          card.getAttribute('data-name') +
+          ' ' +
+          card.getAttribute('data-desc') +
+          ' ' +
+          (catNames[cat] || '')
+        ).toLowerCase();
+        const catMatch = active === 'all' || active === cat;
+        const textMatch = !q || hay.includes(q);
+        const vis = catMatch && textMatch;
+        card.style.display = vis ? '' : 'none';
+        if (vis) {
+          shown++;
+          perCat[cat] = (perCat[cat] || 0) + 1;
+        }
+      });
+
+      sections.forEach((sec) => {
+        const cat = sec.getAttribute('data-cat-section');
+        const n = perCat[cat] || 0;
+        sec.style.display = n > 0 ? '' : 'none';
+        if (catCounts[cat]) catCounts[cat].textContent = n + ' tools';
+      });
+
+      const filtering = q !== '' || active !== 'all';
+      clearBtn.style.display = filtering ? 'inline-flex' : 'none';
+      noResults.style.display = shown === 0 ? 'block' : 'none';
+
+      if (filtering) {
+        const inName = active !== 'all' ? ' in ' + catNames[active] : '';
+        countLabel.textContent = shown + ' ' + (shown === 1 ? 'match' : 'matches') + inName;
+      } else {
+        countLabel.textContent = TOTAL + ' tools across ' + sections.length + ' categories';
+      }
+    }
+
+    function reset() {
+      search.value = '';
+      active = 'all';
+      pills.forEach((x) => x.classList.toggle('is-active', x.getAttribute('data-pill') === 'all'));
+      apply();
+    }
+
+    pills.forEach((p) => {
+      p.addEventListener('click', () => {
+        active = p.getAttribute('data-pill');
+        pills.forEach((x) => x.classList.toggle('is-active', x === p));
+        apply();
+      });
+    });
+    search.addEventListener('input', apply);
+    clearBtn.addEventListener('click', () => {
+      reset();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      search.focus();
+    });
+    resetBtn.addEventListener('click', reset);
+
+    apply();
+  })();
+</script>

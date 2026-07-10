@@ -1,17 +1,25 @@
 ---
 // Legal pages live once at the root (tools-home), so link to them absolutely.
 import { SITE } from '../consts';
+
+const year = new Date().getFullYear();
 ---
 
-<footer class="mt-12 border-t border-[#eef0f4] bg-white dark:border-slate-800 dark:bg-slate-900">
-  <div
-    class="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-8 py-[22px] text-[13px] text-slate-400 dark:text-slate-500"
-  >
-    <p>© {SITE.name} — private by design, nothing leaves your browser.</p>
-    <nav class="flex gap-5">
-      <a href={`${SITE.url}/privacy/`} class="hover:text-slate-600 dark:hover:text-slate-300">Privacy</a>
-      <a href={`${SITE.url}/terms/`} class="hover:text-slate-600 dark:hover:text-slate-300">Terms</a>
-      <a href={`${SITE.url}/about/`} class="hover:text-slate-600 dark:hover:text-slate-300">About</a>
-    </nav>
+<footer class="border-t border-[#E7E1D5] bg-[#FBF9F3]">
+  <div class="mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-5 px-6 py-[38px]">
+    <div class="flex items-center gap-[11px]">
+      <span class="flex h-[26px] w-[26px] items-center justify-center rounded-[8px] bg-ink" aria-hidden="true">
+        <span class="h-2 w-2 rounded-[3px] bg-accent"></span>
+      </span>
+      <span class="text-[14px] text-[#4B473E]">
+        Private by design — <span class="text-[#8C8677]">nothing leaves your browser.</span>
+      </span>
+    </div>
+    <div class="flex items-center gap-[22px]">
+      <a href={`${SITE.url}/privacy/`} class="text-[13.5px] text-[#4B473E] hover:text-ink">Privacy</a>
+      <a href={`${SITE.url}/terms/`} class="text-[13.5px] text-[#4B473E] hover:text-ink">Terms</a>
+      <a href={`${SITE.url}/about/`} class="text-[13.5px] text-[#4B473E] hover:text-ink">About</a>
+      <span class="font-mono text-[11.5px] text-[#B4AD9C]">© {year} Luci Tools</span>
+    </div>
   </div>
 </footer>

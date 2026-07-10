@@ -1,5 +1,6 @@
 ---
-import '@fontsource-variable/plus-jakarta-sans';
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/hanken-grotesk';
 import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
 import SeoHead from '../components/SeoHead.astro';
@@ -18,17 +19,9 @@ const { title, description, jsonLd } = Astro.props;
 <!doctype html>
 <html lang="en">
   <head>
-    <script is:inline>
-      (() => {
-        const saved = localStorage.getItem('theme');
-        const dark = saved === 'dark';
-        document.documentElement.classList.toggle('dark', dark);
-        document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-      })();
-    </script>
     <SeoHead title={title} description={description} jsonLd={jsonLd} />
   </head>
-  <body class="flex min-h-screen flex-col bg-[#f8f9fc] font-sans text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+  <body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased">
     <Header />
     <main class="w-full flex-1">
       <slot />

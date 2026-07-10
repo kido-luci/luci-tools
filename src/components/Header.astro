@@ -1,33 +1,50 @@
 ---
-import { SITE } from '../consts';
-import Icon from './Icon.astro';
+// Sticky cream header: logo mark, a search affordance that focuses the hub search
+// (or navigates home from other pages), and the About link.
 ---
 
-<header class="border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
-  <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-8 py-5">
-    <a href="/" class="flex items-center gap-[14px]">
-      <img src="/logo-icon.png" class="h-10 w-10" alt="Luci Studio" />
-      <span class="whitespace-nowrap text-[20px] font-bold text-slate-900 dark:text-slate-100">{SITE.name}</span>
+<header
+  class="sticky top-0 z-50 border-b border-[#E7E1D5] bg-paper/80 backdrop-blur-md"
+>
+  <div class="mx-auto flex h-16 max-w-[1180px] items-center justify-between gap-4 px-6">
+    <a href="/" class="flex items-center gap-2.5 text-ink">
+      <span class="flex h-7 w-7 items-center justify-center rounded-[9px] bg-ink" aria-hidden="true">
+        <span class="h-[9px] w-[9px] rounded-[3px] bg-accent"></span>
+      </span>
+      <span class="font-display text-[18px] font-bold tracking-[-0.01em]">Luci</span>
+      <span class="pt-[3px] font-mono text-[12px] tracking-[0.02em] text-[#6E6A5F]">tools</span>
     </a>
-    <nav class="flex items-center gap-[26px] text-[15px] font-medium text-slate-600 dark:text-slate-400">
-      <a href="/about/" class="hover:text-slate-900 dark:hover:text-slate-100">About</a>
+    <div class="flex items-center gap-4">
       <button
         type="button"
-        id="theme-toggle"
-        aria-label="Toggle dark mode"
-        class="inline-flex h-[38px] w-[38px] items-center justify-center rounded-[10px] border border-[#e7e9f0] text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+        id="header-search"
+        class="hidden h-[34px] items-center gap-[9px] rounded-[9px] border border-[#E4DDCF] bg-[#FBF9F3] pl-3 pr-2.5 font-mono text-[12px] text-[#6E6A5F] transition hover:border-[#D6CEBE] hover:text-[#3A362E] sm:inline-flex"
       >
-        <Icon name="moon" stroke={1.9} class="h-[17px] w-[17px] dark:hidden" />
-        <Icon name="sun" stroke={1.9} class="hidden h-[17px] w-[17px] dark:block" />
+        <span>Search tools</span>
+        <span class="rounded-[5px] border border-[#E4DDCF] px-[5px] py-px text-[11px] text-[#A7A192]">⌘K</span>
       </button>
-    </nav>
+      <a href="/about/" class="text-[14.5px] font-medium text-ink hover:text-accent">About</a>
+    </div>
   </div>
 </header>
 
 <script is:inline>
-  document.getElementById('theme-toggle')?.addEventListener('click', () => {
-    const dark = document.documentElement.classList.toggle('dark');
-    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-    localStorage.setItem('theme', dark ? 'dark' : 'light');
-  });
+  (() => {
+    const focusSearch = () => {
+      const el = document.getElementById('tool-search');
+      if (el) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        el.focus();
+      } else {
+        window.location.href = '/';
+      }
+    };
+    document.getElementById('header-search')?.addEventListener('click', focusSearch);
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && String(e.key).toLowerCase() === 'k') {
+        e.preventDefault();
+        focusSearch();
+      }
+    });
+  })();
 </script>

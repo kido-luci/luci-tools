@@ -5,19 +5,20 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Plus Jakarta Sans Variable"', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+        // Cream-paper "Luci Tools" identity: Hanken for body, Space Grotesk for
+        // display headings, JetBrains Mono for labels/chips.
+        sans: ['"Hanken Grotesk Variable"', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['"Space Grotesk Variable"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono Variable"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       colors: {
-        // Brand indigo, sampled from the "Refined Indigo" design.
-        // `tint`/`ring` are the soft fills used by icon tiles, trust chips and
-        // the active mockup tile; `dark` is the hover/darker shade.
-        brand: {
-          DEFAULT: '#4f46e5',
-          dark: '#4338ca',
-          light: '#818cf8',
-          tint: '#eef0fe',
-          ring: '#e0e2fb',
+        // Cream-paper palette (light-only). `ink` is the near-black text; `paper`
+        // is the canvas; `accent` is the private-green used for links + active state.
+        ink: '#1C1A16',
+        paper: '#F6F3EC',
+        accent: {
+          DEFAULT: '#1F7A55',
+          dark: '#17603F',
         },
       },
     },
