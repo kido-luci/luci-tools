@@ -22,7 +22,7 @@ const tintBg = (h: number) => `oklch(0.955 0.045 ${h})`;
 const tintFg = (h: number) => `oklch(0.46 0.15 ${h})`;
 const dotColor = (h: number) => `oklch(0.63 0.15 ${h})`;
 const chipFont = (isSample: boolean) =>
-  isSample ? "'Space Grotesk Variable', sans-serif" : "'JetBrains Mono Variable', monospace";
+  isSample ? "'Space Grotesk Variable', sans-serif" : "'IBM Plex Mono', monospace";
 const chipSize = (isSample: boolean, glyph: string) =>
   isSample ? '18px' : glyph.length <= 3 ? '13px' : glyph.length <= 4 ? '11.5px' : '10px';
 
@@ -44,7 +44,7 @@ const gridStyle =
     </div>
     <div style="position:relative;max-width:1180px;margin:0 auto;padding:60px 24px 34px">
       <div
-        style="display:inline-flex;align-items:center;gap:9px;padding:6px 12px;border:1px solid #CDE1D4;background:#EAF3EC;border-radius:999px;font-family:'JetBrains Mono Variable',monospace;font-size:12px;color:#1F7A55;margin-bottom:24px"
+        style="display:inline-flex;align-items:center;gap:9px;padding:6px 12px;border:1px solid #CDE1D4;background:#EAF3EC;border-radius:999px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#1F7A55;margin-bottom:24px"
       >
         <span class="luci-pulse" style="width:8px;height:8px;border-radius:50%;background:#2F9E6B"></span>
         Running locally · nothing uploaded
@@ -87,7 +87,7 @@ const gridStyle =
           style="position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;gap:5px;pointer-events:none"
         >
           <span
-            style="font-family:'JetBrains Mono Variable',monospace;font-size:11px;color:#A7A192;border:1px solid #E4DDCF;border-radius:6px;padding:3px 7px;background:#FBF9F3"
+            style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#A7A192;border:1px solid #E4DDCF;border-radius:6px;padding:3px 7px;background:#FBF9F3"
             >⌘K</span
           >
         </span>
@@ -96,7 +96,7 @@ const gridStyle =
       <div style="display:flex;flex-wrap:wrap;gap:9px">
         {
           ['100% in your browser', 'Nothing uploaded', 'Free & instant'].map((label) => (
-            <span style="display:inline-flex;align-items:center;gap:8px;padding:7px 13px;background:#FFFFFF;border:1px solid #E7E1D5;border-radius:999px;font-family:'JetBrains Mono Variable',monospace;font-size:12px;color:#3A362E">
+            <span style="display:inline-flex;align-items:center;gap:8px;padding:7px 13px;background:#FFFFFF;border:1px solid #E7E1D5;border-radius:999px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#3A362E">
               <span style="width:7px;height:7px;border-radius:50%;background:#2F9E6B" />
               {label}
             </span>
@@ -108,7 +108,7 @@ const gridStyle =
 
   <!-- STICKY CATEGORY FILTER -->
   <div
-    style="position:sticky;top:64px;z-index:40;background:rgba(246,243,236,.92);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid #ECE6DA;border-bottom:1px solid #E7E1D5"
+    style="position:sticky;top:64px;z-index:40;background:rgba(244,242,236,.92);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid #ECE6DA;border-bottom:1px solid #E7E1D5"
   >
     <div style="max-width:1180px;margin:0 auto;padding:0 24px">
       <div data-noscroll style="display:flex;gap:8px;overflow-x:auto;padding:11px 0">
@@ -133,7 +133,7 @@ const gridStyle =
     <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 0 4px">
       <div
         id="count-label"
-        style="font-family:'JetBrains Mono Variable',monospace;font-size:12.5px;color:#6E6A5F;letter-spacing:.02em"
+        style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#6E6A5F;letter-spacing:.02em"
       >
         {total} tools across {catCount} categories
       </div>
@@ -144,7 +144,7 @@ const gridStyle =
       style="display:flex;align-items:center;justify-content:center;gap:12px;margin:14px 0 6px;padding:15px;border:1px dashed #DBD3C3;border-radius:12px;background:#FBF9F3"
     >
       <span
-        style="font-family:'JetBrains Mono Variable',monospace;font-size:10.5px;letter-spacing:.14em;color:#B4AD9C;text-transform:uppercase"
+        style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:#B4AD9C;text-transform:uppercase"
         >Sponsored</span
       >
       <span style="font-size:13.5px;color:#8C8677"
@@ -165,7 +165,7 @@ const gridStyle =
                 <span
                   class="cat-count"
                   data-cat-count={engine.prefix}
-                  style="font-family:'JetBrains Mono Variable',monospace;font-size:11.5px;color:#A7A192;padding-top:3px"
+                  style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#A7A192;padding-top:3px"
                 >
                   {engine.tools.length} tools
                 </span>
@@ -269,7 +269,7 @@ const gridStyle =
     transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
   }
   .luci-pill .luci-pill-count {
-    font-family: 'JetBrains Mono Variable', monospace;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     font-weight: 500;
     color: #a7a192;
@@ -301,7 +301,7 @@ const gridStyle =
 
   .luci-viewall {
     flex: none;
-    font-family: 'JetBrains Mono Variable', monospace;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 12.5px;
     color: #1f7a55;
     white-space: nowrap;
@@ -319,7 +319,7 @@ const gridStyle =
     background: #fff;
     border-radius: 8px;
     cursor: pointer;
-    font-family: 'JetBrains Mono Variable', monospace;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
     color: #6e6a5f;
   }
