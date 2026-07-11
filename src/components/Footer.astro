@@ -5,21 +5,21 @@ import { SITE } from '../consts';
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-[#E7E1D5] bg-[#FBF9F3]">
+<footer class="border-t border-[var(--border)] bg-[var(--surface-2)]">
   <div class="mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-5 px-6 py-[38px]">
     <div class="flex items-center gap-[11px]">
-      <span class="flex h-[26px] w-[26px] items-center justify-center rounded-[8px] bg-ink" aria-hidden="true">
-        <span class="h-2 w-2 rounded-[3px] bg-accent"></span>
+      <span class="flex h-[26px] w-[26px] items-center justify-center rounded-[8px] bg-[var(--text)]" aria-hidden="true">
+        <span class="h-2 w-2 rounded-[3px] bg-[var(--accent)]"></span>
       </span>
-      <span class="text-[14px] text-[#4B473E]">
-        Private by design — <span class="text-[#8C8677]">nothing leaves your browser.</span>
+      <span class="text-[14px] text-[var(--text-2)]">
+        Private by design — <span class="text-[var(--text-5)]">nothing leaves your browser.</span>
       </span>
     </div>
     <div class="flex items-center gap-[22px]">
-      <a href={`${SITE.url}/privacy/`} class="text-[13.5px] text-[#4B473E] hover:text-ink">Privacy</a>
-      <a href={`${SITE.url}/terms/`} class="text-[13.5px] text-[#4B473E] hover:text-ink">Terms</a>
-      <a href={`${SITE.url}/about/`} class="text-[13.5px] text-[#4B473E] hover:text-ink">About</a>
-      <span class="font-mono text-[11.5px] text-[#B4AD9C]">© {year} Luci Tools</span>
+      <a href={`${SITE.url}/privacy/`} class="text-[13.5px] text-[var(--text-2)] hover:text-[var(--text)]">Privacy</a>
+      <a href={`${SITE.url}/terms/`} class="text-[13.5px] text-[var(--text-2)] hover:text-[var(--text)]">Terms</a>
+      <a href={`${SITE.url}/about/`} class="text-[13.5px] text-[var(--text-2)] hover:text-[var(--text)]">About</a>
+      <span class="font-mono text-[11.5px] text-[var(--text-7)]">© {year} Luci Tools</span>
     </div>
   </div>
 </footer>

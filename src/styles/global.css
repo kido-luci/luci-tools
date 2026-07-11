@@ -2,6 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Cream-paper theme tokens. Light values on :root; the "night cream" dark theme
+ * (warm charcoal, off-white text, brightened green) overrides them on html.dark.
+ * The hub is almost entirely inline hex, so these drive the page via var() — the
+ * .dark class is toggled by the same shared `theme` localStorage key the engine
+ * tool pages use, so the choice carries across hub <-> tools on the one origin.
+ */
+:root {
+  color-scheme: light;
+  --bg: #f4f2ec;
+  --surface: #ffffff;
+  --surface-2: #fbf9f3;
+  --border: #e7e1d5;
+  --border-2: #e4ddcf;
+  --border-3: #e9e3d7;
+  --border-hover: #d6cebe;
+  --border-dashed: #dbd3c3;
+  --text: #1c1a16;
+  --text-2: #4b473e;
+  --text-3: #6e6a5f;
+  --text-4: #807a6c;
+  --text-5: #8c8677;
+  --text-6: #a7a192;
+  --text-7: #b4ad9c;
+  --text-8: #c6bfb0;
+  --pill-text: #3a362e;
+  --accent: #1f7a55;
+  --accent-hover: #17603f;
+  --accent-soft-bg: #eaf3ec;
+  --accent-soft-border: #cde1d4;
+  --header-bg: rgba(244, 242, 236, 0.8);
+  --sticky-bg: rgba(244, 242, 236, 0.92);
+  --sticky-border-top: #ece6da;
+  --dot-grid: rgba(28, 26, 22, 0.055);
+  --card-shadow: rgba(28, 26, 22, 0.32);
+  --search-shadow: rgba(28, 26, 22, 0.03);
+}
+
+html.dark {
+  color-scheme: dark;
+  --bg: #16140e;
+  --surface: #221f18;
+  --surface-2: #1d1a14;
+  --border: #322e25;
+  --border-2: #38332a;
+  --border-3: #2e2a21;
+  --border-hover: #4a4436;
+  --border-dashed: #3a352b;
+  --text: #f2efe6;
+  --text-2: #cdc6b6;
+  --text-3: #a39c8a;
+  --text-4: #968e7c;
+  --text-5: #898170;
+  --text-6: #79725f;
+  --text-7: #6a6351;
+  --text-8: #595344;
+  --pill-text: #d6d0c2;
+  --accent: #46a67d;
+  --accent-hover: #63c096;
+  --accent-soft-bg: #16271e;
+  --accent-soft-border: #274030;
+  --header-bg: rgba(22, 20, 14, 0.8);
+  --sticky-bg: rgba(22, 20, 14, 0.92);
+  --sticky-border-top: #2a261e;
+  --dot-grid: rgba(255, 255, 255, 0.05);
+  --card-shadow: rgba(0, 0, 0, 0.5);
+  --search-shadow: rgba(0, 0, 0, 0.25);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
 /* Shared readable-copy styles for the SEO body (how-to + explanation). */
 @layer components {
   .copy {

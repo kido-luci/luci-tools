@@ -39,12 +39,12 @@ const gridStyle =
   <section style="position:relative;overflow:hidden">
     <div
       aria-hidden="true"
-      style="position:absolute;inset:0;background-image:radial-gradient(circle, rgba(28,26,22,.055) 1px, transparent 1.4px);background-size:24px 24px;-webkit-mask-image:linear-gradient(#000,transparent 88%);mask-image:linear-gradient(#000,transparent 88%)"
+      style="position:absolute;inset:0;background-image:radial-gradient(circle, var(--dot-grid) 1px, transparent 1.4px);background-size:24px 24px;-webkit-mask-image:linear-gradient(#000,transparent 88%);mask-image:linear-gradient(#000,transparent 88%)"
     >
     </div>
     <div style="position:relative;max-width:1180px;margin:0 auto;padding:60px 24px 34px">
       <div
-        style="display:inline-flex;align-items:center;gap:9px;padding:6px 12px;border:1px solid #CDE1D4;background:#EAF3EC;border-radius:999px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#1F7A55;margin-bottom:24px"
+        style="display:inline-flex;align-items:center;gap:9px;padding:6px 12px;border:1px solid var(--accent-soft-border);background:var(--accent-soft-bg);border-radius:999px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent);margin-bottom:24px"
       >
         <span class="luci-pulse" style="width:8px;height:8px;border-radius:50%;background:#2F9E6B"></span>
         Running locally · nothing uploaded
@@ -54,8 +54,8 @@ const gridStyle =
       >
         Sharp little tools that never leave your browser.
       </h1>
-      <p style="font-size:19px;line-height:1.55;color:#4B473E;margin:0 0 30px;max-width:600px">
-        A growing kit of <strong style="color:#1C1A16;font-weight:600">{total} utilities</strong> for
+      <p style="font-size:19px;line-height:1.55;color:var(--text-2);margin:0 0 30px;max-width:600px">
+        A growing kit of <strong style="color:var(--text);font-weight:600">{total} utilities</strong> for
         images, PDFs, code and text. Everything runs on your device — your files are never uploaded to a
         server.
       </p>
@@ -66,10 +66,10 @@ const gridStyle =
           height="20"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="#A7A192"
+          stroke="currentColor"
           stroke-width="2"
           stroke-linecap="round"
-          style="position:absolute;left:18px;top:50%;transform:translateY(-50%);pointer-events:none"
+          style="position:absolute;left:18px;top:50%;transform:translateY(-50%);pointer-events:none;stroke:var(--text-6)"
         >
           <circle cx="11" cy="11" r="7"></circle>
           <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
@@ -81,13 +81,13 @@ const gridStyle =
           spellcheck="false"
           autocomplete="off"
           aria-label="Search tools"
-          style="width:100%;height:58px;padding:0 108px 0 48px;border:1px solid #E0D9CA;background:#FFFFFF;border-radius:14px;font-family:'Hanken Grotesk Variable',sans-serif;font-size:16.5px;color:#1C1A16;outline:none;box-shadow:0 1px 2px rgba(28,26,22,.03)"
+          style="width:100%;height:58px;padding:0 108px 0 48px;border:1px solid var(--border-2);background:var(--surface);border-radius:14px;font-family:'Hanken Grotesk Variable',sans-serif;font-size:16.5px;color:var(--text);outline:none;box-shadow:0 1px 2px var(--search-shadow)"
         />
         <span
           style="position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;gap:5px;pointer-events:none"
         >
           <span
-            style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#A7A192;border:1px solid #E4DDCF;border-radius:6px;padding:3px 7px;background:#FBF9F3"
+            style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-6);border:1px solid var(--border-2);border-radius:6px;padding:3px 7px;background:var(--surface-2)"
             >⌘K</span
           >
         </span>
@@ -96,7 +96,7 @@ const gridStyle =
       <div style="display:flex;flex-wrap:wrap;gap:9px">
         {
           ['100% in your browser', 'Nothing uploaded', 'Free & instant'].map((label) => (
-            <span style="display:inline-flex;align-items:center;gap:8px;padding:7px 13px;background:#FFFFFF;border:1px solid #E7E1D5;border-radius:999px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#3A362E">
+            <span style="display:inline-flex;align-items:center;gap:8px;padding:7px 13px;background:var(--surface);border:1px solid var(--border);border-radius:999px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--pill-text)">
               <span style="width:7px;height:7px;border-radius:50%;background:#2F9E6B" />
               {label}
             </span>
@@ -108,7 +108,7 @@ const gridStyle =
 
   <!-- STICKY CATEGORY FILTER -->
   <div
-    style="position:sticky;top:64px;z-index:40;background:rgba(244,242,236,.92);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid #ECE6DA;border-bottom:1px solid #E7E1D5"
+    style="position:sticky;top:64px;z-index:40;background:var(--sticky-bg);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid var(--sticky-border-top);border-bottom:1px solid var(--border)"
   >
     <div style="max-width:1180px;margin:0 auto;padding:0 24px">
       <div data-noscroll style="display:flex;gap:8px;overflow-x:auto;padding:11px 0">
@@ -133,7 +133,7 @@ const gridStyle =
     <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 0 4px">
       <div
         id="count-label"
-        style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#6E6A5F;letter-spacing:.02em"
+        style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--text-3);letter-spacing:.02em"
       >
         {total} tools across {catCount} categories
       </div>
@@ -141,13 +141,13 @@ const gridStyle =
     </div>
 
     <div
-      style="display:flex;align-items:center;justify-content:center;gap:12px;margin:14px 0 6px;padding:15px;border:1px dashed #DBD3C3;border-radius:12px;background:#FBF9F3"
+      style="display:flex;align-items:center;justify-content:center;gap:12px;margin:14px 0 6px;padding:15px;border:1px dashed var(--border-dashed);border-radius:12px;background:var(--surface-2)"
     >
       <span
-        style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:#B4AD9C;text-transform:uppercase"
+        style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--text-7);text-transform:uppercase"
         >Sponsored</span
       >
-      <span style="font-size:13.5px;color:#8C8677"
+      <span style="font-size:13.5px;color:var(--text-5)"
         >A quiet, unobtrusive ad slot — never trackers, never your data.</span
       >
     </div>
@@ -165,12 +165,12 @@ const gridStyle =
                 <span
                   class="cat-count"
                   data-cat-count={engine.prefix}
-                  style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#A7A192;padding-top:3px"
+                  style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text-6);padding-top:3px"
                 >
                   {engine.tools.length} tools
                 </span>
               </div>
-              <p style="margin:8px 0 0;font-size:14.5px;color:#6E6A5F;max-width:60ch">{engine.blurb}</p>
+              <p style="margin:8px 0 0;font-size:14.5px;color:var(--text-3);max-width:60ch">{engine.blurb}</p>
             </div>
             <a href={engineUrl(engine.prefix)} class="luci-viewall">
               View all →
@@ -196,12 +196,12 @@ const gridStyle =
                   </span>
                   <span style="min-width:0;flex:1">
                     <span style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-                      <span style="font-family:'Hanken Grotesk Variable',sans-serif;font-weight:600;font-size:15px;color:#1C1A16;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                      <span style="font-family:'Hanken Grotesk Variable',sans-serif;font-weight:600;font-size:15px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
                         {t.title}
                       </span>
-                      <span style="flex:none;color:#C6BFB0;font-size:14px">→</span>
+                      <span style="flex:none;color:var(--text-8);font-size:14px">→</span>
                     </span>
-                    <span style="display:block;margin-top:3px;font-size:13px;line-height:1.4;color:#807A6C">
+                    <span style="display:block;margin-top:3px;font-size:13px;line-height:1.4;color:var(--text-4)">
                       {t.description}
                     </span>
                   </span>
@@ -215,16 +215,16 @@ const gridStyle =
 
     <div id="no-results" style="display:none;text-align:center;padding:70px 20px">
       <div
-        style="font-family:'Space Grotesk Variable',sans-serif;font-weight:600;font-size:22px;color:#1C1A16;margin-bottom:8px"
+        style="font-family:'Space Grotesk Variable',sans-serif;font-weight:600;font-size:22px;color:var(--text);margin-bottom:8px"
       >
         No tools match your search
       </div>
-      <p style="font-size:15px;color:#6E6A5F;margin:0 0 20px">
+      <p style="font-size:15px;color:var(--text-3);margin:0 0 20px">
         Try a different keyword, or browse everything.
       </p>
       <button
         id="reset-btn"
-        style="height:40px;padding:0 18px;border:none;background:#1C1A16;color:#FBF9F3;border-radius:10px;cursor:pointer;font-family:'Hanken Grotesk Variable',sans-serif;font-weight:600;font-size:14px"
+        style="height:40px;padding:0 18px;border:none;background:var(--text);color:var(--bg);border-radius:10px;cursor:pointer;font-family:'Hanken Grotesk Variable',sans-serif;font-weight:600;font-size:14px"
       >
         Reset filters
       </button>
@@ -244,11 +244,11 @@ const gridStyle =
   [data-noscroll]::-webkit-scrollbar { height: 0; width: 0; }
 
   #tool-search:focus {
-    border-color: #1f7a55;
+    border-color: var(--accent);
     box-shadow: 0 0 0 4px rgba(31, 122, 85, 0.12);
     outline: none;
   }
-  #tool-search::placeholder { color: #a7a192; }
+  #tool-search::placeholder { color: var(--text-6); }
 
   .luci-pill {
     flex: none;
@@ -262,9 +262,9 @@ const gridStyle =
     font-family: inherit;
     font-size: 13.5px;
     font-weight: 600;
-    border: 1px solid #e4ddcf;
-    background: #fff;
-    color: #3a362e;
+    border: 1px solid var(--border-2);
+    background: var(--surface);
+    color: var(--pill-text);
     white-space: nowrap;
     transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
   }
@@ -272,11 +272,11 @@ const gridStyle =
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     font-weight: 500;
-    color: #a7a192;
+    color: var(--text-6);
   }
-  .luci-pill:hover:not(.is-active) { border-color: #d6cebe; }
+  .luci-pill:hover:not(.is-active) { border-color: var(--border-hover); }
   .luci-pill.is-active {
-    background: #1f7a55;
+    background: var(--accent);
     color: #fff;
     border-color: transparent;
   }
@@ -287,27 +287,27 @@ const gridStyle =
     gap: 13px;
     align-items: flex-start;
     padding: 15px;
-    background: #fff;
-    border: 1px solid #e9e3d7;
+    background: var(--surface);
+    border: 1px solid var(--border-3);
     border-radius: 14px;
-    color: #1c1a16;
+    color: var(--text);
     transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   }
   .luci-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 26px -16px rgba(28, 26, 22, 0.32);
-    border-color: #d6cebe;
+    box-shadow: 0 12px 26px -16px var(--card-shadow);
+    border-color: var(--border-hover);
   }
 
   .luci-viewall {
     flex: none;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12.5px;
-    color: #1f7a55;
+    color: var(--accent);
     white-space: nowrap;
     padding-bottom: 2px;
   }
-  .luci-viewall:hover { color: #17603f; }
+  .luci-viewall:hover { color: var(--accent-hover); }
 
   .luci-clear {
     display: none;
@@ -315,15 +315,15 @@ const gridStyle =
     gap: 7px;
     height: 30px;
     padding: 0 12px;
-    border: 1px solid #e4ddcf;
-    background: #fff;
+    border: 1px solid var(--border-2);
+    background: var(--surface);
     border-radius: 8px;
     cursor: pointer;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
-    color: #6e6a5f;
+    color: var(--text-3);
   }
-  .luci-clear:hover { border-color: #d6cebe; color: #1c1a16; }
+  .luci-clear:hover { border-color: var(--border-hover); color: var(--text); }
 
   @media (prefers-reduced-motion: reduce) {
     .luci-pulse { animation: none; }

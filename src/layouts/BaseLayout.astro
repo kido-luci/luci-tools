@@ -21,9 +21,18 @@ const { title, description, jsonLd } = Astro.props;
 <!doctype html>
 <html lang="en">
   <head>
+    <script is:inline>
+      // No-FOUC theme boot: mirror the engine tool pages (shared `theme` key on the
+      // one origin) so the hub opens in whatever the visitor last chose. Default light.
+      (() => {
+        const dark = localStorage.getItem('theme') === 'dark';
+        document.documentElement.classList.toggle('dark', dark);
+        document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+      })();
+    </script>
     <SeoHead title={title} description={description} jsonLd={jsonLd} />
   </head>
-  <body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased">
+  <body class="flex min-h-screen flex-col font-sans antialiased">
     <Header />
     <main class="w-full flex-1">
       <slot />
