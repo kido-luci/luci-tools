@@ -61,15 +61,15 @@ const faqs: FaqItem[] = [
         <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
       ) : (
         <span
-          class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light"
+          class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg"
           aria-hidden="true"
         >
           <Icon name={meta.icon} class="h-7 w-7" />
         </span>
       )
     }
-    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
-    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
 
     <ToolShell to="jpeg" accept=".avif,image/avif" prompt="Drag & drop AVIF images here" />
 
@@ -116,9 +116,9 @@ const faqs: FaqItem[] = [
 
       <h2>Related tools</h2>
       <ul>
-        <li><a href={toolUrl('webp-to-jpg')} class="text-brand underline hover:no-underline dark:text-brand-light">WebP to JPG converter</a> — another modern web format, converted the same way.</li>
-        <li><a href={toolUrl('png-to-jpg')} class="text-brand underline hover:no-underline dark:text-brand-light">PNG to JPG converter</a> — flatten screenshots and graphics into JPG.</li>
-        <li><a href={`${SITE.url}/pdf/jpg-to-pdf/`} class="text-brand underline hover:no-underline dark:text-brand-light">JPG to PDF</a> — combine your JPGs into a single PDF document.</li>
+        <li><a href={toolUrl('webp-to-jpg')} class="text-[var(--accent)] underline hover:no-underline">WebP to JPG converter</a> — another modern web format, converted the same way.</li>
+        <li><a href={toolUrl('png-to-jpg')} class="text-[var(--accent)] underline hover:no-underline">PNG to JPG converter</a> — flatten screenshots and graphics into JPG.</li>
+        <li><a href={`${SITE.url}/pdf/jpg-to-pdf/`} class="text-[var(--accent)] underline hover:no-underline">JPG to PDF</a> — combine your JPGs into a single PDF document.</li>
       </ul>
     </div>
 

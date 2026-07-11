@@ -26,9 +26,9 @@ function init(): void {
     for (const file of Array.from(files)) {
       const row = document.createElement('div');
       row.className =
-        'flex items-center justify-between gap-3 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm';
+        'flex items-center justify-between gap-3 rounded-md border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm';
       const label = document.createElement('span');
-      label.className = 'text-slate-500';
+      label.className = 'text-[var(--text-3)]';
       label.textContent = `Converting ${file.name}…`;
       row.appendChild(label);
       results!.appendChild(row);
@@ -39,7 +39,7 @@ function init(): void {
         row.innerHTML = '';
 
         const name = document.createElement('span');
-        name.className = 'truncate text-slate-700';
+        name.className = 'truncate text-[var(--text-2)]';
         name.textContent = `${filename} · ${formatBytes(blob.size)}`;
 
         const link = document.createElement('a');
@@ -47,7 +47,7 @@ function init(): void {
         link.download = filename;
         link.textContent = 'Download';
         link.className =
-          'shrink-0 rounded-md bg-blue-600 px-3 py-1 font-medium text-white hover:bg-blue-700';
+          'shrink-0 rounded-md bg-[var(--accent)] px-3 py-1 font-medium text-white hover:bg-[var(--accent-hover)]';
 
         row.append(name, link);
       } catch (err) {
@@ -66,11 +66,11 @@ function init(): void {
 
     const activate = (e: Event) => {
       e.preventDefault();
-      dropzone.classList.add('border-blue-500', 'bg-blue-50');
+      dropzone.classList.add('border-[var(--accent)]', 'bg-[var(--accent-soft-bg)]');
     };
     const deactivate = (e: Event) => {
       e.preventDefault();
-      dropzone.classList.remove('border-blue-500', 'bg-blue-50');
+      dropzone.classList.remove('border-[var(--accent)]', 'bg-[var(--accent-soft-bg)]');
     };
 
     dropzone.addEventListener('dragover', activate);
