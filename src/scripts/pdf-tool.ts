@@ -39,15 +39,15 @@ function init(): void {
     files.forEach((file, i) => {
       const row = document.createElement('div');
       row.className =
-        'flex items-center justify-between gap-3 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm';
+        'flex items-center justify-between gap-3 rounded-md border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm';
 
       const name = document.createElement('span');
-      name.className = 'truncate text-slate-700';
+      name.className = 'truncate text-[var(--text-2)]';
       name.textContent = `${file.name} · ${formatBytes(file.size)}`;
 
       const remove = document.createElement('button');
       remove.type = 'button';
-      remove.className = 'shrink-0 text-slate-400 hover:text-red-600';
+      remove.className = 'shrink-0 text-[var(--text-6)] hover:text-red-600';
       remove.textContent = 'Remove';
       remove.addEventListener('click', () => {
         files.splice(i, 1);
@@ -79,7 +79,7 @@ function init(): void {
     if (files.length < minFiles) return;
     action.disabled = true;
     results.innerHTML = '';
-    status.className = 'mt-4 text-sm text-slate-500';
+    status.className = 'mt-4 text-sm text-[var(--text-4)]';
     status.textContent = 'Processing…';
 
     function offerDownload(blob: Blob, filename: string, label: string): void {
@@ -88,7 +88,7 @@ function init(): void {
       link.download = filename;
       link.textContent = `${label} · ${formatBytes(blob.size)}`;
       link.className =
-        'inline-block rounded-md bg-brand px-4 py-2 font-medium text-white hover:bg-brand-dark';
+        'inline-block rounded-md bg-[var(--accent)] px-4 py-2 font-medium text-white hover:bg-[var(--accent-hover)]';
       results!.appendChild(link);
     }
 
@@ -128,11 +128,11 @@ function init(): void {
 
     const activate = (e: Event) => {
       e.preventDefault();
-      dropzone.classList.add('border-brand', 'bg-brand-tint');
+      dropzone.classList.add('border-[var(--accent)]', 'bg-[var(--accent-soft-bg)]');
     };
     const deactivate = (e: Event) => {
       e.preventDefault();
-      dropzone.classList.remove('border-brand', 'bg-brand-tint');
+      dropzone.classList.remove('border-[var(--accent)]', 'bg-[var(--accent-soft-bg)]');
     };
 
     dropzone.addEventListener('dragover', activate);
