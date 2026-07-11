@@ -23,13 +23,13 @@ const faqJsonLd = {
 ---
 
 <section class="mt-12">
-  <h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100">Frequently asked questions</h2>
-  <dl class="mt-4 divide-y divide-slate-200 border-y border-slate-200 dark:divide-slate-800 dark:border-slate-800">
+  <h2 class="font-display text-xl font-semibold text-[var(--text)]">Frequently asked questions</h2>
+  <dl class="mt-4 divide-y divide-[var(--border)] border-y border-[var(--border)]">
     {
       items.map((i) => (
         <div class="py-4">
-          <dt class="font-medium text-slate-900 dark:text-slate-100">{i.q}</dt>
-          <dd class="mt-1 text-slate-600 dark:text-slate-400">{i.a}</dd>
+          <dt class="font-medium text-[var(--text)]">{i.q}</dt>
+          <dd class="mt-1 text-[var(--text-3)]">{i.a}</dd>
         </div>
       ))
     }
