@@ -5,17 +5,22 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Plus Jakarta Sans Variable"', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['"JetBrains Mono Variable"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        // Cream "Luci Tools" identity, shared with the hub: Hanken body, Space
+        // Grotesk display headings, IBM Plex Mono labels.
+        sans: ['"Hanken Grotesk Variable"', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['"Space Grotesk Variable"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       colors: {
-        // Engine accent — orange. `tint`/`ring` are soft fills; `dark` is hover shade.
-        brand: {
-          DEFAULT: '#f97316',
-          dark: '#ea580c',
-          light: '#fdba74',
-          tint: '#fff7ed',
-          ring: '#fed7aa',
+        // Interactive accent (links/buttons) — the hub green; theme-aware via the var.
+        accent: {
+          DEFAULT: 'var(--accent)',
+          hover: 'var(--accent-hover)',
+        },
+        // Category identity tile — this engine's hub-card hue (same on both themes).
+        tile: {
+          bg: 'var(--tile-bg)',
+          fg: 'var(--tile-fg)',
         },
       },
     },
