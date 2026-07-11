@@ -60,13 +60,13 @@ const faqs: FaqItem[] = [
       conv.length === 2 ? (
         <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
       ) : (
-        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light" aria-hidden="true">
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg" aria-hidden="true">
           <Icon name={meta.icon} class="h-7 w-7" />
         </span>
       )
     }
-    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
-    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
 
     <QrText />
 
@@ -107,7 +107,7 @@ const faqs: FaqItem[] = [
         also encode a phone number, an email address, a calendar event link, a
         payment page, a social-media profile, or even a short note. WiFi
         credentials have their own format — use the{' '}
-        <a href={toolUrl('wifi-qr-code-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">WiFi QR code generator</a>
+        <a href={toolUrl('wifi-qr-code-generator')} class="text-[var(--accent)] underline hover:no-underline">WiFi QR code generator</a>
         {' '}for that. Whatever you encode, shorter content produces a less
         dense code that scans faster and more reliably.
       </p>
@@ -123,7 +123,7 @@ const faqs: FaqItem[] = [
 
       <h2>Related tools</h2>
       <ul>
-        <li><a href={toolUrl('wifi-qr-code-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">WiFi QR Code Generator</a> — create a scannable code that lets phones join your network without typing the password.</li>
+        <li><a href={toolUrl('wifi-qr-code-generator')} class="text-[var(--accent)] underline hover:no-underline">WiFi QR Code Generator</a> — create a scannable code that lets phones join your network without typing the password.</li>
       </ul>
     </div>
 

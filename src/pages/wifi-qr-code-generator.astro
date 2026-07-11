@@ -60,13 +60,13 @@ const faqs: FaqItem[] = [
       conv.length === 2 ? (
         <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
       ) : (
-        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light" aria-hidden="true">
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg" aria-hidden="true">
           <Icon name={meta.icon} class="h-7 w-7" />
         </span>
       )
     }
-    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
-    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
 
     <QrWifi />
 
@@ -124,7 +124,7 @@ const faqs: FaqItem[] = [
 
       <h2>Related tools</h2>
       <ul>
-        <li><a href={toolUrl('qr-code-generator')} class="text-brand underline hover:no-underline dark:text-brand-light">QR Code Generator</a> — encode any text, URL or message as a downloadable QR code.</li>
+        <li><a href={toolUrl('qr-code-generator')} class="text-[var(--accent)] underline hover:no-underline">QR Code Generator</a> — encode any text, URL or message as a downloadable QR code.</li>
       </ul>
     </div>
 
