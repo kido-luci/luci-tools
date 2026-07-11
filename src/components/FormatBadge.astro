@@ -10,9 +10,9 @@ const { from, to, class: className = '' } = Astro.props;
 ---
 
 <span
-  class={`inline-flex flex-col items-start justify-center rounded-[20px] bg-brand-tint px-[18px] py-4 dark:bg-brand/15 ${className}`}
+  class={`inline-flex flex-col items-start justify-center rounded-[20px] bg-tile-bg px-[18px] py-4 ${className}`}
   aria-hidden="true"
 >
-  <span class="text-[21px] font-extrabold leading-none tracking-[-0.02em] text-brand-dark dark:text-brand-light">{from}</span>
-  <span class="mt-2 text-[15px] font-bold leading-none text-brand-light dark:text-brand-light/70">→ {to}</span>
+  <span class="font-display text-[21px] font-bold leading-none tracking-[-0.02em] text-tile-fg">{from}</span>
+  <span class="mt-2 text-[15px] font-bold leading-none text-tile-fg opacity-80">→ {to}</span>
 </span>
