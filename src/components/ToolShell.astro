@@ -22,20 +22,20 @@ const inputPlaceholder = mode === 'csv-to-json' ? 'Paste your CSV here…' : 'Pa
 <div data-json-tool data-mode={mode} class="mt-8">
   <div class="grid gap-4 md:grid-cols-2">
     <div>
-      <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="json-input">Input</label>
+      <label class="block text-sm font-medium text-[var(--text-2)]" for="json-input">Input</label>
       <textarea
         id="json-input"
         data-input
         spellcheck="false"
         placeholder={inputPlaceholder}
-        class="mt-1 h-72 w-full resize-y rounded-lg border border-slate-300 bg-white p-3 font-mono text-sm text-slate-900 focus:border-brand focus:outline-none dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:placeholder:text-slate-500"
+        class="mt-1 h-72 w-full resize-y rounded-lg border border-[var(--border-2)] bg-[var(--surface)] p-3 font-mono text-sm text-[var(--text)] placeholder:text-[var(--text-6)] focus:border-[var(--accent)] focus:outline-none"
       ></textarea>
     </div>
     <div>
-      <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Output</label>
+      <label class="block text-sm font-medium text-[var(--text-2)]">Output</label>
       <pre
         data-output
-        class="mt-1 h-72 w-full overflow-auto rounded-lg border border-slate-300 bg-slate-50 p-3 font-mono text-sm text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100"></pre>
+        class="mt-1 h-72 w-full overflow-auto rounded-lg border border-[var(--border-2)] bg-[var(--surface-2)] p-3 font-mono text-sm text-[var(--text)]"></pre>
     </div>
   </div>
 
@@ -43,18 +43,18 @@ const inputPlaceholder = mode === 'csv-to-json' ? 'Paste your CSV here…' : 'Pa
     <button
       data-run
       type="button"
-      class="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark"
+      class="rounded-md bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--accent-hover)]"
     >
       {runLabel}
     </button>
 
     {
       isFormat && (
-        <label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+        <label class="flex items-center gap-2 text-sm text-[var(--text-3)]">
           Indent
           <select
             data-indent
-            class="rounded-md border border-slate-300 bg-white px-2 py-1 text-sm focus:border-brand focus:outline-none dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100"
+            class="rounded-md border border-[var(--border-2)] bg-[var(--surface)] px-2 py-1 text-sm text-[var(--text)] focus:border-[var(--accent)] focus:outline-none"
           >
             <option value="2">2 spaces</option>
             <option value="4">4 spaces</option>
@@ -67,7 +67,7 @@ const inputPlaceholder = mode === 'csv-to-json' ? 'Paste your CSV here…' : 'Pa
     <button
       data-copy
       type="button"
-      class="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-brand hover:text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:text-slate-100"
+      class="rounded-md border border-[var(--border-2)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text-2)] hover:border-[var(--accent)] hover:text-[var(--text)]"
     >
       Copy
     </button>
@@ -77,7 +77,7 @@ const inputPlaceholder = mode === 'csv-to-json' ? 'Paste your CSV here…' : 'Pa
         <button
           data-download
           type="button"
-          class="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-brand hover:text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:text-slate-100"
+          class="rounded-md border border-[var(--border-2)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text-2)] hover:border-[var(--accent)] hover:text-[var(--text)]"
         >
           {mode === 'json-to-csv' ? 'Download CSV' : 'Download JSON'}
         </button>
@@ -85,8 +85,8 @@ const inputPlaceholder = mode === 'csv-to-json' ? 'Paste your CSV here…' : 'Pa
     }
   </div>
 
-  <p data-status class="mt-2 text-sm text-slate-500 dark:text-slate-500"></p>
-  <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">
+  <p data-status class="mt-2 text-sm text-[var(--text-4)]"></p>
+  <p class="mt-1 text-xs text-[var(--text-6)]">
     100% in your browser — your data never leaves your device.
   </p>
 </div>
