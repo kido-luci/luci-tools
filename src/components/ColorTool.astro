@@ -15,13 +15,13 @@ const isContrast = mode === 'contrast';
 <div
   data-color-tool
   data-mode={mode}
-  class="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:p-8"
+  class="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm sm:p-8"
 >
   {
     isContrast ? (
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
-          <label class="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-400" for="ct-fg">
+          <label class="mb-1.5 block text-sm font-medium text-[var(--text-3)]" for="ct-fg">
             Text color
           </label>
           <div class="flex items-center gap-2">
@@ -31,13 +31,13 @@ const isContrast = mode === 'contrast';
               type="text"
               value="#111827"
               spellcheck="false"
-              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 font-mono text-base text-slate-900 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/30 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+              class="w-full rounded-lg border border-[var(--border-2)] bg-[var(--surface)] px-3 py-2.5 font-mono text-base text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/30"
             />
-            <input data-fg-picker type="color" value="#111827" aria-label="Pick text color" class="h-10 w-10 shrink-0 cursor-pointer rounded-lg border border-slate-300 bg-white p-1 dark:border-slate-600 dark:bg-slate-800" />
+            <input data-fg-picker type="color" value="#111827" aria-label="Pick text color" class="h-10 w-10 shrink-0 cursor-pointer rounded-lg border border-[var(--border-2)] bg-[var(--surface)] p-1" />
           </div>
         </div>
         <div>
-          <label class="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-400" for="ct-bg">
+          <label class="mb-1.5 block text-sm font-medium text-[var(--text-3)]" for="ct-bg">
             Background color
           </label>
           <div class="flex items-center gap-2">
@@ -47,36 +47,36 @@ const isContrast = mode === 'contrast';
               type="text"
               value="#ffffff"
               spellcheck="false"
-              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 font-mono text-base text-slate-900 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/30 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+              class="w-full rounded-lg border border-[var(--border-2)] bg-[var(--surface)] px-3 py-2.5 font-mono text-base text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/30"
             />
-            <input data-bg-picker type="color" value="#ffffff" aria-label="Pick background color" class="h-10 w-10 shrink-0 cursor-pointer rounded-lg border border-slate-300 bg-white p-1 dark:border-slate-600 dark:bg-slate-800" />
+            <input data-bg-picker type="color" value="#ffffff" aria-label="Pick background color" class="h-10 w-10 shrink-0 cursor-pointer rounded-lg border border-[var(--border-2)] bg-[var(--surface)] p-1" />
           </div>
         </div>
 
         <div
           data-preview
-          class="flex min-h-[110px] flex-col items-center justify-center gap-1 rounded-xl border border-slate-200 p-6 text-center dark:border-slate-700 sm:col-span-2"
+          class="flex min-h-[110px] flex-col items-center justify-center gap-1 rounded-xl border border-[var(--border)] p-6 text-center sm:col-span-2"
         >
           <span data-preview-text class="text-2xl font-bold">Aa</span>
           <span data-preview-text class="text-sm">The quick brown fox jumps over the lazy dog</span>
         </div>
 
-        <div class="flex flex-wrap items-center justify-between gap-4 rounded-xl bg-slate-50 p-5 dark:bg-slate-800/60 sm:col-span-2">
+        <div class="flex flex-wrap items-center justify-between gap-4 rounded-xl bg-[var(--surface-2)] p-5 sm:col-span-2">
           <div>
-            <p class="text-sm text-slate-500 dark:text-slate-400">Contrast ratio</p>
-            <p data-ratio class="mt-1 text-3xl font-extrabold text-slate-900 dark:text-slate-100">21.00:1</p>
+            <p class="text-sm text-[var(--text-4)]">Contrast ratio</p>
+            <p data-ratio class="mt-1 text-3xl font-extrabold text-[var(--text)]">21.00:1</p>
           </div>
           <dl class="grid grid-cols-3 gap-4 text-center">
             <div>
-              <dt class="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">AA text</dt>
+              <dt class="text-xs uppercase tracking-wide text-[var(--text-6)]">AA text</dt>
               <dd data-aa class="mt-1 text-sm font-bold">—</dd>
             </div>
             <div>
-              <dt class="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">AA large</dt>
+              <dt class="text-xs uppercase tracking-wide text-[var(--text-6)]">AA large</dt>
               <dd data-aa-large class="mt-1 text-sm font-bold">—</dd>
             </div>
             <div>
-              <dt class="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">AAA text</dt>
+              <dt class="text-xs uppercase tracking-wide text-[var(--text-6)]">AAA text</dt>
               <dd data-aaa class="mt-1 text-sm font-bold">—</dd>
             </div>
           </dl>
@@ -85,7 +85,7 @@ const isContrast = mode === 'contrast';
     ) : (
       <div class="grid grid-cols-1 items-start gap-6 sm:grid-cols-[1fr_auto]">
         <div>
-          <label class="mb-1.5 block text-sm font-medium text-slate-600 dark:text-slate-400" for="ct-input">
+          <label class="mb-1.5 block text-sm font-medium text-[var(--text-3)]" for="ct-input">
             {mode === 'rgb-to-hex' ? 'RGB value' : 'HEX color'}
           </label>
           <div class="flex items-center gap-2">
@@ -95,10 +95,10 @@ const isContrast = mode === 'contrast';
               type="text"
               value={mode === 'rgb-to-hex' ? 'rgb(59, 130, 246)' : '#3b82f6'}
               spellcheck="false"
-              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 font-mono text-base text-slate-900 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/30 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+              class="w-full rounded-lg border border-[var(--border-2)] bg-[var(--surface)] px-3 py-2.5 font-mono text-base text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/30"
             />
             {mode !== 'rgb-to-hex' && (
-              <input data-input-picker type="color" value="#3b82f6" aria-label="Pick a color" class="h-11 w-11 shrink-0 cursor-pointer rounded-lg border border-slate-300 bg-white p-1 dark:border-slate-600 dark:bg-slate-800" />
+              <input data-input-picker type="color" value="#3b82f6" aria-label="Pick a color" class="h-11 w-11 shrink-0 cursor-pointer rounded-lg border border-[var(--border-2)] bg-[var(--surface)] p-1" />
             )}
           </div>
           <p data-error class="mt-2 min-h-[1.25rem] text-sm text-red-600 dark:text-red-400"></p>
@@ -106,7 +106,7 @@ const isContrast = mode === 'contrast';
 
         <div
           data-swatch
-          class="h-24 w-24 shrink-0 justify-self-center rounded-2xl border border-slate-200 shadow-inner dark:border-slate-700 sm:justify-self-end"
+          class="h-24 w-24 shrink-0 justify-self-center rounded-2xl border border-[var(--border)] shadow-inner sm:justify-self-end"
           aria-hidden="true"
         />
       </div>
@@ -116,17 +116,17 @@ const isContrast = mode === 'contrast';
   {
     !isContrast && (
       <div data-outputs class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <div class="rounded-lg bg-slate-50 p-4 dark:bg-slate-800/60">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">HEX</p>
-          <p data-out-hex class="mt-1 select-all font-mono text-lg font-semibold text-slate-900 dark:text-slate-100">—</p>
+        <div class="rounded-lg bg-[var(--surface-2)] p-4">
+          <p class="text-xs font-semibold uppercase tracking-wide text-[var(--text-6)]">HEX</p>
+          <p data-out-hex class="mt-1 select-all font-mono text-lg font-semibold text-[var(--text)]">—</p>
         </div>
-        <div class="rounded-lg bg-slate-50 p-4 dark:bg-slate-800/60">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">RGB</p>
-          <p data-out-rgb class="mt-1 select-all font-mono text-lg font-semibold text-slate-900 dark:text-slate-100">—</p>
+        <div class="rounded-lg bg-[var(--surface-2)] p-4">
+          <p class="text-xs font-semibold uppercase tracking-wide text-[var(--text-6)]">RGB</p>
+          <p data-out-rgb class="mt-1 select-all font-mono text-lg font-semibold text-[var(--text)]">—</p>
         </div>
-        <div class="rounded-lg bg-slate-50 p-4 dark:bg-slate-800/60">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">HSL</p>
-          <p data-out-hsl class="mt-1 select-all font-mono text-lg font-semibold text-slate-900 dark:text-slate-100">—</p>
+        <div class="rounded-lg bg-[var(--surface-2)] p-4">
+          <p class="text-xs font-semibold uppercase tracking-wide text-[var(--text-6)]">HSL</p>
+          <p data-out-hsl class="mt-1 select-all font-mono text-lg font-semibold text-[var(--text)]">—</p>
         </div>
       </div>
     )

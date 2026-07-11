@@ -51,8 +51,8 @@ const faqs: FaqItem[] = [
 <BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
   <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
     <FormatBadge from="HEX" to="RGB" class="mb-5" />
-    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
-    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
 
     <ColorTool mode="hex-to-rgb" />
 
@@ -84,9 +84,9 @@ const faqs: FaqItem[] = [
 
       <h2>Related tools</h2>
       <ul>
-        <li><a href={toolUrl('rgb-to-hex')} class="text-brand underline hover:no-underline dark:text-brand-light">RGB to HEX converter</a> — go the other way.</li>
-        <li><a href={toolUrl('hex-to-hsl')} class="text-brand underline hover:no-underline dark:text-brand-light">HEX to HSL converter</a> — get hue, saturation and lightness instead.</li>
-        <li><a href={toolUrl('color-contrast-checker')} class="text-brand underline hover:no-underline dark:text-brand-light">Color contrast checker</a> — check WCAG accessibility between two colors.</li>
+        <li><a href={toolUrl('rgb-to-hex')} class="text-[var(--accent)] underline hover:no-underline">RGB to HEX converter</a> — go the other way.</li>
+        <li><a href={toolUrl('hex-to-hsl')} class="text-[var(--accent)] underline hover:no-underline">HEX to HSL converter</a> — get hue, saturation and lightness instead.</li>
+        <li><a href={toolUrl('color-contrast-checker')} class="text-[var(--accent)] underline hover:no-underline">Color contrast checker</a> — check WCAG accessibility between two colors.</li>
       </ul>
     </div>
 

@@ -55,13 +55,13 @@ const faqs: FaqItem[] = [
 <BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
   <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
     <span
-      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light"
+      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg"
       aria-hidden="true"
     >
       <Icon name={meta.icon} class="h-7 w-7" />
     </span>
-    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{meta.h1}</h1>
-    <p class="mt-3 text-lg text-slate-600 dark:text-slate-400">{meta.description}</p>
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
 
     <ColorTool mode="contrast" />
 
@@ -99,8 +99,8 @@ const faqs: FaqItem[] = [
 
       <h2>Related tools</h2>
       <ul>
-        <li><a href={toolUrl('hex-to-rgb')} class="text-brand underline hover:no-underline dark:text-brand-light">HEX to RGB converter</a> — inspect a color's raw channels.</li>
-        <li><a href={toolUrl('hex-to-hsl')} class="text-brand underline hover:no-underline dark:text-brand-light">HEX to HSL converter</a> — adjust lightness to fix a failing contrast ratio.</li>
+        <li><a href={toolUrl('hex-to-rgb')} class="text-[var(--accent)] underline hover:no-underline">HEX to RGB converter</a> — inspect a color's raw channels.</li>
+        <li><a href={toolUrl('hex-to-hsl')} class="text-[var(--accent)] underline hover:no-underline">HEX to HSL converter</a> — adjust lightness to fix a failing contrast ratio.</li>
       </ul>
     </div>
 
