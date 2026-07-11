@@ -8,9 +8,13 @@
 >
   <div class="mx-auto flex h-16 max-w-[1180px] items-center justify-between gap-4 px-6">
     <a href="/" class="flex items-center gap-2.5 text-[var(--text)]">
-      <span class="flex h-7 w-7 items-center justify-center rounded-[9px] bg-[var(--text)]" aria-hidden="true">
-        <span class="h-[9px] w-[9px] rounded-[3px] bg-[var(--accent)]"></span>
-      </span>
+      <img
+        src={`${import.meta.env.BASE_URL}logo-icon.png`}
+        width="28"
+        height="28"
+        class="h-7 w-7"
+        alt="Luci Studio"
+      />
       <span class="font-display text-[18px] font-bold tracking-[-0.01em]">Luci</span>
       <span class="pt-[3px] font-mono text-[12px] tracking-[0.02em] text-[var(--text-3)]">tools</span>
     </a>
