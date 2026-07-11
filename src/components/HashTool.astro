@@ -13,7 +13,7 @@ const { algo } = Astro.props;
 ---
 
 <div data-hash-tool data-algo={algo} class="mt-8">
-  <label for="hash-input" class="text-sm font-medium text-slate-700 dark:text-slate-300">
+  <label for="hash-input" class="text-sm font-medium text-[var(--text-2)]">
     Text to hash
   </label>
   <textarea
@@ -22,19 +22,19 @@ const { algo } = Astro.props;
     rows="6"
     spellcheck="false"
     placeholder="Type or paste text here…"
-    class="mt-2 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 py-3 font-mono text-sm text-slate-900 outline-none transition-colors focus:border-brand dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+    class="mt-2 w-full rounded-2xl border-2 border-[var(--border-2)] bg-[var(--surface)] px-4 py-3 font-mono text-sm text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]"
   ></textarea>
-  <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">
+  <p class="mt-1 text-xs text-[var(--text-6)]">
     100% in your browser — your text never leaves your device.
   </p>
 
   <div class="mt-4">
     <div class="flex items-center justify-between">
-      <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{algo} hash</span>
+      <span class="text-sm font-medium text-[var(--text-2)]">{algo} hash</span>
       <button
         type="button"
         data-copy
-        class="rounded-md bg-brand px-3 py-1 text-sm font-medium text-white transition hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50"
+        class="rounded-md bg-[var(--accent)] px-3 py-1 text-sm font-medium text-white transition hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
         disabled
       >
         Copy
@@ -42,7 +42,7 @@ const { algo } = Astro.props;
     </div>
     <output
       data-output
-      class="mt-2 block break-all rounded-xl border border-slate-200 bg-[#f3f5fb] px-4 py-3 font-mono text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-500"
+      class="mt-2 block break-all rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-4 py-3 font-mono text-sm text-[var(--text-4)]"
     >
       Start typing above to see the {algo} hash.
     </output>

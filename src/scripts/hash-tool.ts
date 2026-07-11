@@ -30,8 +30,8 @@ function init(): void {
 
     if (text === '') {
       output!.textContent = placeholder;
-      output!.classList.add('text-slate-500');
-      output!.classList.remove('text-slate-900', 'dark:text-slate-100');
+      output!.classList.add('text-[var(--text-4)]');
+      output!.classList.remove('text-[var(--text)]');
       copyBtn!.disabled = true;
       return;
     }
@@ -40,8 +40,8 @@ function init(): void {
     if (id !== requestId) return; // a newer keystroke superseded this one
 
     output!.textContent = hash;
-    output!.classList.remove('text-slate-500');
-    output!.classList.add('text-slate-900', 'dark:text-slate-100');
+    output!.classList.remove('text-[var(--text-4)]');
+    output!.classList.add('text-[var(--text)]');
     copyBtn!.disabled = false;
   }
 
