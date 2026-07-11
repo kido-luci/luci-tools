@@ -76,13 +76,24 @@ body {
   color: var(--text);
 }
 
-/* Shared readable-copy styles for the SEO body (how-to + explanation). */
+/* Shared readable-copy styles for the SEO body (how-to + explanation).
+   Cream tokens (not slate) so legal/about pages match the hub in both themes. */
 @layer components {
   .copy {
-    @apply mt-10 text-slate-700 leading-relaxed dark:text-slate-300;
+    @apply mt-10 leading-relaxed;
+    color: var(--text-2);
   }
   .copy h2 {
-    @apply text-xl font-semibold text-slate-900 mt-8 mb-3 dark:text-slate-100;
+    @apply font-display text-xl font-semibold mt-8 mb-3;
+    color: var(--text);
+  }
+  .copy a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .copy a:hover {
+    color: var(--accent-hover);
   }
   .copy p {
     @apply mt-3;
