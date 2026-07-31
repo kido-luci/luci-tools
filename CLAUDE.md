@@ -37,8 +37,10 @@ tools.luci-studio.com
 - The **Worker is a pure pass-through proxy** — it only maps `/<engine>/*` to that
   engine's Pages project. It is the one piece of shared infra (and a single point
   of failure; keep it tiny and stable).
-- Each engine = **its own repo + its own Pages project**, owning the path prefix
-  `/<engine>/*`. Repos are fully independent (NOT git submodules).
+- Each engine = **its own top-level directory in this monorepo + its own Pages
+  project**, owning the path prefix `/<engine>/*`. (Consolidated 2026-07-31 —
+  the former per-engine repos were subtree-merged in with full history and
+  archived.)
 - **Engine-prefix path scheme**: `/image/heic-to-jpg`, `/pdf/merge-pdf`, …
   Each repo sets Astro **`base: '/<engine>'`** so its internal links, canonical
   tags, and sitemap already match the production path → the Worker needs **no path
@@ -49,9 +51,14 @@ tools.luci-studio.com
 - **Stack:** Astro `output: 'static'` + TypeScript + Tailwind v3 (build-time via
   PostCSS). Tool logic = vanilla JS / WASM, no React. **No Sentry, no SSR
   adapter** — so unlike the blog, `npm run dev` should work here. Verify per repo.
-- **Hosting:** Cloudflare Pages. 1 repo = 1 Pages project, auto-deploy from `master`.
-- **Repos:** GitHub org **`kido-luci`**, named `kido-luci/<engine>`
-  (e.g. `kido-luci/image-converter`). Each independent.
+- **Hosting:** Cloudflare Pages. 1 engine directory = 1 Pages project
+  (**direct-upload** — no git integration). Deploys are **manual**:
+  `wrangler pages deploy <engine>/dist --project-name <engine> --branch master`
+  (wrangler is OAuth-authed locally). The Worker deploys via
+  `npm run deploy` in `tools-router/`.
+- **Repo:** the single monorepo **`kido-luci/luci-tools`**; each engine is a
+  top-level directory. The old `kido-luci/<engine>` repos are archived
+  snapshots — never push to them.
 - **Domain:** `tools.luci-studio.com`, engine-prefix paths.
 - **Ads:** Google AdSense — **one** site (`tools.luci-studio.com`), **one** root
   `ads.txt`.
@@ -117,18 +124,21 @@ VN Decree 13/2023) and a selling point.
 
 ## Git workflow
 
-- Per repo: `master` + topic branches (`feat/…`, `fix/…`, `chore/…`), land via PR.
-  Auto-deploy from `master` (Cloudflare Pages). Never push straight to `master`.
+- One monorepo: `master` + topic branches (`feat/…`, `fix/…`, `chore/…`), land
+  via PR. Never push straight to `master`. Deploys are decoupled from git —
+  after merging, run the wrangler deploy for the engine(s) you changed.
+- CI runs per-directory: `.github/workflows/ci-<engine>.yml`, path-filtered to
+  `<engine>/**` (npm ci + check + test + build inside that directory).
 - GitHub free plan → branch protection is a **convention**, not server-enforced.
 - One focused change per commit. End every commit **you author** with a
   `Co-Authored-By: Claude <model> <noreply@anthropic.com>` trailer, using the exact
   running-model name (e.g. `Claude Opus 4.8`).
-- A release = merge to `master` **then** an annotated tag `vX.Y.Z` (each repo
-  versioned independently).
-- **After a release (or after a topic branch is merged/landed), `git checkout`
-  back to the base branch (`master`) locally** so the working tree is clean and
-  not left sitting on a merged/deleted branch. Applies to submodules too — after
-  merging a submodule PR, switch that submodule back to `master`.
+- A release = merge to `master` **then** an annotated per-engine tag
+  `<engine>/vX.Y.Z` (engines stay versioned independently; the old repos' plain
+  `vX.Y.Z` tags live on in the imported history and the archived repos).
+- **After a topic branch is merged/landed, `git checkout` back to `master`
+  locally** so the working tree is clean and not left sitting on a merged
+  branch.
 
 ## Build / verify
 
@@ -149,8 +159,8 @@ VN Decree 13/2023) and a selling point.
    engine Pages projects.
 4. Apply to AdSense once `tools.luci-studio.com` has real content and traffic.
 
-## Per-repo chats
+## Per-tool chats
 
-Each tool is built in its **own chat**, with the cwd set to that repo's folder, so
-this CLAUDE.md is inherited as shared context. Keep design discussion here; keep
-implementation in the per-repo chats.
+Each tool is best worked on in its **own chat**, with the cwd set to that tool's
+directory, so this CLAUDE.md is inherited as shared context. Keep design
+discussion here; keep implementation in the per-tool chats.
