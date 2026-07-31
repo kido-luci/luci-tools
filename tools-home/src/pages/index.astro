@@ -1,0 +1,430 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { ENGINES, engineUrl, toolUrl, SITE } from '../consts';
+
+const title = 'Free Online Tools — Image, PDF, JSON, QR & Text | Luci Tools';
+const description =
+  'A growing collection of fast, free, privacy-first web tools. Convert images and PDFs, format JSON, generate QR codes and fancy text — all 100% in your browser, nothing uploaded.';
+
+const total = ENGINES.reduce((n, e) => n + e.tools.length, 0);
+const catCount = ENGINES.length;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE.name,
+  url: new URL('/', SITE.url).href,
+  description,
+};
+
+// Per-category OKLCH tints (soft fill + foreground + dot), mirrored from the design.
+const tintBg = (h: number) => `oklch(0.955 0.045 ${h})`;
+const tintFg = (h: number) => `oklch(0.46 0.15 ${h})`;
+const dotColor = (h: number) => `oklch(0.63 0.15 ${h})`;
+const chipFont = (isSample: boolean) =>
+  isSample ? "'Space Grotesk Variable', sans-serif" : "'IBM Plex Mono', monospace";
+const chipSize = (isSample: boolean, glyph: string) =>
+  isSample ? '18px' : glyph.length <= 3 ? '13px' : glyph.length <= 4 ? '11.5px' : '10px';
+
+const pills = [{ id: 'all', label: 'All', count: total, name: 'All' }].concat(
+  ENGINES.map((e) => ({ id: e.prefix, label: e.name, count: e.tools.length, name: e.name })),
+);
+
+const gridStyle =
+  'display:grid;grid-template-columns:repeat(auto-fill, minmax(262px, 1fr));gap:13px';
+---
+
+<BaseLayout title={title} description={description} jsonLd={jsonLd}>
+  <!-- HERO -->
+  <section style="position:relative;overflow:hidden">
+    <div
+      aria-hidden="true"
+      style="position:absolute;inset:0;background-image:radial-gradient(circle, var(--dot-grid) 1px, transparent 1.4px);background-size:24px 24px;-webkit-mask-image:linear-gradient(#000,transparent 88%);mask-image:linear-gradient(#000,transparent 88%)"
+    >
+    </div>
+    <div style="position:relative;max-width:1180px;margin:0 auto;padding:60px 24px 34px">
+      <div
+        style="display:inline-flex;align-items:center;gap:9px;padding:6px 12px;border:1px solid var(--accent-soft-border);background:var(--accent-soft-bg);border-radius:999px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent);margin-bottom:24px"
+      >
+        <span class="luci-pulse" style="width:8px;height:8px;border-radius:50%;background:#2F9E6B"></span>
+        Running locally · nothing uploaded
+      </div>
+      <h1
+        style="font-family:'Space Grotesk Variable',sans-serif;font-weight:600;font-size:58px;line-height:1.03;letter-spacing:-.028em;margin:0 0 18px;max-width:15ch"
+      >
+        Sharp little tools that never leave your browser.
+      </h1>
+      <p style="font-size:19px;line-height:1.55;color:var(--text-2);margin:0 0 30px;max-width:600px">
+        A growing kit of <strong style="color:var(--text);font-weight:600">{total} utilities</strong> for
+        images, PDFs, code and text. Everything runs on your device — your files are never uploaded to a
+        server.
+      </p>
+
+      <div style="max-width:640px;position:relative;margin-bottom:20px">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          style="position:absolute;left:18px;top:50%;transform:translateY(-50%);pointer-events:none;stroke:var(--text-6)"
+        >
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+        </svg>
+        <input
+          id="tool-search"
+          type="text"
+          placeholder={`Search ${total} tools — try 'heic', 'json', 'qr'…`}
+          spellcheck="false"
+          autocomplete="off"
+          aria-label="Search tools"
+          style="width:100%;height:58px;padding:0 108px 0 48px;border:1px solid var(--border-2);background:var(--surface);border-radius:14px;font-family:'Hanken Grotesk Variable',sans-serif;font-size:16.5px;color:var(--text);outline:none;box-shadow:0 1px 2px var(--search-shadow)"
+        />
+        <span
+          style="position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;gap:5px;pointer-events:none"
+        >
+          <span
+            style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-6);border:1px solid var(--border-2);border-radius:6px;padding:3px 7px;background:var(--surface-2)"
+            >⌘K</span
+          >
+        </span>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:9px">
+        {
+          ['100% in your browser', 'Nothing uploaded', 'Free & instant'].map((label) => (
+            <span style="display:inline-flex;align-items:center;gap:8px;padding:7px 13px;background:var(--surface);border:1px solid var(--border);border-radius:999px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--pill-text)">
+              <span style="width:7px;height:7px;border-radius:50%;background:#2F9E6B" />
+              {label}
+            </span>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- STICKY CATEGORY FILTER -->
+  <div
+    style="position:sticky;top:64px;z-index:40;background:var(--sticky-bg);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid var(--sticky-border-top);border-bottom:1px solid var(--border)"
+  >
+    <div style="max-width:1180px;margin:0 auto;padding:0 24px">
+      <div data-noscroll style="display:flex;gap:8px;overflow-x:auto;padding:11px 0">
+        {
+          pills.map((p) => (
+            <button
+              class:list={['luci-pill', p.id === 'all' && 'is-active']}
+              data-pill={p.id}
+              data-name={p.name}
+            >
+              <span>{p.label}</span>
+              <span class="luci-pill-count">{p.count}</span>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- CATALOG -->
+  <main style="max-width:1180px;margin:0 auto;padding:0 24px 90px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 0 4px">
+      <div
+        id="count-label"
+        style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--text-3);letter-spacing:.02em"
+      >
+        {total} tools across {catCount} categories
+      </div>
+      <button id="clear-btn" class="luci-clear">Clear ✕</button>
+    </div>
+
+    <div
+      style="display:flex;align-items:center;justify-content:center;gap:12px;margin:14px 0 6px;padding:15px;border:1px dashed var(--border-dashed);border-radius:12px;background:var(--surface-2)"
+    >
+      <span
+        style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--text-7);text-transform:uppercase"
+        >Sponsored</span
+      >
+      <span style="font-size:13.5px;color:var(--text-5)"
+        >A quiet, unobtrusive ad slot — never trackers, never your data.</span
+      >
+    </div>
+
+    {
+      ENGINES.map((engine) => (
+        <section id={`cat-${engine.prefix}`} data-cat-section={engine.prefix} style="padding:30px 0 4px">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px">
+            <div style="min-width:0">
+              <div style="display:flex;align-items:center;gap:11px">
+                <span style={`flex:none;width:10px;height:10px;border-radius:50%;background:${dotColor(engine.hue)}`} />
+                <h2 style="font-family:'Space Grotesk Variable',sans-serif;font-weight:600;font-size:23px;letter-spacing:-.015em;margin:0">
+                  {engine.name}
+                </h2>
+                <span
+                  class="cat-count"
+                  data-cat-count={engine.prefix}
+                  style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text-6);padding-top:3px"
+                >
+                  {engine.tools.length} tools
+                </span>
+              </div>
+              <p style="margin:8px 0 0;font-size:14.5px;color:var(--text-3);max-width:60ch">{engine.blurb}</p>
+            </div>
+            <a href={engineUrl(engine.prefix)} class="luci-viewall">
+              View all →
+            </a>
+          </div>
+
+          <div style={gridStyle}>
+            {engine.tools.map((t) => {
+              const glyph = t.specimen ?? t.chip ?? '';
+              const isSample = !!t.specimen;
+              const chipStyle = `flex:none;width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:${tintBg(engine.hue)};color:${tintFg(engine.hue)};font-family:${chipFont(isSample)};font-weight:600`;
+              const chipTextStyle = `font-size:${chipSize(isSample, glyph)};line-height:1;letter-spacing:${isSample ? '0' : '.01em'};white-space:nowrap`;
+              return (
+                <a
+                  href={toolUrl(engine.prefix, t.slug)}
+                  class="luci-card"
+                  data-cat={engine.prefix}
+                  data-name={t.title}
+                  data-desc={t.description}
+                >
+                  <span style={chipStyle}>
+                    <span style={chipTextStyle}>{glyph}</span>
+                  </span>
+                  <span style="min-width:0;flex:1">
+                    <span style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                      <span style="font-family:'Hanken Grotesk Variable',sans-serif;font-weight:600;font-size:15px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                        {t.title}
+                      </span>
+                      <span style="flex:none;color:var(--text-8);font-size:14px">→</span>
+                    </span>
+                    <span style="display:block;margin-top:3px;font-size:13px;line-height:1.4;color:var(--text-4)">
+                      {t.description}
+                    </span>
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      ))
+    }
+
+    <div id="no-results" style="display:none;text-align:center;padding:70px 20px">
+      <div
+        style="font-family:'Space Grotesk Variable',sans-serif;font-weight:600;font-size:22px;color:var(--text);margin-bottom:8px"
+      >
+        No tools match your search
+      </div>
+      <p style="font-size:15px;color:var(--text-3);margin:0 0 20px">
+        Try a different keyword, or browse everything.
+      </p>
+      <button
+        id="reset-btn"
+        style="height:40px;padding:0 18px;border:none;background:var(--text);color:var(--bg);border-radius:10px;cursor:pointer;font-family:'Hanken Grotesk Variable',sans-serif;font-weight:600;font-size:14px"
+      >
+        Reset filters
+      </button>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  @keyframes lucipulse {
+    0% { box-shadow: 0 0 0 0 rgba(47, 158, 107, 0.5); }
+    70% { box-shadow: 0 0 0 7px rgba(47, 158, 107, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(47, 158, 107, 0); }
+  }
+  .luci-pulse { animation: lucipulse 2.6s infinite; }
+
+  [data-noscroll] { scrollbar-width: none; }
+  [data-noscroll]::-webkit-scrollbar { height: 0; width: 0; }
+
+  #tool-search:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(31, 122, 85, 0.12);
+    outline: none;
+  }
+  #tool-search::placeholder { color: var(--text-6); }
+
+  .luci-pill {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 34px;
+    padding: 0 13px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    border: 1px solid var(--border-2);
+    background: var(--surface);
+    color: var(--pill-text);
+    white-space: nowrap;
+    transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+  }
+  .luci-pill .luci-pill-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-6);
+  }
+  .luci-pill:hover:not(.is-active) { border-color: var(--border-hover); }
+  .luci-pill.is-active {
+    background: var(--accent);
+    color: #fff;
+    border-color: transparent;
+  }
+  .luci-pill.is-active .luci-pill-count { color: rgba(255, 255, 255, 0.72); }
+
+  .luci-card {
+    display: flex;
+    gap: 13px;
+    align-items: flex-start;
+    padding: 15px;
+    background: var(--surface);
+    border: 1px solid var(--border-3);
+    border-radius: 14px;
+    color: var(--text);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .luci-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px -16px var(--card-shadow);
+    border-color: var(--border-hover);
+  }
+
+  .luci-viewall {
+    flex: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    color: var(--accent);
+    white-space: nowrap;
+    padding-bottom: 2px;
+  }
+  .luci-viewall:hover { color: var(--accent-hover); }
+
+  .luci-clear {
+    display: none;
+    align-items: center;
+    gap: 7px;
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid var(--border-2);
+    background: var(--surface);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-3);
+  }
+  .luci-clear:hover { border-color: var(--border-hover); color: var(--text); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .luci-pulse { animation: none; }
+    .luci-card { transition: none; }
+  }
+
+  @media (max-width: 640px) {
+    #tool-search { font-size: 16px; }
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const search = document.getElementById('tool-search');
+    const clearBtn = document.getElementById('clear-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const countLabel = document.getElementById('count-label');
+    const noResults = document.getElementById('no-results');
+    if (!search) return;
+
+    const pills = Array.from(document.querySelectorAll('[data-pill]'));
+    const sections = Array.from(document.querySelectorAll('[data-cat-section]'));
+    const cards = Array.from(document.querySelectorAll('[data-cat][data-name]'));
+    const catCounts = {};
+    document.querySelectorAll('[data-cat-count]').forEach((el) => {
+      catCounts[el.getAttribute('data-cat-count')] = el;
+    });
+    const catNames = {};
+    pills.forEach((p) => {
+      const id = p.getAttribute('data-pill');
+      if (id !== 'all') catNames[id] = p.getAttribute('data-name');
+    });
+
+    const TOTAL = cards.length;
+    let active = 'all';
+
+    function apply() {
+      const q = (search.value || '').trim().toLowerCase();
+      const perCat = {};
+      let shown = 0;
+
+      cards.forEach((card) => {
+        const cat = card.getAttribute('data-cat');
+        const hay = (
+          card.getAttribute('data-name') +
+          ' ' +
+          card.getAttribute('data-desc') +
+          ' ' +
+          (catNames[cat] || '')
+        ).toLowerCase();
+        const catMatch = active === 'all' || active === cat;
+        const textMatch = !q || hay.includes(q);
+        const vis = catMatch && textMatch;
+        card.style.display = vis ? '' : 'none';
+        if (vis) {
+          shown++;
+          perCat[cat] = (perCat[cat] || 0) + 1;
+        }
+      });
+
+      sections.forEach((sec) => {
+        const cat = sec.getAttribute('data-cat-section');
+        const n = perCat[cat] || 0;
+        sec.style.display = n > 0 ? '' : 'none';
+        if (catCounts[cat]) catCounts[cat].textContent = n + ' tools';
+      });
+
+      const filtering = q !== '' || active !== 'all';
+      clearBtn.style.display = filtering ? 'inline-flex' : 'none';
+      noResults.style.display = shown === 0 ? 'block' : 'none';
+
+      if (filtering) {
+        const inName = active !== 'all' ? ' in ' + catNames[active] : '';
+        countLabel.textContent = shown + ' ' + (shown === 1 ? 'match' : 'matches') + inName;
+      } else {
+        countLabel.textContent = TOTAL + ' tools across ' + sections.length + ' categories';
+      }
+    }
+
+    function reset() {
+      search.value = '';
+      active = 'all';
+      pills.forEach((x) => x.classList.toggle('is-active', x.getAttribute('data-pill') === 'all'));
+      apply();
+    }
+
+    pills.forEach((p) => {
+      p.addEventListener('click', () => {
+        active = p.getAttribute('data-pill');
+        pills.forEach((x) => x.classList.toggle('is-active', x === p));
+        apply();
+      });
+    });
+    search.addEventListener('input', apply);
+    clearBtn.addEventListener('click', () => {
+      reset();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      search.focus();
+    });
+    resetBtn.addEventListener('click', reset);
+
+    apply();
+  })();
+</script>

@@ -1,0 +1,70 @@
+---
+// Decorative hero illustration: a faux browser window showing the tool
+// categories as a tile grid. Purely visual (aria-hidden) — the six tiles are
+// illustrative and intentionally generic, not navigation. Tokens sampled
+// directly from the "Refined Indigo" design.
+import Icon from './Icon.astro';
+
+const tiles: { label: string; icon: string; active?: boolean }[] = [
+  { label: 'Image', icon: 'image' },
+  { label: 'PDF', icon: 'file' },
+  { label: 'Code', icon: 'code' },
+  { label: 'Text', icon: 'text' },
+  { label: 'Convert', icon: 'convert' },
+  { label: 'Private', icon: 'lock', active: true },
+];
+---
+
+<div aria-hidden="true" class="relative w-full max-w-[432px]">
+  <div
+    class="overflow-hidden rounded-[18px] border border-[#e9ebf3] bg-white shadow-[0_30px_60px_-32px_rgba(15,23,42,0.40),0_20px_44px_-24px_rgba(79,70,229,0.22)] dark:border-slate-800 dark:bg-slate-900"
+  >
+    <!-- title bar -->
+    <div class="flex items-center gap-[7px] border-b border-slate-100 px-5 py-[14px] dark:border-slate-800">
+      <span class="h-2.5 w-2.5 rounded-full bg-[#ff5f57]"></span>
+      <span class="h-2.5 w-2.5 rounded-full bg-[#febc2e]"></span>
+      <span class="h-2.5 w-2.5 rounded-full bg-[#28c840]"></span>
+      <span class="ml-[10px] h-[18px] flex-1 rounded-[6px] bg-[#f3f4f9] dark:bg-slate-800"></span>
+    </div>
+
+    <!-- category tiles -->
+    <div class="grid grid-cols-3 gap-3 p-5">
+      {
+        tiles.map((t) => (
+          <div
+            class={`flex flex-col items-center gap-[9px] rounded-[14px] border px-1.5 py-[15px] ${
+              t.active
+                ? 'border-brand-ring bg-brand-tint dark:border-brand/30 dark:bg-brand/15'
+                : 'border-[#eef0f6] bg-[#f7f8fc] dark:border-slate-800 dark:bg-slate-800/50'
+            }`}
+          >
+            <span
+              class={`inline-flex h-[34px] w-[34px] items-center justify-center rounded-[10px] ${
+                t.active
+                  ? 'bg-brand text-white'
+                  : 'bg-brand-tint text-brand dark:bg-brand/15 dark:text-brand-light'
+              }`}
+            >
+              <Icon name={t.icon} stroke={1.9} class="h-[18px] w-[18px]" />
+            </span>
+            <span
+              class={`text-[10.5px] ${
+                t.active ? 'font-bold text-brand dark:text-brand-light' : 'font-semibold text-slate-500 dark:text-slate-400'
+              }`}
+            >
+              {t.label}
+            </span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- floating trust badge -->
+  <div
+    class="absolute -bottom-[14px] -right-[10px] inline-flex items-center gap-[7px] rounded-[12px] bg-brand px-[14px] py-[9px] text-[12.5px] font-bold text-white shadow-[0_12px_26px_-8px_rgba(79,70,229,0.60)]"
+  >
+    <Icon name="lock" stroke={2} class="h-[13px] w-[13px]" />
+    100% on device
+  </div>
+</div>
