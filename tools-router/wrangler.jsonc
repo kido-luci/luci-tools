@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tools-router",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-09-01",
+  // The Worker owns the whole hostname as a Custom Domain: `wrangler deploy`
+  // provisions the DNS record + TLS cert and routes all traffic for the host here.
+  // The luci-studio.com zone must be on this Cloudflare account.
+  "routes": [
+    { "pattern": "tools.luci-studio.com", "custom_domain": true }
+  ],
+  "observability": { "enabled": true }
+}

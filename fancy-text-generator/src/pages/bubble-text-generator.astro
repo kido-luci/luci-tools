@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'bubble-text-generator')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Copy & Paste ⓑⓤⓑⓑⓛⓔ Text | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How does this circle every letter?',
+    a: 'It swaps each letter and digit for its "Enclosed Alphanumeric" Unicode equivalent — a character that already has a circle built around it. Because the circle is part of the character itself, it survives copy and paste anywhere plain text is accepted.',
+  },
+  {
+    q: 'Where can I paste bubble text?',
+    a: 'Instagram, TikTok, Twitter/X, Discord and Facebook bios, captions and usernames generally render it correctly. As with any Unicode style, always test on your target app first.',
+  },
+  {
+    q: 'Does bubble text work with numbers?',
+    a: 'Yes — digits 1–9 map to circled digit characters, and 0 maps to its own dedicated circled-zero character. Letters A–Z and a–z are also fully covered.',
+  },
+  {
+    q: 'Is my text sent to a server?',
+    a: 'No. The conversion happens entirely in your browser with JavaScript, and nothing you type is uploaded anywhere.',
+  },
+  {
+    q: 'Why do bubble letters look small on some devices?',
+    a: 'Circled Unicode characters are drawn inside a single character cell, so fonts that give them less room can render the letter and its ring on the small side. The text is still fully legible — it is a font-rendering difference, not a bug in the conversion.',
+  },
+  {
+    q: 'Will screen readers read bubble text correctly?',
+    a: 'Not reliably. Screen readers may read circled characters individually, mispronounce words, or skip them, since they are distinct code points from ordinary Latin letters. Avoid bubble text for anything that needs to stay fully accessible.',
+  },
+  {
+    q: 'Will bubble text still match hashtag or username searches?',
+    a: 'No. Search treats circled characters as different from the standard alphabet, so a bubbled hashtag will not match a plain-text search for the same word. Keep important keywords and hashtags in normal text.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ToolShell style="bubble" placeholder="Type your text to put it in ⓑⓤⓑⓑⓛⓔⓢ…" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to make bubble text</h2>
+      <ol>
+        <li>Type or paste your text into the box above.</li>
+        <li>Every letter and digit gets wrapped in a circle instantly as you type.</li>
+        <li>Click <strong>Copy</strong>, then paste the circled text into your bio, caption or post.</li>
+      </ol>
+
+      <h2>Why use a bubble text generator?</h2>
+      <p>
+        Circled letters give text a playful, badge-like look that stands out in
+        a feed of plain sentences. It works well for a short display name, a
+        username, or a single word you want to draw the eye to — the round
+        shape reads as friendly and casual rather than formal, which suits
+        gaming handles, fun bios and casual captions.
+      </p>
+
+      <h2>Where bubble text works (and where it doesn't)</h2>
+      <ul>
+        <li><strong>Instagram, TikTok, Discord</strong> — bios, captions and display names render the circled characters cleanly on modern apps.</li>
+        <li><strong>Gaming handles &amp; usernames</strong> — many game clients and forums that don't restrict Unicode display names show bubble text well; check the specific platform's character rules first.</li>
+        <li><strong>Twitter/X &amp; Facebook</strong> — renders correctly in posts and bios in most cases, though very old app versions may show boxes instead of circles.</li>
+        <li><strong>Search boxes &amp; hashtags</strong> — circled characters are different code points from the plain alphabet, so a bubbled hashtag won't match a normal-text search.</li>
+        <li><strong>Strict username &amp; legal-name fields</strong> — platforms that only accept standard ASCII will usually reject or strip bubble text.</li>
+      </ul>
+
+      <h2>A note on accessibility and SEO</h2>
+      <p>
+        Bubble characters come from Unicode's "Enclosed Alphanumerics" block —
+        separate code points from ordinary Latin letters and digits, not a
+        decoration layered on top of them. Screen readers may read circled
+        characters individually or skip them, so avoid bubble text for content
+        that needs to stay fully accessible. Search engines and in-app search
+        also treat circled words as different from their plain-text
+        equivalents, so keep important keywords in normal text alongside any
+        decorative bubble text.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('cursive-text-generator')} class="text-[var(--accent)] underline hover:no-underline">Cursive Text Generator</a> — an elegant flowing script style for bios and captions</li>
+        <li><a href={toolUrl('bold-text-generator')} class="text-[var(--accent)] underline hover:no-underline">Bold Text Generator</a> — make a word stand out with Unicode bold characters</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

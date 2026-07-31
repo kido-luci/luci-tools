@@ -1,0 +1,131 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import QrText from '../components/QrText.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'url-qr-code')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is the link I enter uploaded anywhere?',
+    a: 'No. The QR code is generated entirely in your browser with JavaScript. The URL you paste never leaves your device and is never sent to a server — the code works even offline.',
+  },
+  {
+    q: 'Is this a dynamic QR code I can edit later?',
+    a: 'No — and that is a good thing for most people. This makes a static code that points directly at your link with no redirect in between. It cannot be edited after printing, but it also never expires, needs no account, and keeps working forever.',
+  },
+  {
+    q: 'Does the URL QR code track scans?',
+    a: 'No. Because the link is encoded directly with no redirect service, there is no scan counter, no analytics and nothing logged. Anyone who scans it goes straight to your page.',
+  },
+  {
+    q: 'Do I need to include https:// in the link?',
+    a: 'Yes, include the full URL with its https:// (or http://) prefix. That ensures every phone opens it as a web address rather than treating it as plain text or guessing the protocol.',
+  },
+  {
+    q: 'Can I print it on a poster or packaging?',
+    a: 'Absolutely. Download the SVG so the code stays crisp at any size — posters, packaging, banners — or use the PNG for digital placement. Always scan the printed version with your own phone before it goes out.',
+  },
+  {
+    q: 'Should I download the PNG or the SVG?',
+    a: 'PNG is a fixed-resolution image, ideal for websites, emails and social posts. SVG is a vector that scales without blurring — the right choice for print where the final size may be large or unknown.',
+  },
+  {
+    q: 'Will a shorter link scan more reliably?',
+    a: 'Yes. A shorter URL produces a less dense code that phones lock onto faster, especially at small print sizes. Trim tracking parameters where you can, and keep the printed code large with a clear border around it.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <QrText />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to create a URL QR code</h2>
+      <ol>
+        <li>Paste your full link, including the <strong>https://</strong> prefix.</li>
+        <li>The QR code is generated instantly, right in your browser.</li>
+        <li>
+          Click <strong>Download PNG</strong> for a ready-to-use image, or
+          <strong>Download SVG</strong> for a sharp, print-ready vector.
+        </li>
+        <li>Place it on a poster, card or screen so people open your page with one scan.</li>
+      </ol>
+
+      <h2>What is a URL QR code?</h2>
+      <p>
+        A URL QR code encodes a web link so that pointing a phone camera at it
+        opens the page directly — no typing a long address, no hunting for it in
+        a search engine. It is the fastest way to move someone from the physical
+        world to a specific web page: a product listing, a booking form, a menu,
+        an app-store download or a social profile. Because the link is embedded
+        straight into the code, there is no shortener or redirect in the middle,
+        so the scan is instant and the code never depends on a third-party
+        service staying online.
+      </p>
+
+      <h2>Where a link QR code works best</h2>
+      <p>
+        URL codes are built for sharing pages in the real world. Put one on a
+        poster or flyer to send people to an event page; print it on packaging so
+        buyers reach setup instructions or reviews; add it to a restaurant table
+        for the digital menu; drop it on a business card, slide or shop window to
+        link your website. Creators and businesses use them to grow an audience —
+        a single code on a stall or storefront can point to an Instagram,
+        TikTok, YouTube or Linktree profile so followers connect in one tap. Any
+        time you would otherwise write out a web address, a link QR code does it
+        without typos.
+      </p>
+
+      <h2>PNG or SVG for a link code</h2>
+      <p>
+        Choose the <strong>PNG</strong> for on-screen and digital use — web
+        pages, email campaigns, social graphics — where a fixed-resolution image
+        is easiest to drop in. Choose the <strong>SVG</strong> for print: as a
+        vector it scales to any dimension without losing sharpness, so it stays
+        crisp on everything from a business card to a shopfront banner. When in
+        doubt, PNG for screens and SVG for print.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('vcard-qr-code')} class="text-[var(--accent)] underline hover:no-underline">vCard QR Code Generator</a> — share full contact details, not just a single link.</li>
+        <li><a href={toolUrl('email-qr-code')} class="text-[var(--accent)] underline hover:no-underline">Email QR Code Generator</a> — open a pre-filled email instead of a web page.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

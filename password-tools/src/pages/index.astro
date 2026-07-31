@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AdSlot from '../components/AdSlot.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const title = 'Free Online Password Generator — Strong Passwords & Passphrases | Luci Tools';
+const description =
+  'Generate strong passwords and memorable passphrases right in your browser. 100% client-side, fast, free, nothing uploaded.';
+
+const hubUrl = new URL(import.meta.env.BASE_URL, SITE.url).href;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Password Tools',
+  description,
+  url: hubUrl,
+};
+---
+
+<BaseLayout title={title} description={description} jsonLd={jsonLd}>
+  <section class="mx-auto max-w-[1600px] px-4 pb-20 pt-14 sm:px-10">
+    <h1 class="font-display text-[42px] font-bold leading-[1.1] tracking-[-0.025em] text-[var(--text)]">
+      Password Tools
+    </h1>
+    <p class="mt-[18px] max-w-[880px] text-[19px] leading-[1.55] text-[var(--text-2)]">
+      Fast, free and private password and passphrase generation that runs entirely
+      in your browser. Nothing is ever uploaded to a server.
+    </p>
+
+    <div class="mt-6 flex flex-wrap gap-[30px]">
+      {
+        ['100% in your browser', 'Nothing uploaded', 'Free & instant'].map((label) => (
+          <div class="flex items-center gap-[9px]">
+            <span
+              class="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[var(--accent-soft-bg)] text-xs font-extrabold text-[var(--accent)]"
+              aria-hidden="true"
+            >
+              ✓
+            </span>
+            <span class="text-[14.5px] font-medium text-[var(--text-2)]">{label}</span>
+          </div>
+        ))
+      }
+    </div>
+
+    <AdSlot />
+
+    <ul class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] gap-[26px]">
+      {
+        TOOLS.map((t) => (
+          <li>
+            <a
+              href={toolUrl(t.slug)}
+              class="flex h-full gap-[18px] rounded-xl border border-[var(--border-3)] bg-[var(--surface)] px-7 py-[26px] text-[var(--text)] transition hover:-translate-y-0.5 hover:border-[var(--border-hover)] hover:shadow-[0_12px_26px_-16px_var(--card-shadow)]"
+            >
+              <div class="flex h-[60px] w-[60px] flex-shrink-0 items-center justify-center rounded-[14px] bg-tile-bg text-tile-fg">
+                <Icon name={t.icon} class="h-7 w-7" />
+              </div>
+              <div>
+                <div class="text-[21px] font-bold text-[var(--text)]">{t.title}</div>
+                <div class="mt-2 text-[16px] leading-[1.55] text-[var(--text-4)]">{t.description}</div>
+                <div class="mt-[14px] text-sm font-bold text-[var(--accent)]">Generate →</div>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>

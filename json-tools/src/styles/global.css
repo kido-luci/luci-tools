@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Cream-paper theme tokens — shared with the hub (tools.luci-studio.com) so tool
+ * pages no longer jump themes. Light values on :root; the "night cream" dark theme
+ * overrides them on html.dark. The .dark class is toggled by the shared `theme`
+ * localStorage key, so the choice carries across hub <-> tools on the one origin.
+ *
+ * --tile-* is this engine's category identity (its hub-card hue, same on both
+ * themes, like the hub chips). Interactive elements (links/buttons) use --accent.
+ */
+:root {
+  color-scheme: light;
+  --bg: #f4f2ec;
+  --surface: #ffffff;
+  --surface-2: #fbf9f3;
+  --border: #e7e1d5;
+  --border-2: #e4ddcf;
+  --border-3: #e9e3d7;
+  --border-hover: #d6cebe;
+  --border-dashed: #dbd3c3;
+  --text: #1c1a16;
+  --text-2: #4b473e;
+  --text-3: #6e6a5f;
+  --text-4: #807a6c;
+  --text-5: #8c8677;
+  --text-6: #a7a192;
+  --text-7: #b4ad9c;
+  --text-8: #c6bfb0;
+  --pill-text: #3a362e;
+  --accent: #1f7a55;
+  --accent-hover: #17603f;
+  --accent-soft-bg: #eaf3ec;
+  --accent-soft-border: #cde1d4;
+  --header-bg: rgba(244, 242, 236, 0.8);
+  --card-shadow: rgba(28, 26, 22, 0.32);
+  --search-shadow: rgba(28, 26, 22, 0.03);
+  /* category identity — json-tools hue 156 */
+  --tile-bg: oklch(0.955 0.045 156);
+  --tile-fg: oklch(0.46 0.15 156);
+  --tile-dot: oklch(0.63 0.15 156);
+}
+
+html.dark {
+  color-scheme: dark;
+  --bg: #16140e;
+  --surface: #221f18;
+  --surface-2: #1d1a14;
+  --border: #322e25;
+  --border-2: #38332a;
+  --border-3: #2e2a21;
+  --border-hover: #4a4436;
+  --border-dashed: #3a352b;
+  --text: #f2efe6;
+  --text-2: #cdc6b6;
+  --text-3: #a39c8a;
+  --text-4: #968e7c;
+  --text-5: #898170;
+  --text-6: #79725f;
+  --text-7: #6a6351;
+  --text-8: #595344;
+  --pill-text: #d6d0c2;
+  --accent: #46a67d;
+  --accent-hover: #63c096;
+  --accent-soft-bg: #16271e;
+  --accent-soft-border: #274030;
+  --header-bg: rgba(22, 20, 14, 0.8);
+  --card-shadow: rgba(0, 0, 0, 0.5);
+  --search-shadow: rgba(0, 0, 0, 0.25);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* Shared readable-copy styles for the SEO body (how-to + explanation).
+   Cream tokens (not slate) so the body matches the hub in both themes. */
+@layer components {
+  .copy {
+    @apply mt-10 leading-relaxed;
+    color: var(--text-2);
+  }
+  .copy h2 {
+    @apply font-display text-xl font-semibold mt-8 mb-3;
+    color: var(--text);
+  }
+  .copy a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .copy a:hover {
+    color: var(--accent-hover);
+  }
+  .copy p {
+    @apply mt-3;
+  }
+  .copy ol {
+    @apply mt-3 list-decimal space-y-1 pl-6;
+  }
+  .copy ul {
+    @apply mt-3 list-disc space-y-1 pl-6;
+  }
+}

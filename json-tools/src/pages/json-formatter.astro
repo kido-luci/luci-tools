@@ -1,0 +1,138 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'json-formatter')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my JSON uploaded to a server?',
+    a: 'No. Formatting and validation run entirely in your browser with the native JSON parser. Your data never leaves your device.',
+  },
+  {
+    q: 'How does the validator report errors?',
+    a: 'If the input is not valid JSON, the parser message is shown below the editor, including the character position where parsing failed, so you can jump straight to the problem.',
+  },
+  {
+    q: 'Can I choose the indentation?',
+    a: 'Yes. Pick 2 spaces, 4 spaces or a tab, and the output is re-formatted instantly to match.',
+  },
+  {
+    q: 'Does formatting change my data?',
+    a: 'No. Only whitespace and key ordering as written are affected — the values and structure stay exactly the same. Reformatting is lossless.',
+  },
+  {
+    q: 'Does it just format, or does it also validate?',
+    a: 'Both. The formatter always parses the input first. If the JSON is invalid, it reports an error with the position; only valid JSON produces formatted output.',
+  },
+  {
+    q: 'What is the largest file I can format?',
+    a: "There is no fixed limit — nothing is uploaded, so the only constraint is your device's available memory. Extremely large files may take a moment to process.",
+  },
+  {
+    q: 'Does it sort or reorder my keys?',
+    a: 'No. Key order is preserved exactly as you wrote it. The formatter only adjusts whitespace and indentation.',
+  },
+  {
+    q: 'Does it accept comments or JSON5?',
+    a: 'No. It expects strict, standard JSON as defined by the JSON specification. Comments, trailing commas, and unquoted keys are not valid JSON and will be reported as errors.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ToolShell mode="format" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to format and validate JSON</h2>
+      <ol>
+        <li>Paste your JSON into the input box on the left.</li>
+        <li>
+          It is parsed and pretty-printed instantly in the output panel; pick an
+          indent size if you want.
+        </li>
+        <li>
+          If the JSON is invalid, the error message and position appear below so
+          you can fix it.
+        </li>
+        <li>Click <strong>Copy</strong> to put the clean JSON on your clipboard.</li>
+      </ol>
+
+      <h2>Why format JSON?</h2>
+      <p>
+        Minified or hand-edited JSON is hard to read and easy to break. Formatting
+        adds consistent indentation and line breaks so the structure is obvious,
+        and validating it first catches the missing comma or stray bracket that
+        would otherwise crash your app or API call.
+      </p>
+
+      <h2>What the formatter does</h2>
+      <p>
+        The formatter parses your JSON using the browser's built-in JSON parser,
+        then re-serialises it with your chosen indentation — 2 spaces, 4 spaces,
+        or a tab. Because it parses first, it also validates the structure and
+        points you to the exact character position of the first error, so invalid
+        JSON is quick to diagnose and fix rather than silently passing through.
+      </p>
+
+      <h2>Common JSON errors it catches</h2>
+      <ul>
+        <li><strong>Trailing commas</strong> — a comma after the last item in an object or array is not allowed in standard JSON.</li>
+        <li><strong>Single quotes</strong> — JSON requires double quotes around both keys and string values; single quotes cause a parse error.</li>
+        <li><strong>Missing or extra commas</strong> — a missing comma between two items, or an extra comma in an unexpected position, breaks the structure.</li>
+        <li><strong>Unquoted keys</strong> — unlike JavaScript object literals, JSON keys must always be quoted strings.</li>
+        <li><strong>Unbalanced braces or brackets</strong> — every opening <code>{`{`}</code> or <code>[</code> must have a matching closing character, in the right order.</li>
+      </ul>
+
+      <h2>Formatter vs minifier</h2>
+      <p>
+        Formatting (pretty-printing) makes JSON human-readable by adding indentation
+        and line breaks, which is ideal while you are debugging or reviewing a
+        response. Minifying does the opposite — it strips all insignificant
+        whitespace to produce the smallest valid document for use in production
+        or network transfers. If you need to shrink JSON instead of expanding it,
+        use the <a href={toolUrl('json-minifier')} class="text-[var(--accent)] underline hover:no-underline">JSON Minifier</a>.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('json-minifier')} class="text-[var(--accent)] underline hover:no-underline">JSON Minifier</a> — strip whitespace from JSON to get the smallest valid output.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

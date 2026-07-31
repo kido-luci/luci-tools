@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PasswordTool from '../components/PasswordTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'passphrase-generator')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'SecurityApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'What is a passphrase, and how is it different from a password?',
+    a: 'A passphrase strings together several random words (like "maple-otter-quartz-dawn") instead of random characters. It aims for the same entropy as a complex password but is built from words, which makes it much easier to read, type and remember.',
+  },
+  {
+    q: 'Are passphrases actually as secure as random-character passwords?',
+    a: "Yes, when they use enough words picked from a large, random wordlist. Each additional word multiplies the number of possible combinations, similar to how each additional character does for a traditional password — five or six random words comfortably reaches strong entropy.",
+  },
+  {
+    q: 'Are my generated passphrases uploaded anywhere?',
+    a: 'No. Word selection happens entirely in your browser — nothing is sent to a server, logged, or stored. Refreshing or closing the page clears it completely.',
+  },
+  {
+    q: 'How many words should my passphrase have?',
+    a: 'Four to five words is a solid baseline for most accounts; six or more pushes into very strong territory. Use the length slider (which controls word count here) and watch the strength meter to see the resulting entropy directly.',
+  },
+  {
+    q: 'Can I customize the separator between words?',
+    a: 'This tool joins words with a hyphen by default, which keeps the passphrase easy to read and type on any keyboard. If a site requires a different format, you can copy the passphrase and adjust the separator yourself before using it.',
+  },
+  {
+    q: 'Should I add numbers or symbols to a passphrase?',
+    a: "You can, but it isn't necessary if the word count is high enough — most of the security comes from how many words you use and how large the wordlist is. If a site requires a digit or symbol, adding one to a long passphrase barely changes usability while satisfying the rule.",
+  },
+  {
+    q: 'When is a passphrase better than a random password?',
+    a: 'Passphrases shine anywhere you need to type a password by hand and recall it repeatedly — a device unlock code, a Wi-Fi password you share verbally, or a password manager master password. For passwords you\'ll only ever copy-paste from a manager, a fully random password is just as good.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <span
+      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg"
+      aria-hidden="true"
+    >
+      <Icon name={meta.icon} class="h-7 w-7" />
+    </span>
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <PasswordTool mode="passphrase" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to generate a passphrase</h2>
+      <ol>
+        <li>Drag the word-count slider to choose how many words to include — 4–6 is a good range for most accounts.</li>
+        <li>Click <strong>Regenerate</strong> until you get a passphrase you like the sound of.</li>
+        <li>Click <strong>Copy</strong> to copy it, then paste it straight into your password manager.</li>
+      </ol>
+
+      <h2>Why passphrases are easier to remember</h2>
+      <p>
+        Human memory is much better at recalling words than random character
+        strings. A passphrase like "maple-otter-quartz-dawn" reaches high
+        entropy through the sheer number of words in the pool it's drawn
+        from, while staying easy to read aloud, type on a phone keyboard, or
+        recall days later — something a string like "xQ7$mK2!vL9p" can't
+        offer.
+      </p>
+
+      <h2>Length, entropy and word count</h2>
+      <p>
+        Each word you add multiplies the number of possible passphrases by
+        the size of the wordlist, the same way each character multiplies the
+        possibilities for a traditional password. The strength meter above
+        translates the current word count directly into bits of entropy, so
+        you can see exactly how many words you need to cross into "good" or
+        "strong" territory.
+      </p>
+
+      <h2>Where passphrases work best</h2>
+      <ul>
+        <li>Your password manager's master password, which you'll type by hand more often than others.</li>
+        <li>Device passcodes and disk-encryption passwords.</li>
+        <li>Wi-Fi passwords you need to read out loud to guests.</li>
+        <li>Anywhere a strict "no symbols allowed" rule rules out a random-character password.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('password-generator')} class="text-[var(--accent)] underline hover:no-underline">Password Generator</a> — random-character passwords with adjustable rules.</li>
+        <li><a href={toolUrl('strong-password-generator')} class="text-[var(--accent)] underline hover:no-underline">Strong Password Generator</a> — tuned defaults for maximum entropy.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'cursive-text-generator')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Copy & Paste 𝓬𝓾𝓻𝓼𝓲𝓿𝓮 Text | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How does this turn text into cursive without a font install?',
+    a: 'It swaps each letter for its Mathematical Bold Script Unicode equivalent — a full alphabet of flowing, handwritten-style characters. Because the script look is baked into the character itself, it survives copy and paste anywhere plain text is accepted.',
+  },
+  {
+    q: 'Where can I paste cursive text?',
+    a: 'Instagram, TikTok, Twitter/X, Discord and Facebook bios and captions all render it well. As with any Unicode style, test on your target app first since font support varies slightly by platform and device.',
+  },
+  {
+    q: 'Does cursive text support numbers?',
+    a: 'No — the Mathematical Bold Script block only defines letters (A–Z, a–z). Digits, punctuation, spaces and emoji are left exactly as typed.',
+  },
+  {
+    q: 'Is my text sent to a server?',
+    a: 'No. The conversion happens entirely in your browser with JavaScript. Nothing you type is uploaded anywhere.',
+  },
+  {
+    q: 'Is this a real font or a text trick?',
+    a: 'It is real Unicode — specific code points that are defined to look like bold cursive script in any font that supports the Mathematical Alphanumeric Symbols block. It is not a custom font file, so no installation is needed and it renders the same way in any app that supports Unicode.',
+  },
+  {
+    q: 'Will screen readers announce it correctly?',
+    a: 'Not reliably. Screen readers may read each cursive character individually, mispronounce words, or skip them, since they are technically distinct code points from ordinary Latin letters. Avoid using it for content that must stay fully accessible.',
+  },
+  {
+    q: 'Will cursive text still show up in hashtag or username searches?',
+    a: 'No. Platform search treats these as different characters from the standard alphabet, so a cursive hashtag will not match a plain-text search for the same word. Keep searchable keywords and hashtags in normal text.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ToolShell style="cursive" placeholder="Type your text to make it 𝓬𝓾𝓻𝓼𝓲𝓿𝓮…" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to make cursive text</h2>
+      <ol>
+        <li>Type or paste your text into the box above.</li>
+        <li>The flowing script version appears instantly underneath as you type.</li>
+        <li>Click <strong>Copy</strong>, then paste it into your bio, caption or post.</li>
+      </ol>
+
+      <h2>Why use a cursive text generator?</h2>
+      <p>
+        Cursive Unicode gives plain text an elegant, handwritten feel without
+        needing a design app or a custom font. It works well for a display name,
+        a wedding or event announcement, or a single line you want to feel more
+        personal than the surrounding plain text — all while staying fully
+        copy-pasteable, since the style lives in the characters themselves.
+      </p>
+
+      <h2>Where cursive text works (and where it doesn't)</h2>
+      <ul>
+        <li><strong>Instagram, TikTok, Twitter/X, Discord</strong> — bios, captions and display names render the script reliably on modern apps.</li>
+        <li><strong>Facebook &amp; LinkedIn</strong> — generally renders correctly in posts and profile fields, though very old app versions may fall back to boxes.</li>
+        <li><strong>Invitations &amp; announcements shared as text</strong> — a quick way to add a script-style flourish to an engagement post or event caption without opening a design tool.</li>
+        <li><strong>Search boxes &amp; hashtags</strong> — cursive characters are different code points from the plain alphabet, so a cursive hashtag won't match a normal-text search.</li>
+        <li><strong>Username &amp; legal-name fields</strong> — most platforms restrict these to standard ASCII, so cursive Unicode is usually rejected or stripped there.</li>
+      </ul>
+
+      <h2>A note on accessibility and SEO</h2>
+      <p>
+        These characters come from Unicode's "Mathematical Alphanumeric Symbols"
+        range — separate code points from ordinary Latin letters, not a font
+        style layered on top of them. That means screen readers may read the
+        script letters individually or skip them, so avoid using cursive Unicode
+        for anything that needs to stay fully accessible. It also means search
+        engines and in-app search treat cursive words as different from their
+        plain-text equivalents, so keep important keywords in normal text
+        alongside any decorative cursive line.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('italic-text-generator')} class="text-[var(--accent)] underline hover:no-underline">Italic Text Generator</a> — a slanted, subtler style for bios and captions</li>
+        <li><a href={toolUrl('bubble-text-generator')} class="text-[var(--accent)] underline hover:no-underline">Bubble Text Generator</a> — playful circled letters for usernames and titles</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

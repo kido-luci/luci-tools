@@ -1,0 +1,18 @@
+---
+// Placeholder ad slot — reserves layout space so real AdSense units (added
+// once the host is approved) don't cause layout shift. The tool always stays
+// above the fold; ads sit around/below it, never blocking the function.
+interface Props {
+  slot?: string;
+}
+const { slot = 'placeholder' } = Astro.props;
+---
+
+<div
+  class="relative flex h-[118px] items-center justify-center rounded-[14px] border border-[#d6dae6] bg-[#f3f5fb] dark:border-slate-700 dark:bg-slate-900/60"
+  data-ad-slot={slot}
+  aria-hidden="true"
+>
+  <span class="absolute left-5 top-4 font-mono text-[10px] uppercase tracking-[0.14em] text-[#aab2c5] dark:text-slate-600">Sponsored</span>
+  <span class="font-mono text-[12px] uppercase tracking-[0.2em] text-[#aeb6c8] dark:text-slate-600">Ad space</span>
+</div>

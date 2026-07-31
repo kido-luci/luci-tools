@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'csv-to-json')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my CSV uploaded to a server?',
+    a: 'No. The CSV is parsed and turned into JSON entirely in your browser. Nothing is uploaded — your data never leaves your device.',
+  },
+  {
+    q: 'How does it handle the header row?',
+    a: 'The first line is treated as the header, and each of its values becomes a key in every output object. Each following line becomes one object mapping those keys to that row’s cells.',
+  },
+  {
+    q: 'Are commas and quotes inside a field handled correctly?',
+    a: 'Yes. The parser is a proper RFC 4180 state machine, not a naive split on commas. A field wrapped in double quotes can contain commas, and an escaped "" inside it is read as a single literal double quote, so values like "Smith, John" stay in one column.',
+  },
+  {
+    q: 'Can a value contain a line break?',
+    a: 'Yes. A newline inside a quoted field is kept as part of that value rather than starting a new row, so multi-line cells survive the conversion. Both \\r\\n and \\n line endings between rows are accepted.',
+  },
+  {
+    q: 'Are all values strings, or are numbers detected?',
+    a: 'Every value is kept as a string. CSV has no type information, so the safest, lossless conversion is to leave cells exactly as written — including leading zeros and codes — rather than guessing which look like numbers or booleans.',
+  },
+  {
+    q: 'What if a row has fewer or more fields than the header?',
+    a: 'Short rows get empty strings for the missing trailing columns, and any extra fields beyond the header width are dropped since they have no key. A single trailing newline at the end of the file is ignored, so you never get a blank last object.',
+  },
+  {
+    q: 'Can it handle large files?',
+    a: 'Yes, within your device’s memory. Since nothing is uploaded, the only limit is what your browser can hold; very large files may take a moment to parse and pretty-print.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ToolShell mode="csv-to-json" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert CSV to JSON</h2>
+      <ol>
+        <li>Paste your CSV — with a header row on the first line — into the input box on the left.</li>
+        <li>It is parsed instantly into a pretty-printed JSON array of objects in the output panel.</li>
+        <li>
+          Fields with commas, quotes, or line breaks are handled for you, so
+          the values stay in the right columns.
+        </li>
+        <li>Click <strong>Copy</strong> for the clipboard, or <strong>Download JSON</strong> to save a <code>.json</code> file.</li>
+      </ol>
+
+      <h2>Importing spreadsheet exports into your code</h2>
+      <p>
+        Spreadsheets and databases love to export CSV, but code, APIs, and config
+        files want JSON. Converting a CSV export into a JSON array of objects lets
+        you drop a data extract straight into a script, seed a test fixture from a
+        spreadsheet, or turn a colleague’s exported sheet into a request body an API
+        will accept. The header row becomes the object keys, and every data row
+        becomes one object, so each record is addressable by field name instead of
+        by column position.
+      </p>
+
+      <h2>Delimiters, quotes, and how values are typed</h2>
+      <p>
+        This converter uses a real RFC 4180 parser rather than splitting on commas
+        and newlines, which is what makes it safe on messy real-world data. Quoted
+        fields may contain commas, line breaks, and escaped double quotes (written
+        as <code>""</code>), and both Windows (CRLF) and Unix (LF) line endings are
+        accepted. Every value is emitted as a string, because CSV carries no type
+        information — this keeps the conversion lossless, preserving leading zeros,
+        identifiers, and anything that merely looks numeric. Rows shorter than the
+        header are padded with empty strings, and a single trailing newline is
+        ignored so you never get an empty final record.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('json-to-csv')} class="text-[var(--accent)] underline hover:no-underline">JSON to CSV</a> — turn a JSON array of objects back into spreadsheet-ready CSV.</li>
+        <li><a href={toolUrl('json-formatter')} class="text-[var(--accent)] underline hover:no-underline">JSON Formatter &amp; Validator</a> — pretty-print and validate the JSON this produces.</li>
+        <li><a href={toolUrl('json-validator')} class="text-[var(--accent)] underline hover:no-underline">JSON Validator</a> — confirm the resulting JSON is well-formed.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

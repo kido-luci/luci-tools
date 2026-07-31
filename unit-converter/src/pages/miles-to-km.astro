@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import UnitConverter from '../components/UnitConverter.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'miles-to-km')!;
+const [fromLabel, toLabel] = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How do I convert miles to kilometers?',
+    a: 'Multiply the number of miles by 1.609344. For example, 5 mi × 1.609344 ≈ 8.047 km. The converter above updates the result as you type.',
+  },
+  {
+    q: 'How many kilometers are in a mile?',
+    a: 'Exactly 1.609344 kilometers make up one mile — this is the internationally defined ratio, not a rounded approximation.',
+  },
+  {
+    q: 'What is a marathon (26.2 miles) in kilometers?',
+    a: 'A marathon distance of 26.2 miles is about 42.16 km. The official marathon distance is actually defined as 42.195 km — 26.2 miles is itself a rounded figure.',
+  },
+  {
+    q: 'How fast is 60 mph in km/h?',
+    a: 'Multiply by 1.609344: 60 × 1.609344 ≈ 96.56 km/h. The same conversion factor applies whether you’re converting a distance or a speed.',
+  },
+  {
+    q: 'Why is 1.609344 the exact factor?',
+    a: 'The international mile is legally defined as exactly 1609.344 meters (since 1959), so multiplying miles by 1.609344 always gives an exact kilometer value.',
+  },
+  {
+    q: 'Is anything I enter uploaded or logged?',
+    a: 'No. The conversion happens entirely in your browser — nothing you type is sent to a server or stored.',
+  },
+];
+
+const rows = [
+  ['1 mi', '1.6093 km'],
+  ['5 mi', '8.0467 km'],
+  ['10 mi', '16.0934 km'],
+  ['26.2 mi', '42.1647 km'],
+  ['50 mi', '80.4672 km'],
+  ['100 mi', '160.9344 km'],
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <FormatBadge from={fromLabel} to={toLabel} class="mb-5" />
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <UnitConverter dimension={meta.dimension} from={meta.from} to={meta.to} />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert miles to km</h2>
+      <ol>
+        <li>Enter the distance in miles into the box above.</li>
+        <li>The kilometer equivalent updates live as you type.</li>
+        <li>Switch either dropdown to convert between any length unit on this site.</li>
+      </ol>
+
+      <h2>The formula</h2>
+      <p>Kilometers are found by multiplying miles by 1.609344:</p>
+      <p><strong>kilometers = miles × 1.609344</strong></p>
+      <p>Reversed, miles = kilometers × 0.621371.</p>
+
+      <h2>Common miles to km values</h2>
+      <table>
+        <thead><tr><th>Miles</th><th>Kilometers</th></tr></thead>
+        <tbody>{rows.map((r) => <tr><td>{r[0]}</td><td>{r[1]}</td></tr>)}</tbody>
+      </table>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('km-to-miles')} class="text-[var(--accent)] underline hover:no-underline">KM to Miles converter</a> — go the other way.</li>
+        <li><a href={toolUrl('feet-to-meters')} class="text-[var(--accent)] underline hover:no-underline">Feet to Meters converter</a> — for shorter distances.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

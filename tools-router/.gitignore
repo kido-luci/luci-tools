@@ -1,0 +1,10 @@
+# deps
+node_modules/
+
+# cloudflare
+.wrangler/
+.dev.vars
+
+# logs / misc
+*.log
+.DS_Store

@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'png-to-pdf')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Are my PNG files uploaded anywhere?',
+    a: 'No. The PDF is built locally in your browser, so your PNG files never leave your device.',
+  },
+  {
+    q: 'Can I combine multiple PNGs into one PDF?',
+    a: 'Yes. Add as many PNG images as you like and each one becomes its own page in a single PDF.',
+  },
+  {
+    q: 'What order do the pages come out in?',
+    a: 'Pages appear in the order you add the images — top to bottom in the list. To move an image later, remove it and add it again so it lands at the end.',
+  },
+  {
+    q: 'Does converting PNG to PDF reduce quality or increase file size?',
+    a: 'Your PNGs are embedded at their original resolution with no re-compression, so quality is unchanged. Since PNG is lossless, the resulting PDF can be larger than a PDF built from JPGs of the same dimensions.',
+  },
+  {
+    q: 'What happens to transparent areas in my PNG?',
+    a: 'PDF pages have no transparency channel, so any transparent area in your PNG is filled with a white background in the output PDF.',
+  },
+  {
+    q: 'Is this good for combining screenshots into one PDF?',
+    a: 'Yes — screenshots are usually PNG, and this tool is built for exactly that: drop several screenshots in and get back one PDF with each screenshot on its own page.',
+  },
+  {
+    q: 'Can I use this for JPG images instead?',
+    a: 'This page is tuned for PNG. If your images are JPG, use the JPG to PDF tool instead — both share the same private, in-browser conversion.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ToolShell
+      mode="images"
+      accept=".png,image/png"
+      cta="Create PDF"
+      prompt="Drag & drop PNG images here"
+    />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert PNG to PDF</h2>
+      <ol>
+        <li>Drop your PNG images onto the box above, or click to browse.</li>
+        <li>The images are placed one per page in the order you added them.</li>
+        <li>Click <strong>Create PDF</strong>, then download the finished PDF.</li>
+      </ol>
+
+      <h2>Combine screenshots and PNGs into one PDF</h2>
+      <p>
+        PNG is the default format for screenshots and most exported diagrams,
+        so it's common to end up with a folder of loose <code>.png</code> files
+        that are awkward to share one by one. This tool stacks any number of
+        PNGs into a single PDF — each image becomes its own page, in the order
+        you add them — so you can send a walkthrough, a set of design mockups
+        or a bug report as one clean attachment instead of several files.
+      </p>
+
+      <h2>Page order and transparency</h2>
+      <p>
+        Pages come out in the same order the images were added, so build your
+        list in the order you want the PDF to read — remove and re-add an
+        image to move it to the end. Because PDF pages don't support
+        transparency, any transparent or partially transparent area in a PNG
+        (common in logos and UI exports) is rendered with a white background
+        in the resulting PDF. Since PNG is lossless, embedding stays at full
+        quality, though the output PDF may be larger than one built from JPGs
+        of the same dimensions.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('jpg-to-pdf')} class="text-[var(--accent)] underline hover:no-underline">JPG to PDF converter</a> — the same tool tuned for JPG (and mixed JPG/PNG) images.</li>
+        <li><a href={toolUrl('merge-pdf')} class="text-[var(--accent)] underline hover:no-underline">Merge PDF</a> — combine the PDF you just created with other PDF files into one document.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

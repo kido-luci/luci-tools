@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import UnitConverter from '../components/UnitConverter.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'cm-to-inches')!;
+const [fromLabel, toLabel] = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How do I convert centimeters to inches?',
+    a: 'Divide the number of centimeters by 2.54. For example, 10 cm ÷ 2.54 = 3.937 inches. The converter above does this instantly as you type.',
+  },
+  {
+    q: 'How many inches are in a centimeter?',
+    a: 'One centimeter equals about 0.3937 inches. Put another way, it takes 2.54 centimeters to make a single inch.',
+  },
+  {
+    q: 'Is the centimeter-to-inch relationship exact?',
+    a: 'Yes. Since 1959 an inch has been defined as exactly 2.54 centimeters, so the conversion is exact rather than an approximation — no rounding is baked into the factor itself.',
+  },
+  {
+    q: 'What is 10 cm in inches?',
+    a: '10 cm is 3.937 inches (10 ÷ 2.54). A quick mental estimate is "just under 4 inches".',
+  },
+  {
+    q: 'How do I convert a height like 170 cm to feet and inches?',
+    a: 'First convert to inches: 170 ÷ 2.54 ≈ 66.93 in. Then divide by 12 for feet — 66.93 in is about 5 feet 6.9 inches.',
+  },
+  {
+    q: 'Are my numbers sent anywhere?',
+    a: 'No. The conversion runs entirely in your browser with JavaScript. Nothing you type is uploaded, logged or stored on a server.',
+  },
+];
+
+const rows = [
+  ['1 cm', '0.3937 in'],
+  ['5 cm', '1.9685 in'],
+  ['10 cm', '3.937 in'],
+  ['20 cm', '7.874 in'],
+  ['30 cm', '11.811 in'],
+  ['100 cm', '39.37 in'],
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <FormatBadge from={fromLabel} to={toLabel} class="mb-5" />
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <UnitConverter dimension={meta.dimension} from={meta.from} to={meta.to} />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert cm to inches</h2>
+      <ol>
+        <li>Type the number of centimeters into the box above.</li>
+        <li>The inch value updates live — no button to press.</li>
+        <li>Switch either unit with the dropdowns to convert between any metric and imperial length.</li>
+      </ol>
+
+      <h2>The formula</h2>
+      <p>Inches are found by dividing centimeters by 2.54:</p>
+      <p><strong>inches = centimeters ÷ 2.54</strong></p>
+      <p>
+        Because an inch is defined as exactly 2.54 cm, the reverse also holds:
+        centimeters = inches × 2.54.
+      </p>
+
+      <h2>Common cm to inches values</h2>
+      <table>
+        <thead><tr><th>Centimeters</th><th>Inches</th></tr></thead>
+        <tbody>{rows.map((r) => <tr><td>{r[0]}</td><td>{r[1]}</td></tr>)}</tbody>
+      </table>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('inches-to-cm')} class="text-[var(--accent)] underline hover:no-underline">Inches to CM converter</a> — go the other way.</li>
+        <li><a href={toolUrl('mm-to-inches')} class="text-[var(--accent)] underline hover:no-underline">MM to Inches converter</a> — for smaller measurements.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

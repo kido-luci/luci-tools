@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ColorTool from '../components/ColorTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'rgb-to-hex')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DesignApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How do I convert RGB to HEX?',
+    a: 'Convert each of the red, green and blue values (0–255) to a 2-digit base-16 number, then join them with a leading #. For example, rgb(59, 130, 246) becomes 3b, 82, f6 — or #3b82f6.',
+  },
+  {
+    q: 'What format should I type the RGB value in?',
+    a: 'Use CSS function syntax, e.g. rgb(59, 130, 246) or rgba(59, 130, 246, 0.5) — the alpha value is accepted but ignored, since hex colors here have no alpha channel.',
+  },
+  {
+    q: 'Why does my RGB value show an error?',
+    a: 'Each channel must be a whole number between 0 and 255. Values outside that range, or text that isn\'t in rgb(r, g, b) form, will not parse.',
+  },
+  {
+    q: 'Is HEX or RGB better to use?',
+    a: 'Neither is "better" — they represent the same color. HEX is more compact and common in CSS and design tools; RGB is more explicit and easier to read as separate channel values, which some code and APIs prefer.',
+  },
+  {
+    q: 'Does this tool round the RGB values?',
+    a: 'Whole-number channel values convert exactly with no rounding error, since each channel maps directly to a 2-digit hex pair.',
+  },
+  {
+    q: 'Is my color data sent to a server?',
+    a: 'No. The conversion is plain arithmetic that runs entirely in your browser with JavaScript — nothing is uploaded or logged.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <FormatBadge from="RGB" to="HEX" class="mb-5" />
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ColorTool mode="rgb-to-hex" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert RGB to HEX</h2>
+      <ol>
+        <li>Type an RGB value into the box above, e.g. <code>rgb(59, 130, 246)</code>.</li>
+        <li>The HEX and HSL values update live as you type.</li>
+        <li>Copy the HEX value straight out of the result card.</li>
+      </ol>
+
+      <h2>How the conversion works</h2>
+      <p>
+        Each RGB channel is a decimal number from 0–255. Converting to hex means
+        writing each channel as a 2-digit base-16 number and concatenating them:
+        <strong>rgb(59, 130, 246)</strong> becomes <strong>#3b82f6</strong>, since
+        59 is 3b, 130 is 82 and 246 is f6 in hexadecimal.
+      </p>
+
+      <h2>Where you'll need this</h2>
+      <ul>
+        <li>Turning a color you picked or sampled as RGB into a hex string for CSS, SVG fills or a design tool.</li>
+        <li>Copying colors from an image-editing tool's RGB readout into a stylesheet.</li>
+        <li>Standardizing a codebase on hex colors when some values arrive as RGB tuples.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('hex-to-rgb')} class="text-[var(--accent)] underline hover:no-underline">HEX to RGB converter</a> — go the other way.</li>
+        <li><a href={toolUrl('hex-to-hsl')} class="text-[var(--accent)] underline hover:no-underline">HEX to HSL converter</a> — get hue, saturation and lightness instead.</li>
+        <li><a href={toolUrl('color-contrast-checker')} class="text-[var(--accent)] underline hover:no-underline">Color contrast checker</a> — check WCAG accessibility between two colors.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

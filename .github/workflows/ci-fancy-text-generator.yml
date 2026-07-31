@@ -1,0 +1,22 @@
+name: CI (fancy-text-generator)
+on:
+  pull_request:
+    paths: ['fancy-text-generator/**']
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fancy-text-generator
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: fancy-text-generator/package-lock.json
+      - run: npm ci
+      - run: npm run check
+      - run: npm run test --if-present
+      - run: npm run build --if-present

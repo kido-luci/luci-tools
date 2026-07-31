@@ -1,0 +1,58 @@
+---
+// The interactive text/URL + logo → QR widget. The client script reads
+// [data-qr-logo], renders a high-error-correction QR code onto a canvas,
+// composites the uploaded logo behind a white rounded pad, and wires the PNG
+// download button.
+---
+
+<div data-qr-logo class="mt-8">
+  <label for="qr-logo-text-input" class="block text-sm font-medium text-[var(--text-2)]">
+    Text or URL
+  </label>
+  <textarea
+    id="qr-logo-text-input"
+    rows="3"
+    placeholder="https://example.com"
+    class="mt-2 w-full resize-y rounded-xl border border-[var(--border-2)] bg-[var(--surface)] px-3 py-2 text-[var(--text)] shadow-sm focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] placeholder:text-[var(--text-6)]"
+  ></textarea>
+
+  <label for="qr-logo-file-input" class="mt-4 block text-sm font-medium text-[var(--text-2)]">
+    Logo image
+  </label>
+  <input
+    id="qr-logo-file-input"
+    type="file"
+    accept="image/png,image/jpeg,image/svg+xml"
+    class="mt-2 block w-full text-sm text-[var(--text-3)] file:mr-3 file:rounded-md file:border-0 file:bg-[var(--accent)] file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-[var(--accent-hover)]"
+  />
+  <p class="mt-1 text-xs text-[var(--text-6)]">
+    100% in your browser — your text and logo never leave your device.
+  </p>
+
+  <div class="mt-6 flex flex-col items-center">
+    <div
+      data-preview
+      class="flex h-64 w-64 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 text-center text-sm text-[var(--text-6)]"
+    >
+      Enter text or a URL to generate a QR code.
+    </div>
+    <canvas
+      data-canvas
+      class="hidden h-64 w-64 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3"
+    ></canvas>
+
+    <div data-actions class="mt-4 hidden gap-3">
+      <button
+        data-download-png
+        type="button"
+        class="rounded-md bg-[var(--accent)] px-3 py-1.5 text-sm font-medium text-white hover:bg-[var(--accent-hover)]"
+      >
+        Download PNG
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import '../scripts/qr-logo.ts';
+</script>

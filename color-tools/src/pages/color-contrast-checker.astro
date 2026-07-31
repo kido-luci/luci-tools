@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ColorTool from '../components/ColorTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'color-contrast-checker')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DesignApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'What is a good contrast ratio?',
+    a: 'WCAG 2.x defines three tiers for text: 3:1 (AA Large, for text 18pt+ or 14pt+ bold), 4.5:1 (AA, for normal body text) and 7:1 (AAA, an enhanced standard). Higher is always more readable.',
+  },
+  {
+    q: 'How is the contrast ratio calculated?',
+    a: 'Each color\'s relative luminance is computed by linearizing its sRGB channels and weighting them (0.2126 red, 0.7152 green, 0.0722 blue, per the WCAG formula). The ratio is then (lighter + 0.05) / (darker + 0.05), giving a value from 1 (identical colors) to 21 (black on white).',
+  },
+  {
+    q: 'What is the difference between AA and AAA?',
+    a: 'AA is the minimum WCAG level most accessibility guidelines and laws require. AAA is a stricter, enhanced level intended for content where readability matters even more, such as government or medical sites.',
+  },
+  {
+    q: 'What counts as "large text" for the AA Large threshold?',
+    a: 'WCAG defines large text as at least 18pt (24px) regular weight, or at least 14pt (18.66px) bold. Large text gets a lower required ratio (3:1) because bigger, bolder strokes stay legible at less contrast.',
+  },
+  {
+    q: 'Does this check colors for color-blind users?',
+    a: 'No — this tool checks luminance contrast only, which is the WCAG text-contrast requirement. Color-blindness-specific concerns, like relying on hue alone to convey meaning, are a separate accessibility consideration this tool does not test.',
+  },
+  {
+    q: 'Can I type RGB values instead of hex?',
+    a: 'Yes. Both fields accept a hex code (#3b82f6) or an rgb()/rgba() function string (rgb(59, 130, 246)) — or you can just use the color picker next to each field.',
+  },
+  {
+    q: 'Is my color data sent to a server?',
+    a: 'No. The contrast calculation runs entirely in your browser with JavaScript — nothing is uploaded or logged.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <span
+      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg"
+      aria-hidden="true"
+    >
+      <Icon name={meta.icon} class="h-7 w-7" />
+    </span>
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ColorTool mode="contrast" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to check color contrast</h2>
+      <ol>
+        <li>Enter a text color and a background color above (hex, RGB, or the color pickers).</li>
+        <li>The preview shows your text color on your background color live.</li>
+        <li>Read the contrast ratio and see whether it passes AA, AA Large and AAA.</li>
+      </ol>
+
+      <h2>Color models and WCAG levels</h2>
+      <p>
+        Contrast is measured from each color's <strong>relative luminance</strong> —
+        a perceptual brightness value derived by linearizing the sRGB red, green
+        and blue channels and weighting them per the WCAG formula
+        (0.2126R + 0.7152G + 0.0722B). The ratio between the lighter and darker
+        luminance, from 1:1 to 21:1, is then compared against three thresholds:
+      </p>
+      <ul>
+        <li><strong>AA Large (3:1)</strong> — minimum for large text (18pt+, or 14pt+ bold).</li>
+        <li><strong>AA (4.5:1)</strong> — minimum for normal body text; the most commonly required level.</li>
+        <li><strong>AAA (7:1)</strong> — an enhanced standard for maximum readability.</li>
+      </ul>
+
+      <h2>Why contrast matters</h2>
+      <p>
+        Low-contrast text is hard to read for users with low vision, color
+        blindness, or anyone viewing a screen in bright sunlight. Meeting WCAG
+        contrast levels is also a common legal and procurement requirement for
+        websites, alongside being simply good design practice.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('hex-to-rgb')} class="text-[var(--accent)] underline hover:no-underline">HEX to RGB converter</a> — inspect a color's raw channels.</li>
+        <li><a href={toolUrl('hex-to-hsl')} class="text-[var(--accent)] underline hover:no-underline">HEX to HSL converter</a> — adjust lightness to fix a failing contrast ratio.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

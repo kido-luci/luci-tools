@@ -1,0 +1,121 @@
+---
+// The interactive contact → vCard QR widget. The client script reads
+// [data-qr-vcard], builds the vCard 3.0 payload from the fields, regenerates
+// the preview on change, and wires the two download buttons.
+---
+
+<div data-qr-vcard class="mt-8">
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div>
+      <label for="vcard-first" class="block text-sm font-medium text-[var(--text-2)]">
+        First name
+      </label>
+      <input
+        id="vcard-first"
+        type="text"
+        autocomplete="off"
+        placeholder="Ada"
+        class="mt-2 w-full rounded-xl border border-[var(--border-2)] bg-[var(--surface)] px-3 py-2 text-[var(--text)] shadow-sm focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] placeholder:text-[var(--text-6)]"
+      />
+    </div>
+
+    <div>
+      <label for="vcard-last" class="block text-sm font-medium text-[var(--text-2)]">
+        Last name
+      </label>
+      <input
+        id="vcard-last"
+        type="text"
+        autocomplete="off"
+        placeholder="Lovelace"
+        class="mt-2 w-full rounded-xl border border-[var(--border-2)] bg-[var(--surface)] px-3 py-2 text-[var(--text)] shadow-sm focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] placeholder:text-[var(--text-6)]"
+      />
+    </div>
+
+    <div>
+      <label for="vcard-phone" class="block text-sm font-medium text-[var(--text-2)]">
+        Phone
+      </label>
+      <input
+        id="vcard-phone"
+        type="tel"
+        autocomplete="off"
+        placeholder="+1 555 000 1234"
+        class="mt-2 w-full rounded-xl border border-[var(--border-2)] bg-[var(--surface)] px-3 py-2 text-[var(--text)] shadow-sm focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] placeholder:text-[var(--text-6)]"
+      />
+    </div>
+
+    <div>
+      <label for="vcard-email" class="block text-sm font-medium text-[var(--text-2)]">
+        Email
+      </label>
+      <input
+        id="vcard-email"
+        type="email"
+        autocomplete="off"
+        placeholder="ada@example.com"
+        class="mt-2 w-full rounded-xl border border-[var(--border-2)] bg-[var(--surface)] px-3 py-2 text-[var(--text)] shadow-sm focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] placeholder:text-[var(--text-6)]"
+      />
+    </div>
+
+    <div>
+      <label for="vcard-org" class="block text-sm font-medium text-[var(--text-2)]">
+        Organization
+      </label>
+      <input
+        id="vcard-org"
+        type="text"
+        autocomplete="off"
+        placeholder="Analytical Engines Ltd"
+        class="mt-2 w-full rounded-xl border border-[var(--border-2)] bg-[var(--surface)] px-3 py-2 text-[var(--text)] shadow-sm focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] placeholder:text-[var(--text-6)]"
+      />
+    </div>
+
+    <div>
+      <label for="vcard-url" class="block text-sm font-medium text-[var(--text-2)]">
+        Website
+      </label>
+      <input
+        id="vcard-url"
+        type="url"
+        autocomplete="off"
+        placeholder="https://example.com"
+        class="mt-2 w-full rounded-xl border border-[var(--border-2)] bg-[var(--surface)] px-3 py-2 text-[var(--text)] shadow-sm focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] placeholder:text-[var(--text-6)]"
+      />
+    </div>
+  </div>
+
+  <p class="mt-2 text-xs text-[var(--text-6)]">
+    100% in your browser — nothing you enter leaves your device.
+  </p>
+
+  <div class="mt-6 flex flex-col items-center">
+    <div
+      data-preview
+      class="flex h-64 w-64 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 text-center text-sm text-[var(--text-6)]"
+    >
+      Enter a name to generate a contact QR code.
+    </div>
+
+    <div data-actions class="mt-4 hidden gap-3">
+      <button
+        data-download-png
+        type="button"
+        class="rounded-md bg-[var(--accent)] px-3 py-1.5 text-sm font-medium text-white hover:bg-[var(--accent-hover)]"
+      >
+        Download PNG
+      </button>
+      <button
+        data-download-svg
+        type="button"
+        class="rounded-md border border-[var(--border-2)] bg-[var(--surface)] px-3 py-1.5 text-sm font-medium text-[var(--text-2)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
+      >
+        Download SVG
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import '../scripts/qr-vcard.ts';
+</script>

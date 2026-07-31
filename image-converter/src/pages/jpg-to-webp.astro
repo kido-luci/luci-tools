@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'jpg-to-webp')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Are my JPG images uploaded anywhere?',
+    a: 'No. The conversion happens locally on your device with the Canvas API. Nothing is sent to a server, so your photos never leave your machine.',
+  },
+  {
+    q: 'How much smaller will the WebP be than the JPG?',
+    a: 'For most photos, WebP is 25–35% smaller than an equivalent-quality JPG. The exact saving depends on the image content, but it is rarely larger, which is why sites switch to WebP to speed up load times.',
+  },
+  {
+    q: 'Will the WebP look worse than the JPG?',
+    a: "At the default quality used here, no — the difference is generally not visible to the eye. Both formats are lossy, so converting adds a small amount of re-compression, but it's tuned to stay visually close to the source.",
+  },
+  {
+    q: 'Is WebP supported everywhere JPG is?',
+    a: 'Nearly. Every modern browser supports WebP, and most platforms handle it fine. A few older tools, some email clients, and certain legacy systems still expect JPG, so keep the original if you need guaranteed universal compatibility.',
+  },
+  {
+    q: 'Can I convert multiple JPGs to WebP at once?',
+    a: 'Yes. Add several files and each is converted and offered as its own WebP download, so you can batch a whole gallery or product catalog in one pass.',
+  },
+  {
+    q: 'Should I use WebP for a website?',
+    a: 'Generally yes — smaller WebP images mean faster page loads, which helps both user experience and search ranking. Keep your original JPGs as a backup or source, and serve WebP to visitors.',
+  },
+  {
+    q: 'Does converting to WebP strip photo metadata?',
+    a: 'The conversion redraws the image on a canvas, so metadata such as camera EXIF data and GPS location is not carried over to the WebP file. This is often desirable for images published on the web.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span
+          class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg"
+          aria-hidden="true"
+        >
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ToolShell to="webp" accept=".jpg,.jpeg,image/jpeg" prompt="Drag & drop JPG images here" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert JPG to WebP</h2>
+      <ol>
+        <li>Drop your JPG files onto the box above, or click to browse.</li>
+        <li>Each image is redrawn on a canvas and encoded as WebP in your browser.</li>
+        <li>Click <strong>Download</strong> next to each result to save the WebP.</li>
+      </ol>
+
+      <h2>Why convert JPG to WebP?</h2>
+      <p>
+        WebP was designed by Google specifically to beat JPG at its own
+        job — compressing photos efficiently. Converting your JPGs to WebP
+        typically shrinks them by a quarter to a third with no visible loss
+        in quality, which adds up fast if you're publishing many images on a
+        website or app.
+      </p>
+
+      <h2>JPG vs WebP for photos</h2>
+      <p>
+        Both are lossy formats built for photographic images, so the choice
+        usually comes down to where the image will be used:
+      </p>
+      <ul>
+        <li><strong>File size</strong> — WebP consistently produces smaller files at comparable visual quality, which is its main advantage.</li>
+        <li><strong>Web performance</strong> — smaller images mean faster page loads, which matters for user experience and SEO.</li>
+        <li><strong>Compatibility</strong> — JPG remains the safer bet outside the web — for printing, older software, and some email clients.</li>
+        <li><strong>Editing</strong> — keep your original JPG for edits and re-exports; convert to WebP only for final, published copies.</li>
+      </ul>
+
+      <h2>Common reasons to convert JPG to WebP</h2>
+      <ul>
+        <li>Speeding up a website or blog by serving lighter images to visitors.</li>
+        <li>Reducing storage or bandwidth costs for large photo galleries.</li>
+        <li>Meeting a CMS or platform's recommendation to use next-gen image formats.</li>
+        <li>Shrinking product photos for a faster-loading online store.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('png-to-webp')} class="text-[var(--accent)] underline hover:no-underline">PNG to WebP converter</a> — shrink graphics and screenshots too.</li>
+        <li><a href={toolUrl('png-to-jpg')} class="text-[var(--accent)] underline hover:no-underline">PNG to JPG converter</a> — a widely compatible alternative to WebP.</li>
+        <li><a href={`${SITE.url}/pdf/jpg-to-pdf/`} class="text-[var(--accent)] underline hover:no-underline">JPG to PDF</a> — combine your JPGs into a single PDF document.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

@@ -1,0 +1,127 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'avif-to-jpg')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Are my AVIF images uploaded anywhere?',
+    a: 'No. The conversion happens locally on your device using your browser’s built-in image decoder and the Canvas API. Nothing is sent to a server, so your images never leave your computer or phone.',
+  },
+  {
+    q: 'Do I need a specific browser to convert AVIF?',
+    a: 'You need a reasonably recent browser with native AVIF decoding: Chrome 88+, Firefox 93+, or Safari 16.4+. Older browsers can’t decode AVIF at all, so the conversion will fail — update your browser if that happens.',
+  },
+  {
+    q: 'Why would I convert AVIF to JPG if AVIF is smaller?',
+    a: "AVIF usually compresses more efficiently than JPG, but support outside modern browsers is still limited — many photo apps, older editors, and some social platforms don't accept it yet. Converting to JPG trades some file size for compatibility everywhere.",
+  },
+  {
+    q: 'Will the JPG look the same as the AVIF?',
+    a: 'Visually, yes — at the default quality the difference is not noticeable for photos. Both formats are lossy, so re-encoding to JPG adds a small, generally imperceptible amount of extra compression on top of what AVIF already applied.',
+  },
+  {
+    q: 'What happens to transparent AVIF images?',
+    a: "JPG can't store transparency, so any transparent or semi-transparent pixels in the AVIF are filled with a solid white background during conversion. If you need to keep transparency, convert to PNG instead.",
+  },
+  {
+    q: 'Can I convert multiple AVIF files at once?',
+    a: 'Yes. Drop in as many AVIF images as you like — each one is converted and offered as its own JPG download, so you can batch a whole folder in one pass.',
+  },
+  {
+    q: 'Does this work with animated AVIF files?',
+    a: 'No — animated AVIF files are converted using only their first frame, since JPG has no concept of animation. For animated images, keep the original AVIF or convert to a video format instead.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span
+          class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg"
+          aria-hidden="true"
+        >
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ToolShell to="jpeg" accept=".avif,image/avif" prompt="Drag & drop AVIF images here" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert AVIF to JPG</h2>
+      <ol>
+        <li>Drop your AVIF files onto the box above, or click to browse.</li>
+        <li>Each image is decoded and redrawn on a canvas, then encoded as JPG in your browser.</li>
+        <li>Click <strong>Download</strong> next to each result to save the JPG.</li>
+      </ol>
+
+      <h2>Why convert AVIF to JPG?</h2>
+      <p>
+        AVIF is a modern, highly efficient format built on the AV1 video
+        codec — it can produce smaller files than JPG at similar quality.
+        But because it's newer, plenty of photo viewers, editors, printing
+        services, and older devices still can't open it. Converting to JPG
+        gives you a file that works absolutely everywhere, which matters
+        when you're sending an image somewhere you don't control the
+        software.
+      </p>
+
+      <h2>AVIF vs JPG: what changes?</h2>
+      <p>
+        Both can hold photographic images, but they target different
+        priorities:
+      </p>
+      <ul>
+        <li><strong>Compatibility</strong> — JPG is the safest choice for email, older apps, printing services, and any tool that predates AVIF.</li>
+        <li><strong>File size</strong> — AVIF is usually more efficient, so expect the JPG to be somewhat larger for the same visual quality.</li>
+        <li><strong>Browser support</strong> — AVIF needs Chrome 88+, Firefox 93+, or Safari 16.4+ to even open; JPG opens everywhere without exception.</li>
+        <li><strong>Transparency</strong> — AVIF can support it; JPG cannot, so transparent areas become solid white after conversion.</li>
+      </ul>
+
+      <h2>Common reasons to convert AVIF to JPG</h2>
+      <ul>
+        <li>Saving an image from a website that only serves AVIF, for use in software that doesn't support it.</li>
+        <li>Attaching a downloaded AVIF photo to an email or document that expects a standard image format.</li>
+        <li>Uploading to a marketplace, print shop, or CMS that rejects AVIF files.</li>
+        <li>Opening an AVIF image in an older editor, mobile app, or design tool that only reads JPG or PNG.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('webp-to-jpg')} class="text-[var(--accent)] underline hover:no-underline">WebP to JPG converter</a> — another modern web format, converted the same way.</li>
+        <li><a href={toolUrl('png-to-jpg')} class="text-[var(--accent)] underline hover:no-underline">PNG to JPG converter</a> — flatten screenshots and graphics into JPG.</li>
+        <li><a href={`${SITE.url}/pdf/jpg-to-pdf/`} class="text-[var(--accent)] underline hover:no-underline">JPG to PDF</a> — combine your JPGs into a single PDF document.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

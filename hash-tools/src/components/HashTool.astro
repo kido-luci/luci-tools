@@ -1,0 +1,54 @@
+---
+// The interactive hash widget. `algo` selects which digest to compute and is
+// read back by the client script, so every hash page reuses this component.
+// 'MD5' runs the pure-TS implementation; the SHA-* values are computed via
+// the Web Crypto API — both happen live as the user types.
+export type HashAlgo = 'MD5' | 'SHA-1' | 'SHA-256' | 'SHA-384' | 'SHA-512';
+
+interface Props {
+  algo: HashAlgo;
+}
+
+const { algo } = Astro.props;
+---
+
+<div data-hash-tool data-algo={algo} class="mt-8">
+  <label for="hash-input" class="text-sm font-medium text-[var(--text-2)]">
+    Text to hash
+  </label>
+  <textarea
+    id="hash-input"
+    data-input
+    rows="6"
+    spellcheck="false"
+    placeholder="Type or paste text here…"
+    class="mt-2 w-full rounded-2xl border-2 border-[var(--border-2)] bg-[var(--surface)] px-4 py-3 font-mono text-sm text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]"
+  ></textarea>
+  <p class="mt-1 text-xs text-[var(--text-6)]">
+    100% in your browser — your text never leaves your device.
+  </p>
+
+  <div class="mt-4">
+    <div class="flex items-center justify-between">
+      <span class="text-sm font-medium text-[var(--text-2)]">{algo} hash</span>
+      <button
+        type="button"
+        data-copy
+        class="rounded-md bg-[var(--accent)] px-3 py-1 text-sm font-medium text-white transition hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+        disabled
+      >
+        Copy
+      </button>
+    </div>
+    <output
+      data-output
+      class="mt-2 block break-all rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-4 py-3 font-mono text-sm text-[var(--text-4)]"
+    >
+      Start typing above to see the {algo} hash.
+    </output>
+  </div>
+</div>
+
+<script>
+  import '../scripts/hash-tool.ts';
+</script>

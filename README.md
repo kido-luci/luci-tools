@@ -1,55 +1,39 @@
-# Luci Tools — workspace (meta-repo)
+# Luci Tools
 
-Aggregator for the **Luci Tools** portfolio: a set of small, single-purpose,
+Monorepo for the **Luci Tools** portfolio: small, single-purpose,
 100%-client-side web tools (image / PDF / JSON / QR / text…) hosted free on
-Cloudflare Pages under one host, `tools.luci-studio.com`.
-
-**This repo is a management / backup layer only.** Each tool is an independent
-GitHub repo with its own Cloudflare Pages project that auto-deploys from its own
-`master`. The submodules here are a convenience for cloning everything at once,
-versioning the shared planning docs, and pinning a coherent snapshot of the whole
-portfolio — they do **not** affect how any individual tool deploys.
+Cloudflare under one host, **[tools.luci-studio.com](https://tools.luci-studio.com)**.
 
 ## Layout
 
-- `CLAUDE.md`, `docs/` — shared conventions, rationale and roadmap (the source of truth).
-- `.claude/launch.json` — local dev-server definitions for previewing every tool.
-- Submodules (each an independent repo + its own Pages project):
-  - **Engines** — `image-converter`, `fancy-text-generator`, `json-tools`, `qr-tools`, `pdf-tools`
-  - **Infra** — `tools-home` (hub + legal + sitemap index), `tools-router` (Cloudflare Worker reverse proxy)
+Every tool lives as a top-level directory with its own full git history
+(imported from the former per-tool repos via subtree merge, 2026-07-31):
 
-## Clone
-
-```sh
-git clone --recurse-submodules https://github.com/kido-luci/luci-tools.git
-# or, after a plain clone:
-git submodule update --init --recursive
-```
+- **Engines** — `image-converter`, `pdf-tools`, `json-tools`, `qr-tools`,
+  `fancy-text-generator`, `unit-converter`, `hash-tools`,
+  `timestamp-converter`, `encode-decode`, `color-tools`, `password-tools`
+- **Infra** — `tools-home` (hub + legal + sitemap index), `tools-router`
+  (Cloudflare Worker reverse proxy mapping `/<prefix>/*` to each engine's
+  Pages project)
+- `CLAUDE.md`, `docs/` — shared conventions, rationale and roadmap
 
 ## Working in a tool
 
-Submodules check out in detached HEAD. To make changes:
-
 ```sh
 cd <tool>
-git checkout master
-# …edit, commit, push as usual — the tool repo is fully independent…
+npm install
+npm run dev      # engines are plain static Astro — dev works
+npm run check    # type gate before committing
 ```
 
-Then, optionally, record the new pin in this meta-repo:
-
-```sh
-git add <tool> && git commit -m "chore: bump <tool> pointer"
-```
-
-The pointer is only a snapshot; each tool repo and its Cloudflare deployment are
-the source of truth. See [docs/common-plan.md](docs/common-plan.md) for the full
-architecture and rationale.
+Changes land via topic branch → PR into `master`. CI runs per-directory
+(`.github/workflows/ci-<tool>.yml`, path-filtered). Each engine deploys to its
+own Cloudflare Pages project via `wrangler pages deploy` — deploys are manual
+and independent of git pushes.
 
 ## License
 
-[AGPL-3.0-only](./LICENSE) © Luci Studio — this meta-repo and every tool
-submodule carry the same license.
+[AGPL-3.0-only](./LICENSE) © Luci Studio — covers every tool in this repo.
 
 You are free to use, study, modify, and self-host this code. If you run a
 modified version as a network service, the AGPL requires you to offer its

@@ -1,0 +1,112 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CodecTool from '../components/CodecTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'jwt-decoder')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my token uploaded anywhere?',
+    a: 'No. The token is decoded entirely locally in your browser. Nothing is sent to a server, so you can safely paste real access or session tokens while debugging.',
+  },
+  {
+    q: 'Does this verify the JWT signature?',
+    a: 'No. This tool decodes only — it reads the header and payload but does not verify the signature, so it cannot tell you whether the token is authentic or has been tampered with. Never treat a decoded payload as trusted without verifying it against the issuer\'s key server-side.',
+  },
+  {
+    q: 'Why does the payload show my data even though I don\'t have the secret key?',
+    a: 'A JWT\'s header and payload are only Base64url-encoded, not encrypted — anyone holding the token can read them. Only the signature at the end requires the secret or private key, and that part is not decoded here.',
+  },
+  {
+    q: 'What do the header fields mean?',
+    a: 'The header typically has "alg" (the signing algorithm, e.g. HS256 or RS256) and "typ" (usually "JWT"). It tells a verifier how the signature was produced, not anything about the user or session.',
+  },
+  {
+    q: 'What are common payload claims like "sub", "iat" and "exp"?',
+    a: '"sub" is the subject (usually a user ID), "iat" is the issued-at timestamp, and "exp" is the expiry timestamp — both as Unix seconds. Other claims are defined by whatever service issued the token.',
+  },
+  {
+    q: 'What happens if I paste an invalid token?',
+    a: 'The tool shows a clear error message instead of guessing. This usually means the token does not have exactly three dot-separated parts, or one of the parts is not valid Base64url-encoded JSON.',
+  },
+  {
+    q: 'Can I decode an expired token?',
+    a: 'Yes. Decoding just reads the encoded fields regardless of the "exp" claim — this tool does not check expiry, since checking that is part of verification, which happens server-side.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <span
+      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg"
+      aria-hidden="true"
+    >
+      <Icon name={meta.icon} class="h-7 w-7" />
+    </span>
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <CodecTool op="jwt-decode" inputLabel="JWT" inputPlaceholder="Paste a JSON Web Token here (header.payload.signature)…" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to decode a JWT</h2>
+      <ol>
+        <li>Paste the full token into the input box above — it should look like three dot-separated parts.</li>
+        <li>The decoded header and payload appear instantly as formatted JSON.</li>
+        <li>Click <strong>Copy</strong> under either box to copy that JSON to your clipboard.</li>
+      </ol>
+
+      <h2>What this tool does</h2>
+      <p>
+        This tool splits a JSON Web Token into its three parts, Base64url-decodes
+        the header and payload segments, and pretty-prints each as JSON. It
+        <strong> decodes only and does not verify the signature</strong> — so it
+        will show you what a token claims, but not whether that claim is
+        genuine or the token has expired. Verification requires the issuer's
+        secret or public key and should happen on a trusted server.
+      </p>
+
+      <h2>Anatomy of a JWT</h2>
+      <ul>
+        <li><strong>Header</strong> — metadata about the token, such as the signing algorithm.</li>
+        <li><strong>Payload</strong> — the claims: arbitrary data like a user ID, roles, and issued/expiry timestamps.</li>
+        <li><strong>Signature</strong> — a cryptographic signature over the header and payload, verifiable only with the issuer's key. This tool does not decode or check it.</li>
+      </ul>
+
+      <h2>Common reasons to decode a JWT</h2>
+      <ul>
+        <li>Debugging why an API rejects a token by inspecting its claims and expiry.</li>
+        <li>Checking which algorithm and claims an auth provider issues before writing verification code.</li>
+        <li>Confirming a token contains the roles or scopes your app expects.</li>
+        <li>Learning how JWTs are structured while building or reviewing an authentication flow.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('base64-decode')} class="text-[var(--accent)] underline hover:no-underline">Base64 Decode</a> — decode a single Base64 string outside the JWT structure.</li>
+        <li><a href={toolUrl('base64-encode')} class="text-[var(--accent)] underline hover:no-underline">Base64 Encode</a> — encode plain text to Base64.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

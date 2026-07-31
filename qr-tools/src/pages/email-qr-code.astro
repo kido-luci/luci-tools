@@ -1,0 +1,127 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import QrEmail from '../components/QrEmail.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'email-qr-code')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my email address or message uploaded anywhere?',
+    a: 'No. The email QR code is built entirely in your browser with JavaScript. The address, subject and message you type never leave your device and are never sent to any server.',
+  },
+  {
+    q: 'What happens when someone scans an email QR code?',
+    a: 'Their phone opens its default mail app with a new message already addressed to you — and, if you filled them in, the subject line and body pre-populated. The person just adds their words and taps send.',
+  },
+  {
+    q: 'Do I have to include a subject and message?',
+    a: 'No. Only the email address is required. Subject and message are optional — leave them blank for a plain “new email to this address” code, or fill them in to guide the sender with a ready-made subject line.',
+  },
+  {
+    q: 'Does an email QR code expire?',
+    a: 'No. It is a static image that encodes a mailto link directly, so it works forever with no account, redirect or subscription. Even if this site goes away, existing codes keep working.',
+  },
+  {
+    q: 'Can I print it on a flyer or poster?',
+    a: 'Yes. Download the SVG so the code stays sharp at large sizes for posters, flyers, shop signs or table tents; use the PNG for digital placement. Test the printed code with your own phone before distributing it.',
+  },
+  {
+    q: 'Should I download the PNG or the SVG?',
+    a: 'PNG is a ready-to-use image for websites, email footers and social posts. SVG is a vector that scales cleanly to any print size — choose it for signage and printed marketing material.',
+  },
+  {
+    q: 'Is there any tracking on the code?',
+    a: 'No. The mailto link is baked straight into the image — there is no redirect service, no analytics pixel and no scan counter. Scanning opens the sender’s own mail app directly.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <QrEmail />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to create an email QR code</h2>
+      <ol>
+        <li>Enter the email address the message should go to.</li>
+        <li>Optionally add a subject line and a pre-filled message body.</li>
+        <li>The QR code updates instantly — generated only in your browser.</li>
+        <li>
+          Download it as <strong>PNG</strong> or <strong>SVG</strong> and place
+          it wherever you want people to reach you.
+        </li>
+      </ol>
+
+      <h2>What is an email QR code?</h2>
+      <p>
+        An email QR code encodes a <strong>mailto</strong> link — the same kind
+        of link that, on a web page, opens a new email when clicked. When a
+        phone camera reads the code, the device launches its mail app with your
+        address already filled in, plus an optional subject and message. It
+        turns "email us at…" into a single scan, removing the need for anyone to
+        copy an address by hand or risk a typo that bounces their message.
+      </p>
+
+      <h2>Where an email QR code is useful</h2>
+      <p>
+        Email codes shine anywhere you want to capture enquiries offline. Print
+        one on a flyer or poster so passers-by can reach you without typing;
+        add it to a shop counter or table tent for feedback and bookings; put
+        it on a product package so customers can request support; or drop it
+        into a slide deck so an audience can email questions during a talk. A
+        pre-filled subject like "Workshop enquiry" also helps you sort incoming
+        mail, because every scan arrives labelled the same way.
+      </p>
+
+      <h2>PNG or SVG for an email code</h2>
+      <p>
+        Pick the <strong>PNG</strong> for digital use — email footers, web
+        pages, social graphics — where a fixed-resolution image is convenient.
+        Pick the <strong>SVG</strong> whenever the code will be printed at an
+        unknown or large size, because as a vector it stays sharp on everything
+        from a business card to an A1 poster. In short: PNG for screens, SVG for
+        print.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('vcard-qr-code')} class="text-[var(--accent)] underline hover:no-underline">vCard QR Code Generator</a> — share your full contact details, not just an email address.</li>
+        <li><a href={toolUrl('url-qr-code')} class="text-[var(--accent)] underline hover:no-underline">URL QR Code Generator</a> — point people at a website, form or profile link.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

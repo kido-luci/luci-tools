@@ -1,0 +1,133 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import QrWifi from '../components/QrWifi.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'wifi-qr-code-generator')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my WiFi password sent anywhere?',
+    a: 'No — and this is the most important thing to know. The QR code is built entirely in your browser using JavaScript; your network name and password never leave your device and are never sent to any server. You can even disconnect from the internet first and the generator still works.',
+  },
+  {
+    q: 'How do guests use the WiFi QR code?',
+    a: 'They open their phone camera and point it at the code. The phone recognises it as a network and offers to join — no typing the password.',
+  },
+  {
+    q: 'Which encryption should I pick?',
+    a: 'Almost every modern home and office router uses WPA or WPA2, so choose WPA / WPA2. Pick WEP only for old equipment, or No password for an open network.',
+  },
+  {
+    q: 'Which phones can scan to join?',
+    a: 'iPhones running iOS 11 or later and most modern Android phones with up-to-date camera apps support WiFi QR codes natively — no third-party scanner needed.',
+  },
+  {
+    q: 'Does it work for hidden networks?',
+    a: 'Yes. Tick the “Hidden network” checkbox when entering your details. This embeds a flag in the QR code that tells the scanning phone to connect to the SSID even though it is not being broadcast.',
+  },
+  {
+    q: 'Should I download PNG or SVG?',
+    a: 'PNG is fine for sharing digitally or printing at small sizes. SVG is a vector format that stays sharp at any size — use it for wall prints, table tents or A4 signs where the code needs to be large and crisp.',
+  },
+  {
+    q: 'Is it safe to display the QR code publicly?',
+    a: `Anyone who scans it can join your network, so treat the printed code the same way you'd treat the password itself. Display it where you'd already share the credentials — inside a café, an Airbnb, or a guest room — rather than in a publicly visible window.`,
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <QrWifi />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to create a WiFi QR code</h2>
+      <ol>
+        <li>Enter your network name (SSID) exactly as it appears on devices.</li>
+        <li>Choose the encryption type and type the password.</li>
+        <li>The QR code updates instantly — generated only in your browser.</li>
+        <li>
+          Download it as <strong>PNG</strong> or <strong>SVG</strong> and print
+          it for guests to scan.
+        </li>
+      </ol>
+
+      <h2>Why use a WiFi QR code?</h2>
+      <p>
+        Sharing a long, complicated WiFi password by reading it out is slow and
+        error-prone. A WiFi QR code lets guests connect by simply pointing their
+        phone camera at it. It is ideal for cafés, holiday rentals, offices and
+        guest rooms — print one card and never dictate a password again.
+      </p>
+
+      <h2>How a WiFi QR code works</h2>
+      <p>
+        A WiFi QR code encodes your network name (SSID), password and security
+        type in a standard text format (prefixed <strong>WIFI:</strong>) that
+        smartphone cameras understand. When someone points their camera at it,
+        the phone parses those credentials and offers to join the network
+        directly — no copy-pasting a password, no risk of a typo. iPhones from
+        iOS 11 onward and most current Android devices handle this natively.
+      </p>
+
+      <h2>Choosing the right security type</h2>
+      <ul>
+        <li><strong>WPA / WPA2</strong> — the standard for virtually all home and business routers produced in the last decade. Choose this if you are unsure.</li>
+        <li><strong>WPA3</strong> — the newest standard, available on more recent routers. Select it only if you know your router supports it.</li>
+        <li><strong>WEP</strong> — an older, weaker protocol. Only needed for legacy equipment; replace the router if you can.</li>
+        <li><strong>None / Open</strong> — for networks that have no password, such as a public hotspot you control.</li>
+        <li><strong>Hidden network</strong> — tick this box if your router does not broadcast its SSID; the QR code will include a flag so the scanning device searches for it explicitly.</li>
+      </ul>
+
+      <h2>Print it for guests, cafés and offices</h2>
+      <p>
+        Place the printed code on a fridge, table tent, welcome card or wall so
+        visitors can scan to connect the moment they arrive. It removes the
+        friction of reading out a long password, eliminates typos, and works
+        just as well for children or less tech-savvy guests who struggle with
+        manual network settings. For short-term rentals and hospitality,
+        laminating a card with the code is a one-time setup that lasts until
+        you change the password.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('qr-code-generator')} class="text-[var(--accent)] underline hover:no-underline">QR Code Generator</a> — encode any text, URL or message as a downloadable QR code.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
