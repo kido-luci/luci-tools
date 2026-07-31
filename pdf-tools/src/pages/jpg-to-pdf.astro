@@ -1,0 +1,129 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'jpg-to-pdf')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Are my images uploaded anywhere?',
+    a: 'No. The PDF is built locally in your browser, so your JPG and PNG images never leave your device.',
+  },
+  {
+    q: 'Can I combine several images into one PDF?',
+    a: 'Yes. Add as many images as you like and each one becomes a page in a single PDF, in the order you added them.',
+  },
+  {
+    q: 'Which image formats are supported?',
+    a: 'JPG and PNG. Each page is sized to match its image, so nothing is cropped or stretched.',
+  },
+  {
+    q: 'Does converting reduce image quality?',
+    a: 'No. Your images are embedded at their original resolution, so the PDF looks exactly like the source photos.',
+  },
+  {
+    q: 'In what order do the images appear in the PDF?',
+    a: 'Pages appear in the order you add the images — top to bottom in the list. To change the order, remove an image and add it again so it lands at the end.',
+  },
+  {
+    q: 'Can I use this for iPhone photos in HEIC format?',
+    a: 'This tool accepts JPG and PNG only. If your iPhone photos are in HEIC format, convert them to JPG first using the HEIC to JPG tool, then come back here to build your PDF.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ToolShell
+      mode="images"
+      accept="image/jpeg,image/png,.jpg,.jpeg,.png"
+      cta="Create PDF"
+      prompt="Drag & drop JPG or PNG images here"
+    />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert JPG to PDF</h2>
+      <ol>
+        <li>Drop your JPG or PNG images onto the box above, or click to browse.</li>
+        <li>The images are placed one per page in the order you added them.</li>
+        <li>Click <strong>Create PDF</strong>, then download the finished PDF.</li>
+      </ol>
+
+      <h2>Why turn images into a PDF?</h2>
+      <p>
+        A single PDF is much easier to email, print and archive than a folder of
+        loose photos — ideal for receipts, ID scans, screenshots or a set of
+        pictures you want to keep together. Since the conversion runs entirely in
+        your browser, even personal documents stay on your own device.
+      </p>
+
+      <h2>When to turn images into a PDF</h2>
+      <ul>
+        <li>Submit photos of a document — an ID, signed form, or receipt — as one tidy attachment instead of several loose image files.</li>
+        <li>Share a multi-page phone scan with someone who expects a single file they can open on any device.</li>
+        <li>Collect a set of screenshots or diagrams into one PDF that a colleague can annotate or print.</li>
+        <li>Build a small photo portfolio or sample pack that stays in page order and is easy to attach to an email.</li>
+        <li>Archive a series of related images — product shots, event photos, progress pictures — in a single file that opens without special software.</li>
+      </ul>
+
+      <h2>Page size &amp; orientation</h2>
+      <p>
+        Each image becomes its own page in the PDF. The page is sized to exactly
+        match the pixel dimensions of the image, so a landscape photo produces a
+        landscape page and a portrait photo produces a portrait page. Nothing is
+        cropped, scaled down or padded with white margins — what you see in the
+        image is what you get on the page.
+      </p>
+
+      <h2>Private by design</h2>
+      <p>
+        Your images are converted to PDF entirely inside your browser using
+        <strong>pdf-lib</strong>, a JavaScript library that runs locally with no
+        server calls. Photos of passports, receipts, signed contracts or anything
+        else you would rather keep private never leave your device. There is no
+        account to sign up for, no file size cap imposed by a server, and nothing
+        stored once you close the tab.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('merge-pdf')} class="text-[var(--accent)] underline hover:no-underline">Merge PDF</a> — combine the PDF you just created with other PDF files into one document.</li>
+        <li><a href={`${SITE.url}/image/heic-to-jpg/`} class="text-[var(--accent)] underline hover:no-underline">HEIC to JPG converter</a> — convert iPhone photos to JPG first, then use this tool to build your PDF.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

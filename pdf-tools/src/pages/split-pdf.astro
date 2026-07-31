@@ -1,0 +1,130 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'split-pdf')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my PDF uploaded anywhere to split it?',
+    a: 'No. The split happens entirely in your browser using pdf-lib. Your PDF never leaves your device, so there is nothing to upload, store or delete afterwards.',
+  },
+  {
+    q: 'Does splitting a PDF reduce quality or re-compress the pages?',
+    a: 'No. Each page is copied as-is into its own new document, so text stays selectable and images keep their original resolution. Nothing is re-rendered.',
+  },
+  {
+    q: 'How many pages can I split at once?',
+    a: 'There is no fixed limit. Every page becomes its own file in one step, and because the work runs locally the practical ceiling is your device’s memory — a very large PDF just takes a little longer.',
+  },
+  {
+    q: 'Why do I get a ZIP instead of separate downloads?',
+    a: 'Splitting a multi-page PDF produces one file per page, and downloading them individually would mean many browser prompts. Bundling them into a single ZIP gives you one clean download that unzips into all the pages.',
+  },
+  {
+    q: 'What are the split files named?',
+    a: 'Each page is named after your original file with a page number appended — for example report-page-1.pdf, report-page-2.pdf — so they stay in order when you unzip them.',
+  },
+  {
+    q: 'Can I extract just one page instead of every page?',
+    a: 'This tool splits every page into its own file. To keep a single page, split the document and then use only the page file you need from the ZIP.',
+  },
+  {
+    q: 'Does it work with scanned PDFs?',
+    a: 'Yes. A scanned PDF is a standard PDF whose pages contain images. Each scanned page is copied into its own file exactly as it is.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ToolShell
+      mode="split"
+      accept=".pdf,application/pdf"
+      cta="Split PDF"
+      prompt="Drag & drop a PDF here"
+    />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to split a PDF</h2>
+      <ol>
+        <li>Drop your PDF onto the box above, or click to browse.</li>
+        <li>Click <strong>Split PDF</strong> — each page becomes its own PDF.</li>
+        <li>Download the ZIP, then unzip it to get every page as a separate file.</li>
+      </ol>
+
+      <h2>What splitting a PDF does</h2>
+      <p>
+        Splitting takes a multi-page PDF and separates it into one PDF per page,
+        each an independent document you can share, print or re-order on its own.
+        It's the opposite of merging: instead of stacking files together, it
+        breaks a bundle back into its individual pages. Because every page is
+        copied as-is into a new file, nothing is re-compressed — text stays
+        selectable and images keep their full resolution — and the pages are
+        packaged into a single ZIP so you get one tidy download instead of a
+        flurry of separate prompts.
+      </p>
+
+      <h2>Common reasons to split a PDF</h2>
+      <ul>
+        <li>Separate a scanned bundle back into individual documents so each can be filed on its own.</li>
+        <li>Pull the pages of a multi-page contract apart to send only the relevant ones.</li>
+        <li>Break a combined statement or report into per-page files for easier reference.</li>
+        <li>Split a batch of receipts scanned into one PDF into a file per receipt.</li>
+        <li>Turn a many-page form pack into single pages you can route to different people.</li>
+      </ul>
+
+      <h2>Why browser-based splitting keeps your files private</h2>
+      <p>
+        Many "split PDF" websites require you to upload your file to their
+        servers before they'll process it — so your contracts, statements and IDs
+        pass through a computer you don't control. Here, everything is handled by
+        <strong>pdf-lib</strong> running directly in your browser, and the pages
+        are zipped locally too. Your file is never sent anywhere. Once the ZIP is
+        downloaded you can close the tab and nothing persists: no server copy, no
+        account, no deletion email to wait for.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('merge-pdf')} class="text-[var(--accent)] underline hover:no-underline">Merge PDF</a> — the reverse: combine several PDFs back into one document.</li>
+        <li><a href={toolUrl('rotate-pdf')} class="text-[var(--accent)] underline hover:no-underline">Rotate PDF</a> — fix a document that opens sideways or upside down.</li>
+        <li><a href={toolUrl('jpg-to-pdf')} class="text-[var(--accent)] underline hover:no-underline">JPG to PDF converter</a> — turn photos or screenshots into a PDF.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

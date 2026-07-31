@@ -1,0 +1,130 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'rotate-pdf')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my PDF uploaded to a server to rotate it?',
+    a: 'No. The rotation happens entirely in your browser using pdf-lib. Your PDF never leaves your device, so there is nothing to upload, store or delete afterwards.',
+  },
+  {
+    q: 'Does rotating a PDF re-compress it or reduce quality?',
+    a: 'No. Rotating only changes a page-orientation flag written into the PDF — the page content itself is left untouched, so text stays selectable and images keep their original resolution.',
+  },
+  {
+    q: 'How many pages can I rotate at once?',
+    a: 'There is no fixed limit. Every page in the file is rotated in one step, and because the work runs locally the practical ceiling is just your device’s memory — large files simply take a little longer.',
+  },
+  {
+    q: 'Which direction does 90° rotate — clockwise or counter-clockwise?',
+    a: '90° turns each page a quarter-turn clockwise, 180° flips it upside down, and 270° is the same as a quarter-turn counter-clockwise. Pick whichever lands the page upright.',
+  },
+  {
+    q: 'Are all pages rotated, or can I pick individual pages?',
+    a: 'This tool rotates every page by the same amount, which is ideal for a scan or export where the whole document came out sideways. Per-page rotation is not offered here.',
+  },
+  {
+    q: 'Does the tool add to the existing rotation or replace it?',
+    a: 'It adds to whatever rotation the page already has. So a page that was already turned 90° and is rotated another 90° here ends up at 180°.',
+  },
+  {
+    q: 'What do I get back — one file or several?',
+    a: 'One file. You download a single rotated PDF containing all the same pages, now oriented the way you chose.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ToolShell
+      mode="rotate"
+      accept=".pdf,application/pdf"
+      cta="Rotate PDF"
+      prompt="Drag & drop a PDF here"
+    />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to rotate a PDF</h2>
+      <ol>
+        <li>Drop your PDF onto the box above, or click to browse.</li>
+        <li>Choose the rotation — 90°, 180° or 270°.</li>
+        <li>Click <strong>Rotate PDF</strong>, then download the re-oriented PDF.</li>
+      </ol>
+
+      <h2>What rotating a PDF actually does</h2>
+      <p>
+        Rotating a PDF changes the orientation each page is displayed at without
+        touching the underlying content. It's the fix for a document that opens
+        sideways or upside down — most often a page scanned in the wrong
+        direction, a photo of a document taken in landscape, or a report exported
+        from software that got the orientation wrong. Because only an
+        orientation flag is rewritten, nothing is re-rendered or re-compressed:
+        the text stays selectable, and images keep every pixel of their original
+        resolution.
+      </p>
+
+      <h2>Common reasons to rotate a PDF</h2>
+      <ul>
+        <li>Fix a scan that came out sideways because the page fed through the scanner the wrong way.</li>
+        <li>Turn a landscape photo of a document upright so it reads correctly on screen.</li>
+        <li>Correct a report or export where every page landed in the wrong orientation.</li>
+        <li>Flip an upside-down page (180°) before sending a form on for signing.</li>
+        <li>Straighten a batch of receipts or forms so they print the right way up.</li>
+      </ul>
+
+      <h2>Why browser-based rotation keeps your files private</h2>
+      <p>
+        Many "rotate PDF" websites make you upload your file to their servers
+        first. That routes contracts, statements and IDs through a third-party
+        computer you don't control. Here, everything is handled by
+        <strong>pdf-lib</strong> running directly in your browser — your file is
+        never sent anywhere. Once the rotated PDF is downloaded you can close the
+        tab and nothing persists: no server copy, no account, no waiting for a
+        deletion email.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('merge-pdf')} class="text-[var(--accent)] underline hover:no-underline">Merge PDF</a> — combine the rotated PDF with other PDF files into one document.</li>
+        <li><a href={toolUrl('split-pdf')} class="text-[var(--accent)] underline hover:no-underline">Split PDF</a> — break a PDF into one file per page.</li>
+        <li><a href={toolUrl('jpg-to-pdf')} class="text-[var(--accent)] underline hover:no-underline">JPG to PDF converter</a> — turn photos or screenshots into a PDF.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
