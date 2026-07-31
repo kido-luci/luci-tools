@@ -1,0 +1,49 @@
+---
+// The interactive text/URL → QR widget. The client script reads [data-qr-text],
+// regenerates the preview as you type, and wires the two download buttons.
+---
+
+<div data-qr-text class="mt-8">
+  <label for="qr-text-input" class="block text-sm font-medium text-[var(--text-2)]">
+    Text or URL
+  </label>
+  <textarea
+    id="qr-text-input"
+    rows="3"
+    placeholder="https://example.com"
+    class="mt-2 w-full resize-y rounded-xl border border-[var(--border-2)] bg-[var(--surface)] px-3 py-2 text-[var(--text)] shadow-sm focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] placeholder:text-[var(--text-6)]"
+  ></textarea>
+  <p class="mt-1 text-xs text-[var(--text-6)]">
+    100% in your browser — nothing you enter leaves your device.
+  </p>
+
+  <div class="mt-6 flex flex-col items-center">
+    <div
+      data-preview
+      class="flex h-64 w-64 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 text-sm text-[var(--text-6)]"
+    >
+      Your QR code will appear here.
+    </div>
+
+    <div data-actions class="mt-4 hidden gap-3">
+      <button
+        data-download-png
+        type="button"
+        class="rounded-md bg-[var(--accent)] px-3 py-1.5 text-sm font-medium text-white hover:bg-[var(--accent-hover)]"
+      >
+        Download PNG
+      </button>
+      <button
+        data-download-svg
+        type="button"
+        class="rounded-md border border-[var(--border-2)] bg-[var(--surface)] px-3 py-1.5 text-sm font-medium text-[var(--text-2)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
+      >
+        Download SVG
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import '../scripts/qr-text.ts';
+</script>
