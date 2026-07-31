@@ -1,0 +1,85 @@
+---
+// Live client-side converter. `dimension` fixes the set of selectable units;
+// `from`/`to` seed the two selects. The client script reads these off the
+// dataset and recomputes on every input, so every page reuses this component.
+import type { Dimension } from '../lib/units';
+import { UNITS, unitsForDimension } from '../lib/units';
+
+interface Props {
+  dimension: Dimension;
+  from: string;
+  to: string;
+}
+
+const { dimension, from, to } = Astro.props;
+const options = unitsForDimension(dimension);
+---
+
+<div
+  data-unit-tool
+  data-dimension={dimension}
+  data-from={from}
+  data-to={to}
+  class="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm sm:p-8"
+>
+  <div class="grid grid-cols-1 items-end gap-4 sm:grid-cols-[1fr_auto_1fr]">
+    <!-- From -->
+    <div>
+      <label class="mb-1.5 block text-sm font-medium text-[var(--text-3)]" for="uc-value">From</label>
+      <div class="flex gap-2">
+        <input
+          id="uc-value"
+          data-value
+          type="number"
+          inputmode="decimal"
+          value="1"
+          class="w-full rounded-lg border border-[var(--border-2)] bg-[var(--surface)] px-3 py-2.5 text-lg text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-soft-border)]"
+        />
+        <select
+          data-from-unit
+          aria-label="Convert from unit"
+          class="rounded-lg border border-[var(--border-2)] bg-[var(--surface)] px-3 py-2.5 text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-soft-border)]"
+        >
+          {options.map((u) => <option value={u} selected={u === from}>{UNITS[u].label} ({UNITS[u].symbol})</option>)}
+        </select>
+      </div>
+    </div>
+
+    <!-- Swap -->
+    <button
+      type="button"
+      data-swap
+      aria-label="Swap units"
+      class="mx-auto inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border-2)] bg-[var(--surface)] text-[var(--accent)] transition hover:bg-[var(--accent-soft-bg)] hover:text-[var(--accent-hover)]"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5" aria-hidden="true">
+        <path d="M7 4L4 7l3 3" /><path d="M4 7h12" /><path d="M17 20l3-3-3-3" /><path d="M20 17H8" />
+      </svg>
+    </button>
+
+    <!-- To -->
+    <div>
+      <label class="mb-1.5 block text-sm font-medium text-[var(--text-3)]" for="uc-result">To</label>
+      <div class="flex gap-2">
+        <output
+          id="uc-result"
+          data-result
+          class="w-full select-all rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2.5 text-lg font-semibold text-[var(--text)]"
+        >0</output>
+        <select
+          data-to-unit
+          aria-label="Convert to unit"
+          class="rounded-lg border border-[var(--border-2)] bg-[var(--surface)] px-3 py-2.5 text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-soft-border)]"
+        >
+          {options.map((u) => <option value={u} selected={u === to}>{UNITS[u].label} ({UNITS[u].symbol})</option>)}
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <p data-formula class="mt-4 text-center text-sm text-[var(--text-4)]"></p>
+</div>
+
+<script>
+  import '../scripts/unit-tool.ts';
+</script>
