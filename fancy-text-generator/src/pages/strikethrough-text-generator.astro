@@ -1,0 +1,139 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'strikethrough-text-generator')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Copy & Paste s̶t̶r̶i̶k̶e̶ Text | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How does the strikethrough survive copy and paste?',
+    a: 'A combining "long stroke overlay" mark is added after every character. Because the line is encoded as part of the text rather than as formatting, it stays crossed-out when you paste it into a chat or post.',
+  },
+  {
+    q: 'Where can I use strikethrough text?',
+    a: 'Plain-text fields across Instagram, TikTok, Twitter/X, Facebook, Discord and WhatsApp. Rendering depends on the font, so the line may look slightly different from one app to another.',
+  },
+  {
+    q: 'Why does it sometimes look misaligned?',
+    a: 'The strike is a combining character that each font positions itself. On a few fonts the line can sit a little high or low, but the text remains readable and clearly struck through.',
+  },
+  {
+    q: 'Is anything sent to a server?',
+    a: 'No. The strikethrough is added in your browser with JavaScript, and your text never leaves your device.',
+  },
+  {
+    q: 'Will it show as crossed-out everywhere?',
+    a: 'On modern phones and browsers the line renders consistently across Instagram, TikTok, Twitter/X and Discord. Very old Android devices or niche apps that use basic system fonts may not position the combining mark correctly, but the text is still legible.',
+  },
+  {
+    q: 'Why does it sometimes look odd on older phones?',
+    a: 'The combining stroke overlay relies on a font rendering engine that knows how to layer a diacritic over each letter. Older Android system fonts handled this less consistently, which can cause the line to appear offset or doubled. Updating the device font or testing on a different app usually resolves it.',
+  },
+  {
+    q: 'Can I strike through prices for a sale post?',
+    a: 'Yes — that is one of the most popular uses. Paste the original price in strikethrough, follow it with the new price in normal text, and the before/after comparison works in any plain-text caption or bio.',
+  },
+  {
+    q: 'Is my text uploaded anywhere?',
+    a: 'No. The combining marks are added entirely in your browser. Your text is never sent to any server.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg" aria-hidden="true">
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ToolShell
+      style="strike"
+      placeholder="Type your text to cross it out…"
+    />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to make strikethrough text</h2>
+      <ol>
+        <li>Type or paste your text into the box above.</li>
+        <li>Each character gets a line through it instantly as you type.</li>
+        <li>Click <strong>Copy</strong>, then paste the crossed-out text anywhere.</li>
+      </ol>
+
+      <h2>Why use a strikethrough text generator?</h2>
+      <p>
+        Most social apps have no strikethrough button for bios and captions. This
+        tool adds a crossed-out line to your words using Unicode combining
+        characters, so you can show a "before and after" price, mark something as
+        done, or make a joke that lands — all in plain text that pastes anywhere.
+      </p>
+
+      <h2>When to use strikethrough text</h2>
+      <ul>
+        <li><strong>Sale prices</strong> — cross out the original price next to the discounted one to make the saving immediately obvious in a caption or bio link.</li>
+        <li><strong>Corrections &amp; edits</strong> — show that you are revising an earlier statement without deleting it, keeping the context visible for readers who saw the original.</li>
+        <li><strong>Humour &amp; sarcasm</strong> — strike through a thought you are "definitely not" thinking, or add a self-deprecating aside that the reader is meant to notice.</li>
+        <li><strong>Ticking off to-do items</strong> — paste a task list in a post and use strikethrough on the completed items to show progress.</li>
+        <li><strong>Before/after comparisons</strong> — crossed-out old copy next to new copy tells a clear visual story without needing images or screenshots.</li>
+      </ul>
+
+      <h2>How strikethrough is made</h2>
+      <p>
+        Unlike bold or italic Unicode generators, this tool does not swap your
+        letters for characters from a different alphabet block. Instead, it inserts
+        a Unicode "combining long stroke overlay" (U+0336) after each character you
+        type. The overlay is a zero-width mark that your device's font engine draws
+        as a horizontal line layered on top of the preceding letter. Because the
+        mark is attached to the text itself rather than stored as a style attribute,
+        it travels with the characters when you copy and paste — no formatting is
+        needed at the destination.
+      </p>
+
+      <h2>Accessibility note</h2>
+      <p>
+        Combining marks can render inconsistently on older devices or fonts that
+        lack full Unicode diacritic support, so always test on your target platform
+        before publishing. Screen readers typically ignore combining overlay marks
+        and read the underlying text as normal — which means the visual
+        "crossed-out" meaning is invisible to users relying on assistive technology.
+        Use strikethrough for visual effect and decoration, not to convey meaning
+        that only makes sense if the line is seen.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('bold-text-generator')} class="text-[var(--accent)] underline hover:no-underline">Bold Text Generator</a> — make words stand out with Unicode bold characters</li>
+        <li><a href={toolUrl('italic-text-generator')} class="text-[var(--accent)] underline hover:no-underline">Italic Text Generator</a> — add a slanted, elegant style to bios and captions</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
