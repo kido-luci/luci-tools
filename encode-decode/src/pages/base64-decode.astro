@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CodecTool from '../components/CodecTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'base64-decode')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my Base64 string uploaded anywhere?',
+    a: 'No. The decoding happens locally in your browser. Nothing is sent to a server, so tokens, credentials or private notes stay on your device.',
+  },
+  {
+    q: 'Does this handle Unicode and emoji correctly?',
+    a: 'Yes, as long as the string was Base64-encoded from UTF-8 bytes (which is how most tools, including this one, encode text). The decoded output is read back through a UTF-8 decoder, so accented letters, CJK text and emoji come back intact.',
+  },
+  {
+    q: 'What happens if I paste invalid Base64?',
+    a: 'The tool shows a clear error message instead of garbage output. Common causes are missing padding characters, stray whitespace, or characters outside the Base64 alphabet (A–Z, a–z, 0–9, +, /, =).',
+  },
+  {
+    q: 'Why does the decoded text look garbled?',
+    a: 'If the original data was not UTF-8 text — for example a compressed file, an image, or binary encrypted with another algorithm — decoding it as text will not produce readable output, even though the Base64 itself is valid.',
+  },
+  {
+    q: 'Is decoding the same as decrypting?',
+    a: 'No. Base64 is not encryption, so decoding requires no password or key — anyone can reverse it instantly. If the original text needs to stay secret, Base64 alone provides no protection.',
+  },
+  {
+    q: 'Can I decode a JWT with this tool?',
+    a: 'You can decode a single JWT segment here, but a full JSON Web Token has three dot-separated Base64url segments and its own padding rules — use the dedicated JWT Decoder for that instead.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <span
+      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg"
+      aria-hidden="true"
+    >
+      <Icon name={meta.icon} class="h-7 w-7" />
+    </span>
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <CodecTool op="base64-decode" inputLabel="Base64 to decode" inputPlaceholder="Paste a Base64 string here…" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to Base64 decode text</h2>
+      <ol>
+        <li>Paste your Base64 string into the input box above.</li>
+        <li>The decoded plain text appears instantly in the output box.</li>
+        <li>Click <strong>Copy</strong> to copy the decoded text to your clipboard.</li>
+      </ol>
+
+      <h2>What this tool does</h2>
+      <p>
+        This tool reverses Base64 encoding back to plain text. It reads the
+        Base64 alphabet (A–Z, a–z, 0–9, +, /, =), rebuilds the original byte
+        sequence, then decodes those bytes as UTF-8 — so text that was encoded
+        with accented letters, CJK characters or emoji comes back unchanged.
+      </p>
+
+      <h2>Common reasons to Base64 decode text</h2>
+      <ul>
+        <li>Reading the payload of a JSON Web Token or Basic Auth header while debugging an API.</li>
+        <li>Inspecting a <code>data:</code> URI to see the original inline content.</li>
+        <li>Recovering the source text from a config value, log line or email header stored in Base64.</li>
+        <li>Verifying that an encoder in your own code is producing the expected output.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('base64-encode')} class="text-[var(--accent)] underline hover:no-underline">Base64 Encode</a> — convert plain text into Base64.</li>
+        <li><a href={toolUrl('jwt-decoder')} class="text-[var(--accent)] underline hover:no-underline">JWT Decoder</a> — decode a full JSON Web Token's header and payload at once.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

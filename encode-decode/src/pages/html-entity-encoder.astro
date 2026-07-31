@@ -1,0 +1,112 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CodecTool from '../components/CodecTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'html-entity-encoder')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my text uploaded anywhere?',
+    a: 'No. Both encoding and decoding happen locally in your browser. Nothing you type is sent to a server.',
+  },
+  {
+    q: 'Which characters get escaped?',
+    a: 'The five characters that are meaningful in HTML markup: & becomes &amp;, < becomes &lt;, > becomes &gt;, " becomes &quot;, and \' becomes &#39;. Everything else is left as-is.',
+  },
+  {
+    q: 'Why do I need to escape these characters at all?',
+    a: 'A browser treats < and > as the start and end of a tag, so unescaped user text containing them can break the page layout or, worse, let someone inject a working <script> tag (a cross-site scripting attack).',
+  },
+  {
+    q: 'Does the decoder understand numeric entities like &#39;?',
+    a: "Yes. Alongside the five named entities, decoding also handles decimal (&#39;) and hexadecimal (&#x27;) numeric character references, converting them back to the original character.",
+  },
+  {
+    q: 'Is escaping HTML entities enough to prevent XSS on its own?',
+    a: "Escaping the five reserved characters is the core building block of safe HTML output, but a production app should also use its templating engine's built-in auto-escaping and a Content-Security-Policy — don't rely on manual escaping alone for user-generated content.",
+  },
+  {
+    q: 'Can I paste already-encoded HTML and decode it back?',
+    a: 'Yes, use the decode box further down the page — paste text containing entities like &amp;amp; or &amp;#39; and it converts them back to literal characters.',
+  },
+  {
+    q: 'Will this affect whitespace or line breaks in my text?',
+    a: 'No. Only the five reserved characters (and, when decoding, entity references) are changed — spaces, tabs and line breaks pass through untouched.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <span
+      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg"
+      aria-hidden="true"
+    >
+      <Icon name={meta.icon} class="h-7 w-7" />
+    </span>
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <CodecTool op="html-entity-encode" inputLabel="Text to escape" inputPlaceholder={'Type or paste HTML/text here, e.g. <a href="x">'} />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to encode HTML entities</h2>
+      <ol>
+        <li>Type or paste your text into the input box above.</li>
+        <li>The escaped result appears instantly in the output box.</li>
+        <li>Click <strong>Copy</strong> to copy the escaped string to your clipboard.</li>
+      </ol>
+
+      <h2>What this tool does</h2>
+      <p>
+        This tool escapes the five HTML-reserved characters — <code>&amp;</code>,
+        <code>&lt;</code>, <code>&gt;</code>, <code>"</code> and <code>'</code> —
+        into their named entity form (<code>&amp;amp;</code>, <code>&amp;lt;</code>,
+        <code>&amp;gt;</code>, <code>&amp;quot;</code>, <code>&amp;#39;</code>), so
+        the text can be safely inserted into an HTML document without being
+        parsed as markup.
+      </p>
+
+      <h2>Decode HTML entities back to text</h2>
+      <p>Paste already-encoded HTML below to convert entities — including numeric ones like <code>&amp;#39;</code> and <code>&amp;#x27;</code> — back to literal characters.</p>
+    </div>
+
+    <CodecTool op="html-entity-decode" inputLabel="Encoded HTML to decode" inputPlaceholder="Paste text containing HTML entities here…" />
+
+    <div class="copy">
+      <h2>Common reasons to escape HTML entities</h2>
+      <ul>
+        <li>Rendering user-submitted text (comments, usernames, form input) safely inside HTML.</li>
+        <li>Displaying a code snippet or markup example on a page without the browser executing it.</li>
+        <li>Preparing a string to be embedded inside an HTML attribute value.</li>
+        <li>Debugging why a page shows literal <code>&lt;</code>/<code>&gt;</code> characters or a broken tag.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('url-encode')} class="text-[var(--accent)] underline hover:no-underline">URL Encode</a> — escape text for safe use inside a URL instead of HTML.</li>
+        <li><a href={toolUrl('base64-encode')} class="text-[var(--accent)] underline hover:no-underline">Base64 Encode</a> — convert text to Base64 for embedding in JSON, data URIs and more.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

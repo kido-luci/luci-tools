@@ -1,0 +1,75 @@
+---
+// The interactive encode/decode widget. `op` selects which codec.ts function
+// runs and is read back by the client script, so every tool page reuses this
+// component. The JWT decoder renders header + payload as pretty JSON instead
+// of a single output box.
+export type CodecOp = 'base64-encode' | 'base64-decode' | 'url-encode' | 'url-decode' | 'html-entity-encode' | 'html-entity-decode' | 'jwt-decode';
+
+interface Props {
+  op: CodecOp;
+  inputLabel?: string;
+  inputPlaceholder?: string;
+}
+
+const {
+  op,
+  inputLabel = 'Input',
+  inputPlaceholder = 'Type or paste text here…',
+} = Astro.props;
+
+const isJwt = op === 'jwt-decode';
+---
+
+<div data-codec-tool data-op={op} class="mt-8">
+  <label class="block text-sm font-medium text-[var(--text-2)]" for="codec-input">{inputLabel}</label>
+  <textarea
+    id="codec-input"
+    data-input
+    rows="6"
+    spellcheck="false"
+    placeholder={inputPlaceholder}
+    class="mt-2 w-full rounded-xl border border-[var(--border-2)] bg-[var(--surface)] p-4 font-mono text-sm text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]"
+  ></textarea>
+
+  <div data-error class="mt-2 hidden rounded-lg bg-red-50 px-4 py-2 text-sm text-red-700"></div>
+
+  {
+    isJwt ? (
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-[var(--text-2)]">Header</span>
+            <button type="button" data-copy="header" class="rounded-md border border-[var(--border-2)] px-2 py-1 text-xs font-medium text-[var(--text-3)] transition hover:border-[var(--border-hover)] hover:text-[var(--text)]">Copy</button>
+          </div>
+          <pre class="mt-2 min-h-[8rem] overflow-auto rounded-xl border border-[var(--border-2)] bg-[var(--surface-2)] p-4 font-mono text-sm text-[var(--text)]"><code data-output="header"></code></pre>
+        </div>
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-[var(--text-2)]">Payload</span>
+            <button type="button" data-copy="payload" class="rounded-md border border-[var(--border-2)] px-2 py-1 text-xs font-medium text-[var(--text-3)] transition hover:border-[var(--border-hover)] hover:text-[var(--text)]">Copy</button>
+          </div>
+          <pre class="mt-2 min-h-[8rem] overflow-auto rounded-xl border border-[var(--border-2)] bg-[var(--surface-2)] p-4 font-mono text-sm text-[var(--text)]"><code data-output="payload"></code></pre>
+        </div>
+      </div>
+    ) : (
+      <div class="mt-4">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-[var(--text-2)]">Output</span>
+          <button type="button" data-copy="output" class="rounded-md border border-[var(--border-2)] px-2 py-1 text-xs font-medium text-[var(--text-3)] transition hover:border-[var(--border-hover)] hover:text-[var(--text)]">Copy</button>
+        </div>
+        <textarea
+          data-output="output"
+          readonly
+          rows="6"
+          class="mt-2 w-full rounded-xl border border-[var(--border-2)] bg-[var(--surface-2)] p-4 font-mono text-sm text-[var(--text)] outline-none"
+        ></textarea>
+      </div>
+    )
+  }
+
+  <p class="mt-2 text-xs text-[var(--text-6)]">100% in your browser — nothing you type is ever uploaded.</p>
+</div>
+
+<script>
+  import '../scripts/codec-tool.ts';
+</script>
