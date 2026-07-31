@@ -1,0 +1,116 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TimestampTool from '../components/TimestampTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'unix-timestamp-converter')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'What is a Unix timestamp?',
+    a: 'A Unix timestamp (also called epoch time) is the number of seconds that have elapsed since 00:00:00 UTC on 1 January 1970 — the "Unix epoch". It is a single number that unambiguously represents a point in time, independent of timezone or calendar format.',
+  },
+  {
+    q: 'Why do developers use epoch time instead of dates?',
+    a: 'A plain integer is trivial to store, compare and sort, and it sidesteps timezone and locale ambiguity entirely. Databases, APIs and log files overwhelmingly store time this way, converting to a human-readable date only for display.',
+  },
+  {
+    q: 'Seconds or milliseconds — how do I know which one I have?',
+    a: "Check the number of digits. A current Unix timestamp in seconds has 10 digits (around 1.7 billion); in milliseconds it has 13. If your number looks like 1700000000 it's seconds — if it looks like 1700000000000 it's milliseconds. Use the unit selector above to switch.",
+  },
+  {
+    q: 'Does this tool account for timezones?',
+    a: 'The date output is always shown in UTC, which is what a Unix timestamp inherently represents. If you need a local timezone, convert the UTC result using your OS or a timezone-aware tool afterwards.',
+  },
+  {
+    q: 'Are my timestamps sent to a server?',
+    a: 'No. All conversion happens in your browser with plain JavaScript — nothing you type here is uploaded, logged or stored anywhere.',
+  },
+  {
+    q: 'What is the "Now" button for?',
+    a: 'It fills the epoch field with the current Unix time (in whichever unit — seconds or milliseconds — is currently selected), so you can quickly see or copy "right now" as a timestamp.',
+  },
+  {
+    q: 'Can a Unix timestamp be negative?',
+    a: 'Yes — a negative value represents a date before 1 January 1970. This tool handles negative timestamps correctly, converting them to the matching pre-1970 UTC date.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <span
+      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg"
+      aria-hidden="true"
+    >
+      <Icon name={meta.icon} class="h-7 w-7" />
+    </span>
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <TimestampTool epoch={1700000000} date="2023-11-14T22:13:20.000Z" />
+    <p class="mt-3 text-sm text-[var(--text-4)]">
+      Runs entirely in your browser — nothing you enter is uploaded or stored.
+    </p>
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to use this converter</h2>
+      <ol>
+        <li>Type a Unix timestamp into the left field, or a date into the right field.</li>
+        <li>The other field updates live as you type — no button to press.</li>
+        <li>Switch the unit selector between seconds and milliseconds if needed.</li>
+        <li>Click <strong>Now</strong> to fill in the current epoch time.</li>
+      </ol>
+
+      <h2>What is the Unix epoch?</h2>
+      <p>
+        The Unix epoch is the reference point — 00:00:00 UTC on 1 January 1970 — from
+        which Unix time is measured. A Unix timestamp counts the seconds (or
+        milliseconds) that have elapsed since that instant, giving every point in
+        time a single, unambiguous number.
+      </p>
+
+      <h2>Seconds vs. milliseconds</h2>
+      <p>
+        Most systems (Unix, PostgreSQL, PHP) use whole seconds since the epoch,
+        while JavaScript's <code>Date.now()</code> and many web APIs use
+        milliseconds. Mixing the two up is a common bug — 1700000000 read as
+        milliseconds lands in January 1970 instead of November 2023. This tool's
+        unit selector makes the conversion explicit either way.
+      </p>
+
+      <h2>UTC and timezones</h2>
+      <p>
+        A Unix timestamp has no timezone of its own — it's simply seconds since a
+        fixed instant. Displaying it as a date always requires picking a timezone;
+        this tool shows results in UTC, the zero-offset baseline every other
+        timezone is defined relative to.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('epoch-to-date')} class="text-[var(--accent)] underline hover:no-underline">Epoch to Date converter</a> — a focused epoch → date view.</li>
+        <li><a href={toolUrl('date-to-unix-timestamp')} class="text-[var(--accent)] underline hover:no-underline">Date to Unix Timestamp</a> — a focused date → epoch view.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

@@ -1,0 +1,41 @@
+---
+// Per-page <head>: title, description, canonical (trailing slash — Cloudflare
+// Pages 307s no-slash → slash, and a no-slash canonical breaks indexing),
+// OpenGraph, Twitter card, and a JSON-LD block.
+import { SITE } from '../consts';
+
+interface Props {
+  title: string;
+  description: string;
+  jsonLd?: Record<string, unknown>;
+}
+
+const { title, description, jsonLd } = Astro.props;
+const site = Astro.site ?? new URL(SITE.url);
+
+// Astro.url.pathname already carries the base prefix and trailing slash.
+const canonical = new URL(Astro.url.pathname, site).href;
+const ogImage = new URL(`${import.meta.env.BASE_URL}og-default.png`, site).href;
+const favicon = `${import.meta.env.BASE_URL}favicon.svg`;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<link rel="icon" href={favicon} type="image/svg+xml" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+{jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
