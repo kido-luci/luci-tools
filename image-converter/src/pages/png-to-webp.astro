@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'png-to-webp')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Are my PNG images uploaded anywhere?',
+    a: 'No. The conversion happens locally on your device with the Canvas API. Nothing is sent to a server, so your files never leave your machine.',
+  },
+  {
+    q: 'How much smaller will the WebP be?',
+    a: 'Often dramatically smaller — WebP frequently cuts file size by 25–50% or more compared to PNG, especially for photos and images with lots of colors, while keeping visual quality very close to the original.',
+  },
+  {
+    q: 'Does WebP keep transparency like PNG?',
+    a: 'Yes. WebP fully supports an alpha channel, so transparent areas in your PNG — logos, icons, cut-out graphics — stay transparent after conversion. This is one of the main reasons WebP is a safe PNG replacement.',
+  },
+  {
+    q: 'Is WebP supported by browsers and websites?',
+    a: 'Yes — every modern browser (Chrome, Firefox, Safari, Edge) has supported WebP for years, and most content management systems and image CDNs handle it natively. It is the standard recommendation for web images today.',
+  },
+  {
+    q: 'Will converting to WebP lose any quality?',
+    a: "This tool uses WebP's high-quality encoding, so for most images the difference from the original PNG is not visible. If your PNG has sharp, high-contrast edges like text, compare the result closely before replacing the original everywhere.",
+  },
+  {
+    q: 'Can I convert multiple PNGs to WebP at once?',
+    a: 'Yes. Add several files and each is converted and offered as its own download, so you can batch a whole folder of icons or graphics in one go.',
+  },
+  {
+    q: 'Why convert to WebP instead of just keeping PNG?',
+    a: 'If your PNGs load on a website, smaller WebP files mean faster page loads and better Core Web Vitals scores. Keep the PNG as a source file for editing, and use the WebP version for the live site.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span
+          class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg"
+          aria-hidden="true"
+        >
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ToolShell to="webp" accept=".png,image/png" prompt="Drag & drop PNG images here" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert PNG to WebP</h2>
+      <ol>
+        <li>Drop your PNG files onto the box above, or click to browse.</li>
+        <li>Each image is redrawn on a canvas and encoded as WebP in your browser.</li>
+        <li>Click <strong>Download</strong> next to each result to save the WebP.</li>
+      </ol>
+
+      <h2>Why convert PNG to WebP?</h2>
+      <p>
+        PNG's lossless compression makes files larger than they need to be,
+        especially for photos and gradient-heavy graphics. WebP was built to
+        replace both PNG and JPG on the web — it keeps PNG's transparency
+        support while shrinking file size substantially, which means faster
+        page loads for anyone using the image.
+      </p>
+
+      <h2>PNG vs WebP: what you gain</h2>
+      <p>Converting is close to a free upgrade for most web use cases:</p>
+      <ul>
+        <li><strong>File size</strong> — WebP typically shrinks PNG files by a large margin, sometimes cutting them in half or more.</li>
+        <li><strong>Transparency</strong> — fully preserved; WebP supports alpha transparency just like PNG.</li>
+        <li><strong>Compatibility</strong> — near-universal in modern browsers, though very old software may still expect PNG or JPG.</li>
+        <li><strong>Editing</strong> — keep your PNG as the source file for future edits, and use WebP only for the final, published version.</li>
+      </ul>
+
+      <h2>When PNG to WebP makes the biggest difference</h2>
+      <ul>
+        <li>Optimizing website images to improve page speed and Core Web Vitals scores.</li>
+        <li>Shrinking large screenshots or app exports before storing many of them.</li>
+        <li>Preparing transparent logos and icons for a modern, performance-conscious website.</li>
+        <li>Reducing bandwidth costs on image-heavy blogs, stores, or galleries.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('jpg-to-webp')} class="text-[var(--accent)] underline hover:no-underline">JPG to WebP converter</a> — shrink photos for the web too.</li>
+        <li><a href={toolUrl('png-to-jpg')} class="text-[var(--accent)] underline hover:no-underline">PNG to JPG converter</a> — a more universally compatible alternative.</li>
+        <li><a href={`${SITE.url}/pdf/jpg-to-pdf/`} class="text-[var(--accent)] underline hover:no-underline">JPG to PDF</a> — combine converted images into a single PDF document.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

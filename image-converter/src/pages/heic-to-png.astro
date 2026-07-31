@@ -1,0 +1,130 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'heic-to-png')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Are my HEIC photos uploaded to a server?',
+    a: 'No. Conversion runs entirely in your browser using WebAssembly and Canvas. Your HEIC files never leave your device, so private photos stay private.',
+  },
+  {
+    q: 'Why convert HEIC to PNG instead of JPG?',
+    a: "Choose PNG when you need a lossless copy or when the photo has been edited to include transparency, such as a cut-out or a screenshot with a see-through layer. For ordinary camera photos without transparency, JPG is usually the better, smaller choice — use this tool specifically when losslessness or transparency matters.",
+  },
+  {
+    q: 'Will the PNG file be much bigger than the HEIC?',
+    a: 'Yes, often significantly bigger. HEIC compresses very efficiently, while PNG is lossless and stores far more data per pixel. Expect PNG files to be several times the size of the original HEIC.',
+  },
+  {
+    q: 'Does converting to PNG lose any quality?',
+    a: "No — PNG is lossless, so the converted file captures the image exactly as it's decoded from the HEIC, with no additional compression artifacts. This makes it a safe choice when a photo will be edited further.",
+  },
+  {
+    q: 'Can HEIC photos actually contain transparency?',
+    a: 'Yes, HEIC supports an alpha channel, and some edited photos or app exports use it. PNG preserves that transparency fully, whereas JPG would flatten it to a solid background — this is the main reason to pick PNG over JPG for such files.',
+  },
+  {
+    q: 'Can I convert multiple HEIC files to PNG at once?',
+    a: 'Yes. Select or drop multiple files and each is decoded and offered as a separate PNG download, so you can process a whole batch in one go.',
+  },
+  {
+    q: "Why won't Windows or some apps open my HEIC files?",
+    a: 'HEIC support is built into recent macOS and iOS versions, but many Windows installs and third-party apps still lack the codec to read it. Converting to PNG gives you a file that opens anywhere without extra software.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span
+          class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg"
+          aria-hidden="true"
+        >
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ToolShell
+      to="png"
+      accept=".heic,.heif,image/heic,image/heif"
+      prompt="Drag & drop HEIC images here"
+    />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert HEIC to PNG</h2>
+      <ol>
+        <li>Drop your HEIC photos onto the box above, or click to browse.</li>
+        <li>Each photo is decoded and converted to PNG right in your browser.</li>
+        <li>Click <strong>Download</strong> next to each result to save the PNG.</li>
+      </ol>
+
+      <h2>Why convert HEIC to PNG?</h2>
+      <p>
+        Most people converting HEIC photos want JPG for everyday sharing, but
+        PNG is the right call when you need a lossless copy — for example
+        before heavy editing — or when the HEIC file carries transparency
+        that you don't want flattened away. Converting also solves the
+        compatibility problem: PNG opens on virtually any device, browser or
+        app, unlike HEIC.
+      </p>
+
+      <h2>HEIC vs PNG: what changes?</h2>
+      <p>
+        These two formats sit at opposite ends of the efficiency spectrum, so
+        it helps to know what you're trading:
+      </p>
+      <ul>
+        <li><strong>File size</strong> — HEIC's efficient compression means the PNG version will typically be noticeably larger.</li>
+        <li><strong>Quality</strong> — PNG is lossless, so the converted image keeps every detail exactly as decoded, with no further compression.</li>
+        <li><strong>Transparency</strong> — both formats can store an alpha channel, so any transparency in the HEIC carries over intact to the PNG.</li>
+        <li><strong>Compatibility</strong> — PNG is supported everywhere; HEIC needs relatively recent software to open at all.</li>
+      </ul>
+
+      <h2>When HEIC to PNG is the right choice</h2>
+      <ul>
+        <li>Preparing a photo for detailed editing where you want to avoid any compression artifacts.</li>
+        <li>Preserving transparency from an edited photo or app export that used an alpha channel.</li>
+        <li>Feeding a HEIC image into a design tool, icon generator, or template that requires PNG input.</li>
+        <li>Archiving a photo losslessly rather than accepting JPG's compression trade-off.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('heic-to-jpg')} class="text-[var(--accent)] underline hover:no-underline">HEIC to JPG converter</a> — smaller files for everyday sharing.</li>
+        <li><a href={toolUrl('png-to-jpg')} class="text-[var(--accent)] underline hover:no-underline">PNG to JPG converter</a> — shrink the resulting PNG back down later.</li>
+        <li><a href={`${SITE.url}/pdf/jpg-to-pdf/`} class="text-[var(--accent)] underline hover:no-underline">JPG to PDF</a> — combine converted photos into a single PDF document.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

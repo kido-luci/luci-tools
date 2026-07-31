@@ -1,0 +1,141 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'heic-to-jpg')!;
+const conv = meta.title.split(' to ');
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Are my photos uploaded to a server?',
+    a: 'No. Conversion runs entirely in your browser using WebAssembly and Canvas. Your HEIC files never leave your device, so even private or sensitive photos stay on your computer or phone.',
+  },
+  {
+    q: 'What is a HEIC file?',
+    a: 'HEIC is the high-efficiency image format Apple uses for iPhone and iPad photos. It stores the same picture in roughly half the space of a JPG, but because it is newer it is not supported everywhere — which is why converting to JPG is so often needed for sharing.',
+  },
+  {
+    q: 'Will I lose image quality?',
+    a: 'JPG uses lossy compression, but at the default quality the difference is visually negligible for everyday photos. The original HEIC file on your device is never modified, so you can always go back to it.',
+  },
+  {
+    q: 'Can I convert several HEIC files at once?',
+    a: 'Yes. Select or drop multiple files and each one is decoded and offered as a separate JPG download, so you can clear a whole camera roll in one go.',
+  },
+  {
+    q: "Does the JPG keep my photo's date and location data?",
+    a: 'Most camera EXIF metadata, such as the capture date, is carried into the JPG, but some fields can be dropped during conversion. If you specifically want to remove location data before sharing, treat the JPG as a fresh copy and check its details afterwards.',
+  },
+  {
+    q: "Why won't Windows or Android open my HEIC files?",
+    a: 'HEIC support is built into recent versions of macOS and iOS, but older Windows installs and many Android apps still cannot open it without an extra codec. Converting to JPG gives you a file that opens on virtually any device, app or website without plugins.',
+  },
+  {
+    q: 'Can I convert HEIC to PNG instead of JPG?',
+    a: 'This page is tuned for JPG, which is the right choice for photos because it keeps files small. PNG is better for graphics with sharp edges or transparency; for ordinary iPhone photos, JPG is almost always what you want.',
+  },
+  {
+    q: 'Is there a limit on file size or number of photos?',
+    a: "There is no fixed server limit because nothing is uploaded — the only constraint is your device's memory. Very large batches of high-resolution photos may convert more slowly on older phones, so split them into smaller groups if needed.",
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    {
+      conv.length === 2 ? (
+        <FormatBadge from={conv[0]} to={conv[1]} class="mb-5" />
+      ) : (
+        <span
+          class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg"
+          aria-hidden="true"
+        >
+          <Icon name={meta.icon} class="h-7 w-7" />
+        </span>
+      )
+    }
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <ToolShell
+      to="jpeg"
+      accept=".heic,.heif,image/heic,image/heif"
+      prompt="Drag & drop HEIC photos here"
+    />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to convert HEIC to JPG</h2>
+      <ol>
+        <li>Drop your HEIC photos onto the box above, or click to browse.</li>
+        <li>Each photo is decoded and converted to JPG right in your browser.</li>
+        <li>Click <strong>Download</strong> next to each result to save the JPG.</li>
+      </ol>
+
+      <h2>Why convert HEIC to JPG?</h2>
+      <p>
+        HEIC keeps iPhone photos small, but many apps, websites and Windows tools
+        still expect JPG. Converting gives you a file you can share or upload
+        anywhere, while your original photos stay exactly as they are.
+      </p>
+
+      <h2>HEIC vs JPG: what's the difference?</h2>
+      <p>
+        Both formats store the same photo, but they make different trade-offs.
+        Knowing which is which helps you decide when a conversion is worth it:
+      </p>
+      <ul>
+        <li><strong>File size</strong> — HEIC is roughly half the size of an equivalent JPG, which is why Apple adopted it to save storage on iPhones.</li>
+        <li><strong>Compatibility</strong> — JPG opens on essentially every device, browser and app ever made; HEIC needs fairly recent software to display at all.</li>
+        <li><strong>Quality</strong> — at normal settings the two look the same to the eye; HEIC simply reaches that quality in fewer bytes.</li>
+        <li><strong>Editing &amp; uploads</strong> — many web forms, marketplaces and older photo editors silently reject HEIC, while JPG is accepted almost universally.</li>
+      </ul>
+
+      <h2>When you need to convert HEIC to JPG</h2>
+      <p>The format mismatch tends to show up in everyday situations like these:</p>
+      <ul>
+        <li>Emailing or messaging iPhone photos to someone on Windows or Android.</li>
+        <li>Uploading to an older website, job application or government form that only accepts JPG.</li>
+        <li>Sending photos to a print service or photo-book tool that can't read HEIC.</li>
+        <li>Opening pictures in a photo editor or app that doesn't recognise the format.</li>
+      </ul>
+
+      <h2>Quality, metadata and privacy</h2>
+      <p>
+        Conversion redraws each photo and re-encodes it as JPG at a high default
+        quality, so the result looks the same as the original for normal viewing
+        and printing, and your source HEIC file is never touched. Because every
+        step runs inside your browser with WebAssembly, nothing is uploaded —
+        making this a safe way to convert personal or work photos you'd rather
+        not hand to an online server.
+      </p>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('png-to-jpg')} class="text-[var(--accent)] underline hover:no-underline">PNG to JPG converter</a> — flatten screenshots and graphics into JPG.</li>
+        <li><a href={`${SITE.url}/pdf/jpg-to-pdf/`} class="text-[var(--accent)] underline hover:no-underline">JPG to PDF</a> — combine your converted photos into a single PDF.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>
