@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HashTool from '../components/HashTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'sha512-hash-generator')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my text uploaded to a server?',
+    a: 'No. SHA-512 is computed entirely in your browser via the Web Crypto API. Your text never leaves your device, so it is safe to hash private notes, keys or file contents here.',
+  },
+  {
+    q: 'What is SHA-512 used for today?',
+    a: 'SHA-512 is used wherever SHA-256 is, but where a larger security margin or better performance on 64-bit hardware is wanted — password-hashing schemes, TLS, digital signatures, and some blockchain and file-integrity systems all use it.',
+  },
+  {
+    q: 'Is SHA-512 more secure than SHA-256?',
+    a: 'Both are part of the SHA-2 family and are currently considered cryptographically secure. SHA-512 has a larger 512-bit output and larger internal state, giving it a bigger theoretical security margin, but SHA-256 is not considered broken or weak — the choice is usually about digest length and performance, not safety.',
+  },
+  {
+    q: 'How is SHA-512 different from SHA-256?',
+    a: 'SHA-512 produces a 512-bit digest (128 hex characters) versus SHA-256\'s 256 bits (64 hex characters), and internally it operates on 64-bit words instead of 32-bit ones — which can make it faster than SHA-256 on modern 64-bit processors despite the longer output.',
+  },
+  {
+    q: 'Can I reverse a SHA-512 hash back into the original text?',
+    a: 'No. Hashing is one-way by design — there is no operation that turns the 128-character hex output back into your original input. It is used to prove two pieces of data match, not to store or recover the data itself.',
+  },
+  {
+    q: 'Why does changing one character completely change the hash?',
+    a: 'This is the avalanche effect: SHA-512 is built so a single-bit change in the input flips roughly half the output bits. That means the hash cannot show "similarity" between two inputs — only whether they are exactly identical.',
+  },
+  {
+    q: 'Why is my SHA-512 hash always 128 characters?',
+    a: 'SHA-512 always produces a 512-bit digest, shown as 128 hexadecimal characters, no matter how long the input text is — a single character and an entire document both hash to the same fixed length.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <span
+      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg"
+      aria-hidden="true"
+    >
+      <Icon name={meta.icon} class="h-7 w-7" />
+    </span>
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <HashTool algo="SHA-512" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to generate a SHA-512 hash</h2>
+      <ol>
+        <li>Type or paste your text into the box above.</li>
+        <li>The SHA-512 hash updates instantly as you type — nothing is uploaded.</li>
+        <li>Click <strong>Copy</strong> to copy the hash to your clipboard.</li>
+      </ol>
+
+      <h2>What is SHA-512?</h2>
+      <p>
+        SHA-512 (Secure Hash Algorithm, 512-bit) is part of the same SHA-2
+        family as SHA-256, published by NIST in 2001. It takes any amount of
+        text and produces a fixed 512-bit fingerprint, shown here as 128
+        hexadecimal characters, and is favored where a longer digest or
+        64-bit-optimized performance matters.
+      </p>
+      <p>
+        <strong>Hashing is one-way, not encryption.</strong> Encryption is
+        reversible with the right key; hashing is not reversible at all. A
+        SHA-512 hash cannot be decrypted back into the original text — it can
+        only be compared against other hashes to check for a match.
+      </p>
+
+      <h2>When to use SHA-512</h2>
+      <ul>
+        <li><strong>Good for</strong> — systems that want a larger security margin than SHA-256, 64-bit environments where its word size gives a performance edge, and as a building block inside password-hashing schemes.</li>
+        <li><strong>Note</strong> — for storing user passwords specifically, pair a hash with a dedicated password-hashing scheme (bcrypt, scrypt, Argon2) rather than hashing the raw password with SHA-512 alone, since those are deliberately slow to resist brute-force guessing.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('sha256-hash-generator')} class="text-[var(--accent)] underline hover:no-underline">SHA-256 hash generator</a> — the shorter, more common SHA-2 digest.</li>
+        <li><a href={toolUrl('sha1-hash-generator')} class="text-[var(--accent)] underline hover:no-underline">SHA-1 hash generator</a> — the older, now-deprecated predecessor.</li>
+        <li><a href={toolUrl('md5-hash-generator')} class="text-[var(--accent)] underline hover:no-underline">MD5 hash generator</a> — a fast checksum hash for non-security use.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

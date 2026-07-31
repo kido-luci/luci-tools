@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HashTool from '../components/HashTool.astro';
+import AdSlot from '../components/AdSlot.astro';
+import FAQ, { type FaqItem } from '../components/FAQ.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, TOOLS, toolUrl } from '../consts';
+
+const meta = TOOLS.find((t) => t.slug === 'sha1-hash-generator')!;
+const title = `${meta.h1} — Free & Private | ${SITE.name}`;
+const canonical = new URL(toolUrl(meta.slug), SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: meta.h1,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any (web browser)',
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Is my text uploaded to a server?',
+    a: 'No. SHA-1 is computed entirely in your browser via the Web Crypto API. Your text never leaves your device, so it is safe to hash private notes, tokens or file contents here.',
+  },
+  {
+    q: 'What is SHA-1 used for today?',
+    a: 'SHA-1 still appears in older Git commit hashes, legacy TLS certificates and some checksum tooling, but it has been phased out of new security-sensitive systems in favor of SHA-256.',
+  },
+  {
+    q: 'Is SHA-1 secure?',
+    a: 'No. Practical collision attacks against SHA-1 were demonstrated in 2017 (the "SHAttered" attack), and major browsers and certificate authorities have since deprecated it. For anything security-sensitive, use SHA-256 or stronger instead.',
+  },
+  {
+    q: 'How is SHA-1 different from MD5?',
+    a: 'Both are older hash functions with known weaknesses, but SHA-1 produces a longer 160-bit digest (40 hex characters) versus MD5\'s 128 bits (32 hex characters), and SHA-1 is somewhat more resistant to brute-force collision attacks than MD5, though still broken for security use.',
+  },
+  {
+    q: 'Can I reverse a SHA-1 hash back into the original text?',
+    a: 'No. Hashing only goes one way — there is no operation that turns the 40-character hex output back into your original input. It exists to prove two pieces of text match, not to store or recover the text itself.',
+  },
+  {
+    q: 'Why does changing one character completely change the hash?',
+    a: 'This is called the avalanche effect: SHA-1 is designed so that even a one-bit change in the input flips roughly half the bits in the output. That makes the hash useless for spotting "similar" text — it only tells you whether two inputs are identical or not.',
+  },
+  {
+    q: 'Why is my SHA-1 hash always 40 characters?',
+    a: 'SHA-1 always produces a 160-bit digest, displayed as 40 hexadecimal characters, regardless of how much text you hash — one word or an entire document both produce the same fixed-length output.',
+  },
+];
+---
+
+<BaseLayout title={title} description={meta.description} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-3xl px-4 pb-10 pt-12">
+    <span
+      class="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-tile-bg text-tile-fg"
+      aria-hidden="true"
+    >
+      <Icon name={meta.icon} class="h-7 w-7" />
+    </span>
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">{meta.h1}</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">{meta.description}</p>
+
+    <HashTool algo="SHA-1" />
+
+    <AdSlot />
+
+    <div class="copy">
+      <h2>How to generate a SHA-1 hash</h2>
+      <ol>
+        <li>Type or paste your text into the box above.</li>
+        <li>The SHA-1 hash updates instantly as you type — nothing is uploaded.</li>
+        <li>Click <strong>Copy</strong> to copy the hash to your clipboard.</li>
+      </ol>
+
+      <h2>What is SHA-1?</h2>
+      <p>
+        SHA-1 (Secure Hash Algorithm 1) takes any amount of text and produces
+        a fixed 160-bit fingerprint, shown here as 40 hexadecimal characters.
+        Published in 1995, it succeeded MD5 as the standard hash for TLS,
+        code-signing and version control before practical collision attacks
+        pushed the industry toward SHA-256.
+      </p>
+      <p>
+        <strong>Hashing is one-way, not encryption.</strong> Encryption is
+        reversible with the right key; hashing is not reversible at all. A
+        SHA-1 hash cannot be decrypted back into the original text — it can
+        only be compared against other hashes to check for a match.
+      </p>
+
+      <h2>When to use SHA-1 (and when not to)</h2>
+      <ul>
+        <li><strong>Good for</strong> — working with legacy systems (like older Git objects) that still reference SHA-1 hashes, or non-adversarial checksums where compatibility matters more than collision-resistance.</li>
+        <li><strong>Not for</strong> — new certificates, signatures, passwords, or any system where an attacker might try to forge a matching input. Use SHA-256 instead.</li>
+      </ul>
+
+      <h2>Related tools</h2>
+      <ul>
+        <li><a href={toolUrl('sha256-hash-generator')} class="text-[var(--accent)] underline hover:no-underline">SHA-256 hash generator</a> — the modern, collision-resistant standard.</li>
+        <li><a href={toolUrl('md5-hash-generator')} class="text-[var(--accent)] underline hover:no-underline">MD5 hash generator</a> — an even older, shorter checksum hash.</li>
+        <li><a href={toolUrl('sha512-hash-generator')} class="text-[var(--accent)] underline hover:no-underline">SHA-512 hash generator</a> — a longer digest for stronger integrity guarantees.</li>
+      </ul>
+    </div>
+
+    <FAQ items={faqs} />
+  </article>
+</BaseLayout>

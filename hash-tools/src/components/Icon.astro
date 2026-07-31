@@ -1,0 +1,59 @@
+---
+// Central icon registry. Paths are the exact Lucide-style glyphs sampled from
+// the "Refined Indigo" design (viewBox 24, round caps/joins); a handful that
+// the design didn't show (braces/qr/wifi/minimize/sun) are drawn to match.
+interface Props {
+  name: string;
+  class?: string;
+  /** stroke-width; the design varies it per context (1.8 default, 1.9 tiles, 3.6 check) */
+  stroke?: number;
+}
+const { name, class: className = 'h-5 w-5', stroke = 1.8 } = Astro.props;
+
+const ICONS: Record<string, string> = {
+  // — category / tool glyphs (from design) —
+  image:
+    '<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9.5" r="1.7"/><path d="M5 18l4.4-4.4a2 2 0 0 1 2.8 0L19 19"/>',
+  layers:
+    '<path d="M12 3l8 4-8 4-8-4 8-4z"/><path d="M4 12l8 4 8-4"/><path d="M4 16.5l8 4 8-4"/>',
+  sparkle: '<path d="M12 3l1.9 5.7 5.7 1.9-5.7 1.9L12 18.2 10.1 12.5 4.4 10.6 10.1 8.7z"/>',
+  bold:
+    '<path d="M8 5v14"/><path d="M8 5h6a3.3 3.3 0 0 1 0 6.6H8"/><path d="M8 11.6h6.6a3.3 3.3 0 0 1 0 6.6H8"/>',
+  italic: '<path d="M18 5h-7"/><path d="M13 19H6"/><path d="M15 5l-6 14"/>',
+  strikethrough:
+    '<path d="M7 7.2C7 5.4 9 4 11.6 4c2 0 3.5.7 4.3 1.9"/><path d="M9 16c.8 1.1 2.3 1.9 4.4 1.9 2.9 0 4.8-1.4 4.8-3.4"/><path d="M4 12h16"/>',
+  code: '<path d="M9 8l-4 4 4 4"/><path d="M15 8l4 4-4 4"/>',
+  text: '<path d="M5 6V5h14v1"/><path d="M12 5v14"/><path d="M9 19h6"/>',
+  convert:
+    '<path d="M7 4L4 7l3 3"/><path d="M4 7h12"/><path d="M17 20l3-3-3-3"/><path d="M20 17H8"/>',
+  lock: '<rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/>',
+  file: '<path d="M7 3h7l5 5v11.5a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/>',
+  // — drawn to match the design's style —
+  braces:
+    '<path d="M8 4h-.5A2.5 2.5 0 0 0 5 6.5v3A2.5 2.5 0 0 1 2.5 12 2.5 2.5 0 0 1 5 14.5v3A2.5 2.5 0 0 0 7.5 20H8"/><path d="M16 4h.5A2.5 2.5 0 0 1 19 6.5v3a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0-2.5 2.5v3a2.5 2.5 0 0 1-2.5 2.5H16"/>',
+  minimize: '<path d="M4 14h6v6"/><path d="M20 10h-6V4"/><path d="M14 10l7-7"/><path d="M3 21l7-7"/>',
+  qr:
+    '<rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.3"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.3"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.3"/><path d="M14 14h2.5v2.5H14z"/><path d="M20.5 14v.01"/><path d="M14 20.5v.01"/><path d="M20.5 20.5v.01"/><path d="M20.5 17.2v.01"/><path d="M17.2 20.5v.01"/>',
+  wifi:
+    '<path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.55a10 10 0 0 1 14 0"/><path d="M8.5 15.85a5 5 0 0 1 7 0"/><path d="M12 19.2h.01"/>',
+  // — chrome —
+  check: '<path d="M5 12.5l4.5 4.5L19 7"/>',
+  moon: '<path d="M20 13.4A8 8 0 1 1 10.6 4 6.3 6.3 0 0 0 20 13.4z"/>',
+  sun:
+    '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.9 4.9l1.4 1.4"/><path d="M17.7 17.7l1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.3 17.7l-1.4 1.4"/><path d="M19.1 4.9l-1.4 1.4"/>',
+};
+const inner = ICONS[name] ?? ICONS.image;
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width={stroke}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class={className}
+  aria-hidden="true"
+  set:html={inner}
+></svg>
