@@ -1,51 +1,55 @@
 # Deploy runbook — Luci Tools (Phase 2)
 
 How to take the portfolio live on `tools.luci-studio.com`. Order is mandatory:
-**6 Pages projects → Worker → custom domain → verify** (the Worker proxies to
-`*.pages.dev`, so the Pages projects must exist first).
+**Pages projects → Worker → custom domain → verify** (the Worker proxies to
+`*.pages.dev`, so the Pages projects must exist first). There are **12** today —
+11 engines plus `tools-home`.
 
 ## Prerequisites
 
 - A Cloudflare account that already holds the **`luci-studio.com`** zone (the blog).
   `tools.luci-studio.com` is just a subdomain of it — no new domain to buy.
 - Access to the GitHub org **kido-luci** (you'll authorize the Cloudflare GitHub app
-  to read the private repos).
+  to read the `luci-tools` repo).
 
 ## Step 0 — lockfile compatibility (prep)
 
 Cloudflare Pages builds with **npm 10.9.2** and runs `npm ci`; a `package-lock.json`
-written by npm 11 can fail there. Before the first build, each Pages repo's lockfile
+written by npm 11 can fail there. Before the first build, each engine's lockfile
 must be reconciled:
 
 ```sh
-npx npm@10.9.2 --prefix <repo> install --package-lock-only
+npx npm@10.9.2 --prefix <engine> install --package-lock-only
 ```
 
-(Handled per repo via a small PR. The Worker repo `tools-router` deploys via local
+(Handled per engine via a small PR. The Worker directory `tools-router` deploys via local
 `wrangler`, not Cloudflare's npm, so it does not need this.)
 
-## Step 1 — deploy the 6 Pages projects
+## Step 1 — deploy the Pages projects
 
-> **Status (2026-06-28):** all 6 projects are deployed via CLI (`wrangler pages deploy`).
-> Git integration (`Connect to Git`) is **not yet connected** — pushing to `master` does
-> NOT auto-deploy. Use the CLI workflow below until you connect Git in the dashboard.
+> **Status (2026-08-04):** all 12 projects are deployed via CLI (`wrangler pages deploy`).
+> Git integration (`Connect to Git`) is **not connected** — `wrangler pages project list`
+> reports `Git Provider: No` for every project, so pushing to `master` does NOT
+> auto-deploy. Use the CLI workflow below until you connect Git in the dashboard.
 
 ### Option A — CLI deploy (current method)
 
-Build and push each project manually:
+Build and push each engine manually, from the monorepo root:
 
 ```sh
-# repeat for each repo: image-converter, fancy-text-generator, json-tools,
-#                        qr-tools, pdf-tools, tools-home
-cd <repo>
-npm run build
-npx wrangler pages deploy dist --project-name <repo> --branch master --commit-dirty=true
+# engines: image-converter, fancy-text-generator, json-tools, qr-tools, pdf-tools,
+#          unit-converter, hash-tools, timestamp-converter, encode-decode,
+#          color-tools, password-tools — plus tools-home
+npm --prefix <engine> run build
+npx wrangler pages deploy <engine>/dist --project-name <engine> --branch master --commit-dirty=true
 ```
 
-> The 6 projects were created with suffixed names by Cloudflare's uniqueness check —
-> project names are `image-converter-69t`, `fancy-text-generator-3oo`, etc. Check the
-> exact names with `wrangler pages project list` if in doubt; they're also hardcoded in
-> the Worker's `ORIGINS` map.
+> **Project name vs domain.** The **project name is the plain directory name**
+> (`image-converter`, `fancy-text-generator`, …) — that is what `--project-name`
+> takes. Only the assigned **domain** carries Cloudflare's uniqueness suffix
+> (`image-converter-69t.pages.dev`, `fancy-text-generator-2p7.pages.dev`). Run
+> `wrangler pages project list` to see both columns; the domains are also hardcoded
+> in the Worker's `ORIGINS` map, which is the source of truth for routing.
 
 ### Option B — connect Git integration (recommended for long-term)
 
@@ -60,9 +64,13 @@ Connect to Git** → pick the GitHub repo, then:
 | Build output directory | `dist` |
 | Env var | `NODE_VERSION` = `22` |
 
-Once connected, every merge to `master` auto-deploys. Do this for all 6 projects.
+Once connected, every merge to `master` auto-deploys. Do this for all 12 projects.
+In the monorepo, also set each project's **root directory** to its `<engine>/` and
+path-filter the build so an unrelated engine's change does not redeploy everything.
 
-Smoke-test each: `https://image-converter.pages.dev/image/`, `https://tools-home.pages.dev/`.
+Smoke-test each on its real domain: `https://image-converter-69t.pages.dev/`,
+`https://tools-home.pages.dev/` (engine `dist` serves at the origin root — the
+`/image/` prefix only exists behind the Worker).
 
 ## Step 2 — deploy the Worker (`tools-router`)
 
@@ -98,7 +106,7 @@ Let the Worker own the whole hostname (auto DNS + SSL, all traffic → Worker). 
 - **AdSense:** apply once there is real content + traffic; when approved, put the real
   publisher id into `tools-home/public/ads.txt` (replace `pub-0000…`).
 - **Deploying:** until Git integration is connected (see Step 1 Option B), each change
-  requires `npm run build && npx wrangler pages deploy dist --project-name <repo>`.
+  requires `npm --prefix <engine> run build && npx wrangler pages deploy <engine>/dist --project-name <engine>`.
   After connecting Git, pushing to `master` auto-redeploys.
 
 ## Doing the CLI steps via API token (optional)
