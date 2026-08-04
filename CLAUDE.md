@@ -1,8 +1,9 @@
 # CLAUDE.md — luci-tools
 
 Guidance for Claude Code when working in this workspace. These are the **shared
-conventions every tool repo follows**. Full rationale, the tool catalog, and the
-roadmap live in [docs/common-plan.md](docs/common-plan.md).
+conventions every engine follows**. Full rationale, the tool catalog, and the
+roadmap live in [docs/common-plan.md](docs/common-plan.md); the deploy runbook is
+[docs/deploy.md](docs/deploy.md).
 
 ## What this is
 
@@ -26,39 +27,49 @@ tools.luci-studio.com
    │  Cloudflare Worker (tools-router): route path-prefix → Pages project
    ├─ /                       → tools-home   (hub / landing page listing all tools)
    ├─ /privacy /terms /about  → tools-home   (legal — ONE shared copy)
-   ├─ /ads.txt /robots.txt /sitemap.xml → tools-home (sitemap = index of all repos)
-   ├─ /image/*                → image-converter.pages.dev
-   ├─ /pdf/*                  → pdf-tools.pages.dev
-   └─ /json/*                 → json-tools.pages.dev   (etc.)
+   ├─ /ads.txt /robots.txt /sitemap.xml → tools-home (sitemap = index of all engines)
+   ├─ /image/*                → image-converter-69t.pages.dev
+   ├─ /pdf/*                  → pdf-tools-bh7.pages.dev
+   └─ /json/*                 → json-tools-b17.pages.dev   (etc.)
 ```
+
+`*.pages.dev` subdomains are globally unique, so most origins carry a
+Cloudflare-assigned suffix. The authoritative prefix → origin map is `ORIGINS`
+in `tools-router/src/index.ts`; never guess a host from the directory name.
 
 - **One host**, so authority pools and `ads.txt` / AdSense site / consent / legal
   are configured **once** at the root, not per tool.
-- The **Worker is a pure pass-through proxy** — it only maps `/<engine>/*` to that
-  engine's Pages project. It is the one piece of shared infra (and a single point
-  of failure; keep it tiny and stable).
+- The **Worker rewrites the path** — it maps `/<prefix>/*` to that engine's Pages
+  project and **strips the prefix**, because Astro's `base` does not nest the build
+  output: each engine's `dist` is served at its origin root (`/heic-to-jpg/`, not
+  `/image/heic-to-jpg/`). It re-adds the prefix when rewriting redirect `Location`
+  headers. It is the one piece of shared infra (and a single point of failure; keep
+  it tiny and stable).
 - Each engine = **its own top-level directory in this monorepo + its own Pages
-  project**, owning the path prefix `/<engine>/*`. (Consolidated 2026-07-31 —
-  the former per-engine repos were subtree-merged in with full history and
-  archived.)
+  project**, owning one path prefix. (Consolidated 2026-07-31 — the former
+  per-engine repos were subtree-merged in with full history, then deleted
+  2026-08-04.)
 - **Engine-prefix path scheme**: `/image/heic-to-jpg`, `/pdf/merge-pdf`, …
-  Each repo sets Astro **`base: '/<engine>'`** so its internal links, canonical
-  tags, and sitemap already match the production path → the Worker needs **no path
-  rewriting** (avoids asset/canonical bugs).
+  The prefix is **not** always the directory name: `fancy-text-generator` → `/fancy-text`,
+  `timestamp-converter` → `/time`, `unit-converter` → `/unit`, `color-tools` → `/color`,
+  `encode-decode` → `/encode`. Each engine sets Astro **`base: '/<prefix>'`** so its
+  internal links, canonical tags, and sitemap match the production path.
 
 ## Locked decisions
 
 - **Stack:** Astro `output: 'static'` + TypeScript + Tailwind v3 (build-time via
   PostCSS). Tool logic = vanilla JS / WASM, no React. **No Sentry, no SSR
-  adapter** — so unlike the blog, `npm run dev` should work here. Verify per repo.
+  adapter** — so unlike the blog, `npm run dev` should work here. Verify per engine.
 - **Hosting:** Cloudflare Pages. 1 engine directory = 1 Pages project
   (**direct-upload** — no git integration). Deploys are **manual**:
   `wrangler pages deploy <engine>/dist --project-name <engine> --branch master`
-  (wrangler is OAuth-authed locally). The Worker deploys via
-  `npm run deploy` in `tools-router/`.
+  (wrangler is OAuth-authed locally). The **project name is the directory name**;
+  only the assigned `*.pages.dev` domain may carry a suffix — `wrangler pages
+  project list` shows both. The Worker deploys via `npm run deploy` in
+  `tools-router/`.
 - **Repo:** the single monorepo **`kido-luci/luci-tools`**; each engine is a
-  top-level directory. The old `kido-luci/<engine>` repos are archived
-  snapshots — never push to them.
+  top-level directory. The old per-engine `kido-luci/<engine>` repos were deleted
+  2026-08-04 — this monorepo is the only remaining copy.
 - **Domain:** `tools.luci-studio.com`, engine-prefix paths.
 - **Ads:** Google AdSense — **one** site (`tools.luci-studio.com`), **one** root
   `ads.txt`.
@@ -74,11 +85,11 @@ tools.luci-studio.com
 - **Legal:** Privacy / Terms / About live **once** at the root (`tools-home`);
   every tool links to them.
 
-## Per-repo structure (skeleton)
+## Per-engine structure (skeleton)
 
 ```
 <engine>/
-├── astro.config.mjs        # output: 'static', base: '/<engine>'
+├── astro.config.mjs        # output: 'static', base: '/<prefix>'
 ├── src/
 │   ├── pages/<keyword>.astro    # one page per search intent
 │   ├── pages/index.astro        # category hub (e.g. /image/) listing this engine's tools
@@ -100,7 +111,7 @@ tools.luci-studio.com
 - Every page emits **OpenGraph + Twitter card + JSON-LD `SoftwareApplication`**.
 - Every tool page needs **supporting content** (how-to + FAQ). Thin "single input
   field" pages get AdSense-rejected and don't rank.
-- Per-repo `sitemap.xml`; `tools-home` emits a **sitemap index** referencing them.
+- Per-engine `sitemap.xml`; `tools-home` emits a **sitemap index** referencing them.
   `robots.txt` lives only at the root.
 - **Internal links:** hub ↔ tool, category hub (`/image/`) ↔ its tools, plus
   related-tool cross-links. This is how authority flows across the portfolio.
@@ -134,8 +145,11 @@ VN Decree 13/2023) and a selling point.
   `Co-Authored-By: Claude <model> <noreply@anthropic.com>` trailer, using the exact
   running-model name (e.g. `Claude Opus 4.8`).
 - A release = merge to `master` **then** an annotated per-engine tag
-  `<engine>/vX.Y.Z` (engines stay versioned independently; the old repos' plain
-  `vX.Y.Z` tags live on in the imported history and the archived repos).
+  `<engine>/vX.Y.Z` (engines stay versioned independently). The old repos' plain
+  `vX.Y.Z` tags did **not** survive the consolidation — `git subtree add` imports
+  commits, not tags, and the source repos were deleted 2026-08-04. Every
+  pre-consolidation commit is present, but this repo carries **no tags at all**;
+  the first `<engine>/vX.Y.Z` tag will be a fresh start.
 - **After a topic branch is merged/landed, `git checkout` back to `master`
   locally** so the working tree is clean and not left sitting on a merged
   branch.
