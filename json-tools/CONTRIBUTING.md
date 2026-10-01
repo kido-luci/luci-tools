@@ -1,7 +1,7 @@
 # Contributing
 
-This repo is one tool in the **luci-tools** portfolio — a client-side micro web
-tool built with Astro (static) + TypeScript + Tailwind. Everything runs in the
+This directory is one tool in the **luci-tools** monorepo — a client-side micro
+web tool built with Astro (static) + TypeScript + Tailwind. Everything runs in the
 browser: no backend, no SSR, no secrets.
 
 ## Workflow
@@ -12,9 +12,10 @@ browser: no backend, no SSR, no secrets.
   commit message with a `Co-Authored-By: Claude <model> <noreply@anthropic.com>`
   trailer using the exact running-model name.
 - **Pull requests:** open against `master`. CI (`check` → `test` → `build`) must be
-  green. PRs are **squash-merged**; the head branch is deleted automatically.
-- **Releases:** merge to `master`, then push an annotated tag `vX.Y.Z`. The release
-  workflow builds the site and publishes a GitHub Release with `dist.zip` attached.
+  green. The head branch is deleted automatically on merge.
+- **Releases:** merge to `master`, then push an annotated per-engine tag
+  `json-tools/vX.Y.Z`. Deploying is a separate, manual `wrangler pages deploy`;
+  see [docs/deploy.md](../docs/deploy.md).
 
 ## Local development
 

@@ -73,6 +73,12 @@ tags and sitemap** already use the production path.
     `.claude/launch.json`. This does **not** change the above: each tool stays an
     independent repo and Cloudflare Pages deploys it directly from its own `master`;
     the submodule pointer never touches deployment.
+  - *Superseded (2026-07-31):* the tool repos were consolidated into
+    **`kido-luci/luci-tools`** as one monorepo, each subtree-merged in with full
+    history as a top-level directory, and the per-engine repos were then deleted.
+    The repo is now public (AGPL-3.0). Isolation and independent deploys hold per
+    directory instead: one Pages project and one path prefix per engine, each
+    deployed on its own (see [../CLAUDE.md](../CLAUDE.md) and [deploy.md](deploy.md)).
 - **Astro static**: SSG = strong SEO + one repo → many landing pages via file
   routing + $0 server. Matches existing skill. No Sentry / no SSR adapter keeps the
   dev server working.
@@ -113,7 +119,7 @@ Serves everything not owned by an engine:
 - `/sitemap.xml` — a **sitemap index** referencing each engine repo's own
   `sitemap.xml` (e.g. `tools.luci-studio.com/image/sitemap.xml`).
 
-> **Status — built (Phase 1, not deployed).** `tools-home/` is scaffolded: the hub
+> **Status — built (Phase 1) and deployed.** `tools-home/` is scaffolded: the hub
 > (cross-engine catalog in `src/consts.ts`, grouped by engine), Privacy / Terms /
 > About / Contact, `public/ads.txt` (placeholder pub-id + TODO) and
 > `public/robots.txt`, plus the sitemap **index** (`/sitemap.xml`) and the home-pages
@@ -122,7 +128,7 @@ Serves everything not owned by an engine:
 > resolve to the production host. **Deployed live** at `tools-home.pages.dev`, served
 > at the root of `tools.luci-studio.com` via the Worker.
 
-### A blog-side touchpoint (separate small task, lands in `luci_web_blog`)
+### A blog-side touchpoint (separate small task, lands in `luci-studio-frontend`)
 Add a `/tools` page on `luci-studio.com` that promotes the portfolio and links to
 `tools.luci-studio.com`. This is the ONE change that touches the blog repo; do it as
 its own task, not here.
@@ -205,7 +211,7 @@ list. Pick a handful, validate, expand. Markers: 🔥 high traffic · 💰 high 
 
 ### Dev (💰 highest RPM)
 - `json-tools` 💰🔥 — format/validate/minify, json↔yaml/csv/xml, json→typescript/go-struct
-- `encode-decode-tools` 💰 — base64 encode/decode, url, html-entity, jwt decode, escape
+- `encode-decode` 💰 — base64 encode/decode, url, html-entity, jwt decode, escape
 - `hash-tools` 💰 — md5, sha1, sha256, sha512, hmac, bcrypt
 - `id-generators` 💰 — uuid, ulid, nanoid, guid
 - `regex-tester` 🔥 — tester, cheatsheet
@@ -269,8 +275,8 @@ Ranked by (traffic × RPM × ease):
 
 `tools-home` + `tools-router` are built once there is ≥1 tool to route (see CLAUDE.md
 build sequence). **Both are now DEPLOYED — the portfolio is live on
-`tools.luci-studio.com`** (the 6 Pages projects via `wrangler pages deploy`, the
-Worker via `wrangler deploy` with a custom domain). The runbook + the first-deploy
+`tools.luci-studio.com`** (the Pages projects, 12 today, via `wrangler pages
+deploy`; the Worker via `wrangler deploy` with a custom domain). The runbook + the first-deploy
 gotchas are in [deploy.md](deploy.md).
 
 ## 9. Definition of Done (per tool)
@@ -289,8 +295,9 @@ gotchas are in [deploy.md](deploy.md).
 - Confirm the exact `tools-home` design / branding (logo, colors, fonts) — shared
   visual identity across tools, copied per repo (no shared package yet, by design).
 - ~~Decide whether to version/`git init` this planning workspace itself~~ —
-  **Done:** the workspace is now the private meta-repo `kido-luci/luci-tools`,
-  aggregating the tool repos as submodules and versioning the shared docs (see §2).
+  **Done:** `kido-luci/luci-tools` versions it — first as a private meta-repo of
+  tool submodules, now as the public monorepo that holds every tool and the shared
+  docs (see §2).
 - Revisit Ezoic/Mediavine migration once a tool crosses their traffic thresholds.
 
 ## 11. Internationalization (i18n) — design doc (NOT yet built)
@@ -338,8 +345,9 @@ un-prefixed** so existing URLs never move:
   keyword — `png-to-jpg` (en) vs `png-a-jpg` (es). Routing therefore maps
   `(locale, canonical-tool-id) → localized-slug`, kept in a per-repo table.
 - **Worker is unaffected.** The first path segment is still the engine
-  (`image` → `image-converter.pages.dev`); `base: '/<engine>'` composes with Astro
-  i18n routing under it. `tools-router` stays a pure pass-through — **no change**.
+  (`image` → the `image-converter` Pages origin); `base: '/<engine>'` composes with
+  Astro i18n routing under it. `tools-router` routes on that first segment only, so
+  it needs **no change**.
 
 ### 11.3 hreflang / canonical rules
 

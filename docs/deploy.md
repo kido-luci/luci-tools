@@ -102,11 +102,13 @@ Let the Worker own the whole hostname (auto DNS + SSL, all traffic → Worker). 
 
 ## Step 5 — after deploy
 
-- **Cloudflare Web Analytics:** enable per project (auto-inject).
+- **Cloudflare Web Analytics:** nothing to enable. The `luci-studio.com` zone's
+  automatic Web Analytics already covers `tools.luci-studio.com`, and a second
+  beacon double-counts (see CLAUDE.md → Analytics).
 - **AdSense:** apply once there is real content + traffic; when approved, put the real
   publisher id into `tools-home/public/ads.txt` (replace `pub-0000…`).
 - **Deploying:** until Git integration is connected (see Step 1 Option B), each change
-  requires `npm --prefix <engine> run build && npx wrangler pages deploy <engine>/dist --project-name <engine>`.
+  requires `npm --prefix <engine> run build && npx wrangler pages deploy <engine>/dist --project-name <engine> --branch master`.
   After connecting Git, pushing to `master` auto-redeploys.
 
 ## Doing the CLI steps via API token (optional)

@@ -91,11 +91,10 @@ in `tools-router/src/index.ts`; never guess a host from the directory name.
 <engine>/
 ├── astro.config.mjs        # output: 'static', base: '/<prefix>'
 ├── src/
-│   ├── pages/<keyword>.astro    # one page per search intent
+│   ├── pages/<keyword>.astro    # one page per search intent, with its how-to + FAQ copy (SEO body)
 │   ├── pages/index.astro        # category hub (e.g. /image/) listing this engine's tools
 │   ├── lib/<engine>.ts          # the shared client-side engine (the actual work)
-│   ├── components/{Header,Footer,ToolShell,AdSlot,FAQ,SeoHead}.astro
-│   └── content/                 # per-page how-to + FAQ copy (SEO body)
+│   └── components/{Header,Footer,ToolShell,AdSlot,FAQ,SeoHead}.astro
 ├── public/                      # static assets (NO ads.txt/robots here — those are at root)
 └── package.json
 ```
@@ -140,7 +139,8 @@ VN Decree 13/2023) and a selling point.
   after merging, run the wrangler deploy for the engine(s) you changed.
 - CI runs per-directory: `.github/workflows/ci-<engine>.yml`, path-filtered to
   `<engine>/**` (npm ci + check + test + build inside that directory).
-- GitHub free plan → branch protection is a **convention**, not server-enforced.
+- No branch protection or ruleset is configured on `master` → protecting it is a
+  **convention**, not server-enforced.
 - One focused change per commit. End every commit **you author** with a
   `Co-Authored-By: Claude <model> <noreply@anthropic.com>` trailer, using the exact
   running-model name (e.g. `Claude Opus 4.8`).
@@ -148,8 +148,9 @@ VN Decree 13/2023) and a selling point.
   `<engine>/vX.Y.Z` (engines stay versioned independently). The old repos' plain
   `vX.Y.Z` tags did **not** survive the consolidation — `git subtree add` imports
   commits, not tags, and the source repos were deleted 2026-08-04. Every
-  pre-consolidation commit is present, but this repo carries **no tags at all**;
-  the first `<engine>/vX.Y.Z` tag will be a fresh start.
+  pre-consolidation commit is present; the tags restart from the 2026-08-04
+  version baseline (`<engine>/v0.3.0` for the 11 engines, `tools-home/v0.4.0`,
+  `tools-router/v0.1.0`).
 - **After a topic branch is merged/landed, `git checkout` back to `master`
   locally** so the working tree is clean and not left sitting on a merged
   branch.
@@ -166,8 +167,8 @@ VN Decree 13/2023) and a selling point.
 
 ## Build sequence (first time)
 
-1. Build the first tool (`image-converter`) standalone → deploy to
-   `image-converter.pages.dev`, verify it works.
+1. Build the first tool (`image-converter`) standalone → deploy to its Pages
+   project (served at `image-converter-69t.pages.dev`), verify it works.
 2. Build `tools-home` (hub + legal pages + `ads.txt` + sitemap index).
 3. Build `tools-router` Worker; point `tools.luci-studio.com` at it; attach the
    engine Pages projects.
