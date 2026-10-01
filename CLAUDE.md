@@ -91,11 +91,10 @@ in `tools-router/src/index.ts`; never guess a host from the directory name.
 <engine>/
 ├── astro.config.mjs        # output: 'static', base: '/<prefix>'
 ├── src/
-│   ├── pages/<keyword>.astro    # one page per search intent
+│   ├── pages/<keyword>.astro    # one page per search intent, with its how-to + FAQ copy (SEO body)
 │   ├── pages/index.astro        # category hub (e.g. /image/) listing this engine's tools
 │   ├── lib/<engine>.ts          # the shared client-side engine (the actual work)
-│   ├── components/{Header,Footer,ToolShell,AdSlot,FAQ,SeoHead}.astro
-│   └── content/                 # per-page how-to + FAQ copy (SEO body)
+│   └── components/{Header,Footer,ToolShell,AdSlot,FAQ,SeoHead}.astro
 ├── public/                      # static assets (NO ads.txt/robots here — those are at root)
 └── package.json
 ```
