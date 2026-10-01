@@ -139,8 +139,9 @@ VN Decree 13/2023) and a selling point.
   after merging, run the wrangler deploy for the engine(s) you changed.
 - CI runs per-directory: `.github/workflows/ci-<engine>.yml`, path-filtered to
   `<engine>/**` (npm ci + check + test + build inside that directory).
-- No branch protection or ruleset is configured on `master` → protecting it is a
-  **convention**, not server-enforced.
+- `master` is protected server-side since 2026-10-02: a PR is required, and
+  force-push and deletion are blocked for everyone. Admins can still bypass the PR
+  rule, so "never push straight to `master`" stays a convention as well.
 - One focused change per commit. End every commit **you author** with a
   `Co-Authored-By: Claude <model> <noreply@anthropic.com>` trailer, using the exact
   running-model name (e.g. `Claude Opus 4.8`).
