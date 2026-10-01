@@ -128,7 +128,7 @@ Serves everything not owned by an engine:
 > resolve to the production host. **Deployed live** at `tools-home.pages.dev`, served
 > at the root of `tools.luci-studio.com` via the Worker.
 
-### A blog-side touchpoint (separate small task, lands in `luci_web_blog`)
+### A blog-side touchpoint (separate small task, lands in `luci-studio-frontend`)
 Add a `/tools` page on `luci-studio.com` that promotes the portfolio and links to
 `tools.luci-studio.com`. This is the ONE change that touches the blog repo; do it as
 its own task, not here.
@@ -211,7 +211,7 @@ list. Pick a handful, validate, expand. Markers: 🔥 high traffic · 💰 high 
 
 ### Dev (💰 highest RPM)
 - `json-tools` 💰🔥 — format/validate/minify, json↔yaml/csv/xml, json→typescript/go-struct
-- `encode-decode-tools` 💰 — base64 encode/decode, url, html-entity, jwt decode, escape
+- `encode-decode` 💰 — base64 encode/decode, url, html-entity, jwt decode, escape
 - `hash-tools` 💰 — md5, sha1, sha256, sha512, hmac, bcrypt
 - `id-generators` 💰 — uuid, ulid, nanoid, guid
 - `regex-tester` 🔥 — tester, cheatsheet
