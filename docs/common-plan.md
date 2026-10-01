@@ -73,6 +73,12 @@ tags and sitemap** already use the production path.
     `.claude/launch.json`. This does **not** change the above: each tool stays an
     independent repo and Cloudflare Pages deploys it directly from its own `master`;
     the submodule pointer never touches deployment.
+  - *Superseded (2026-07-31):* the tool repos were consolidated into
+    **`kido-luci/luci-tools`** as one monorepo, each subtree-merged in with full
+    history as a top-level directory, and the per-engine repos were then deleted.
+    The repo is now public (AGPL-3.0). Isolation and independent deploys hold per
+    directory instead: one Pages project and one path prefix per engine, each
+    deployed on its own (see [../CLAUDE.md](../CLAUDE.md) and [deploy.md](deploy.md)).
 - **Astro static**: SSG = strong SEO + one repo → many landing pages via file
   routing + $0 server. Matches existing skill. No Sentry / no SSR adapter keeps the
   dev server working.
@@ -289,8 +295,9 @@ gotchas are in [deploy.md](deploy.md).
 - Confirm the exact `tools-home` design / branding (logo, colors, fonts) — shared
   visual identity across tools, copied per repo (no shared package yet, by design).
 - ~~Decide whether to version/`git init` this planning workspace itself~~ —
-  **Done:** the workspace is now the private meta-repo `kido-luci/luci-tools`,
-  aggregating the tool repos as submodules and versioning the shared docs (see §2).
+  **Done:** `kido-luci/luci-tools` versions it — first as a private meta-repo of
+  tool submodules, now as the public monorepo that holds every tool and the shared
+  docs (see §2).
 - Revisit Ezoic/Mediavine migration once a tool crosses their traffic thresholds.
 
 ## 11. Internationalization (i18n) — design doc (NOT yet built)
