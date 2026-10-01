@@ -119,7 +119,7 @@ Serves everything not owned by an engine:
 - `/sitemap.xml` — a **sitemap index** referencing each engine repo's own
   `sitemap.xml` (e.g. `tools.luci-studio.com/image/sitemap.xml`).
 
-> **Status — built (Phase 1, not deployed).** `tools-home/` is scaffolded: the hub
+> **Status — built (Phase 1) and deployed.** `tools-home/` is scaffolded: the hub
 > (cross-engine catalog in `src/consts.ts`, grouped by engine), Privacy / Terms /
 > About / Contact, `public/ads.txt` (placeholder pub-id + TODO) and
 > `public/robots.txt`, plus the sitemap **index** (`/sitemap.xml`) and the home-pages
@@ -275,8 +275,8 @@ Ranked by (traffic × RPM × ease):
 
 `tools-home` + `tools-router` are built once there is ≥1 tool to route (see CLAUDE.md
 build sequence). **Both are now DEPLOYED — the portfolio is live on
-`tools.luci-studio.com`** (the 6 Pages projects via `wrangler pages deploy`, the
-Worker via `wrangler deploy` with a custom domain). The runbook + the first-deploy
+`tools.luci-studio.com`** (the Pages projects, 12 today, via `wrangler pages
+deploy`; the Worker via `wrangler deploy` with a custom domain). The runbook + the first-deploy
 gotchas are in [deploy.md](deploy.md).
 
 ## 9. Definition of Done (per tool)
@@ -345,8 +345,9 @@ un-prefixed** so existing URLs never move:
   keyword — `png-to-jpg` (en) vs `png-a-jpg` (es). Routing therefore maps
   `(locale, canonical-tool-id) → localized-slug`, kept in a per-repo table.
 - **Worker is unaffected.** The first path segment is still the engine
-  (`image` → `image-converter.pages.dev`); `base: '/<engine>'` composes with Astro
-  i18n routing under it. `tools-router` stays a pure pass-through — **no change**.
+  (`image` → the `image-converter` Pages origin); `base: '/<engine>'` composes with
+  Astro i18n routing under it. `tools-router` routes on that first segment only, so
+  it needs **no change**.
 
 ### 11.3 hreflang / canonical rules
 
