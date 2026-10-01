@@ -167,8 +167,8 @@ VN Decree 13/2023) and a selling point.
 
 ## Build sequence (first time)
 
-1. Build the first tool (`image-converter`) standalone → deploy to
-   `image-converter.pages.dev`, verify it works.
+1. Build the first tool (`image-converter`) standalone → deploy to its Pages
+   project (served at `image-converter-69t.pages.dev`), verify it works.
 2. Build `tools-home` (hub + legal pages + `ads.txt` + sitemap index).
 3. Build `tools-router` Worker; point `tools.luci-studio.com` at it; attach the
    engine Pages projects.
