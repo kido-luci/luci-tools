@@ -148,8 +148,9 @@ VN Decree 13/2023) and a selling point.
   `<engine>/vX.Y.Z` (engines stay versioned independently). The old repos' plain
   `vX.Y.Z` tags did **not** survive the consolidation — `git subtree add` imports
   commits, not tags, and the source repos were deleted 2026-08-04. Every
-  pre-consolidation commit is present, but this repo carries **no tags at all**;
-  the first `<engine>/vX.Y.Z` tag will be a fresh start.
+  pre-consolidation commit is present; the tags restart from the 2026-08-04
+  version baseline (`<engine>/v0.3.0` for the 11 engines, `tools-home/v0.4.0`,
+  `tools-router/v0.1.0`).
 - **After a topic branch is merged/landed, `git checkout` back to `master`
   locally** so the working tree is clean and not left sitting on a merged
   branch.
