@@ -108,7 +108,7 @@ Let the Worker own the whole hostname (auto DNS + SSL, all traffic → Worker). 
 - **AdSense:** apply once there is real content + traffic; when approved, put the real
   publisher id into `tools-home/public/ads.txt` (replace `pub-0000…`).
 - **Deploying:** until Git integration is connected (see Step 1 Option B), each change
-  requires `npm --prefix <engine> run build && npx wrangler pages deploy <engine>/dist --project-name <engine>`.
+  requires `npm --prefix <engine> run build && npx wrangler pages deploy <engine>/dist --project-name <engine> --branch master`.
   After connecting Git, pushing to `master` auto-redeploys.
 
 ## Doing the CLI steps via API token (optional)
