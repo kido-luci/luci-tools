@@ -122,7 +122,7 @@ and provide it as an **environment variable** — never commit it. Otherwise
 
 The initial deploy was done via CLI (`wrangler pages deploy dist` per site +
 `wrangler deploy` for the Worker) and hit two non-obvious issues, both now handled
-in `tools-router/src/index.ts`:
+in `tools-router/src/routes.ts`:
 
 1. **`<engine>.pages.dev` is globally unique.** The plain names were taken, so
    Cloudflare assigned suffixed origins (`image-converter-69t.pages.dev`, …). The

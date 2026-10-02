@@ -102,7 +102,7 @@ Pure reverse proxy. Bound to `tools.luci-studio.com/*`. Logic:
 
 > **Status — DEPLOYED (live).** `tools-router/` proxies `tools.luci-studio.com`
 > (Worker custom domain) to the origin Pages projects. First deploy surfaced two
-> gotchas, now handled in `src/index.ts` (`resolveRoute` / `rewriteLocation`,
+> gotchas, now handled in `src/routes.ts` (`resolveRoute` / `rewriteLocation`,
 > unit-tested 9/9): (a) `<engine>.pages.dev` is globally unique, so the real origins
 > carry a suffix — hardcoded in `ORIGINS`; (b) Astro `base` does not nest dist, so
 > the Worker strips the `/<engine>` prefix and re-adds it on redirects. ⚠️ The

@@ -11,70 +11,35 @@
  *     The Worker therefore strips the /<engine> prefix before proxying, and
  *     re-adds it when rewriting redirect Location headers.
  *
- * The routing helpers are pure so they can be unit-tested without a network.
+ * The routing helpers live in routes.ts, pure so they can be unit-tested without a
+ * network. This module exports only the handler: workerd treats every export of
+ * the main module as an entrypoint and refuses to start on a plain value.
  */
 
-export const HOST = 'tools.luci-studio.com';
-
-/** Engine URL prefix (first path segment) -> the real (suffixed) Pages origin host. */
-export const ORIGINS: Record<string, string> = {
-  image: 'image-converter-69t.pages.dev',
-  'fancy-text': 'fancy-text-generator-2p7.pages.dev',
-  json: 'json-tools-b17.pages.dev',
-  qr: 'qr-tools-3u8.pages.dev',
-  pdf: 'pdf-tools-bh7.pages.dev',
-  unit: 'unit-converter-ebc.pages.dev',
-  hash: 'hash-tools.pages.dev',
-  time: 'timestamp-converter-anq.pages.dev',
-  encode: 'encode-decode-9qm.pages.dev',
-  color: 'color-tools-8h2.pages.dev',
-  password: 'password-tools.pages.dev',
-};
-
-/** Everything not owned by an engine is served by the root project (base '/'). */
-export const HOME_ORIGIN = 'tools-home.pages.dev';
-
-export interface Route {
-  /** origin hostname to proxy to */
-  host: string;
-  /** the public prefix that was stripped ('' for the home project) */
-  prefix: string;
-  /** path to request on the origin (engine prefix removed) */
-  originPath: string;
-}
+import { resolveRoute, rewriteLocation } from './routes';
 
 /**
- * Resolve a public pathname to its origin host + path. Engine dist is served at
- * the origin root, so the /<engine> segment is stripped; the home project keeps
- * the path unchanged.
+ * The Content-Security-Policy every page gets, sent as Report-Only until the live
+ * consoles are clean. 'unsafe-inline' because Astro's inline scripts change per build
+ * and Cloudflare's injected loader per request (no hash or nonce can match them);
+ * the data:/blob: sources cover inline fonts, images, downloads and heic2any's
+ * worker. Only /image allows 'unsafe-eval': that worker runs `new Function`.
  */
-export function resolveRoute(pathname: string): Route {
-  const seg = pathname.split('/')[1] ?? '';
-  if (seg in ORIGINS) {
-    return {
-      host: ORIGINS[seg],
-      prefix: `/${seg}`,
-      originPath: pathname.slice(seg.length + 1) || '/',
-    };
-  }
-  return { host: HOME_ORIGIN, prefix: '', originPath: pathname };
-}
-
-/**
- * Map an origin redirect `Location` back to the public host + prefix:
- *  - absolute to the origin -> swap host and re-add the prefix
- *  - root-relative path     -> re-add the prefix
- *  - anything else          -> unchanged
- */
-export function rewriteLocation(location: string, host: string, prefix: string): string {
-  const originBase = `https://${host}`;
-  if (location.startsWith(originBase)) {
-    return `https://${HOST}${prefix}${location.slice(originBase.length)}`;
-  }
-  if (location.startsWith('/')) {
-    return `${prefix}${location}`;
-  }
-  return location;
+function contentSecurityPolicy(prefix: string): string {
+  const unsafeEval = prefix === '/image' ? " 'unsafe-eval'" : '';
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'unsafe-inline'${unsafeEval} https://static.cloudflareinsights.com`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob:",
+    "font-src 'self' data:",
+    "connect-src 'self' data: blob: https://cloudflareinsights.com",
+    "worker-src 'self' blob:",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'self'",
+  ].join('; ');
 }
 
 export default {
@@ -96,16 +61,16 @@ export default {
       ...(hasBody ? { duplex: 'half' } : {}),
     } as RequestInit);
 
-    // Pass the response through, fixing only a leaking or unprefixed redirect.
-    const location = originRes.headers.get('location');
-    if (!location) return originRes;
+    // Headers on a fetch() result are immutable in Workers, so copy the response first.
+    const res = new Response(originRes.body, originRes);
 
-    const fixedHeaders = new Headers(originRes.headers);
-    fixedHeaders.set('location', rewriteLocation(location, host, prefix));
-    return new Response(originRes.body, {
-      status: originRes.status,
-      statusText: originRes.statusText,
-      headers: fixedHeaders,
-    });
+    // Pass the response through, fixing only a leaking or unprefixed redirect,
+    // and add the security headers Pages does not send.
+    const location = res.headers.get('location');
+    if (location) res.headers.set('location', rewriteLocation(location, host, prefix));
+    res.headers.set('Content-Security-Policy-Report-Only', contentSecurityPolicy(prefix));
+    res.headers.set('X-Frame-Options', 'SAMEORIGIN');
+    res.headers.set('Strict-Transport-Security', 'max-age=31536000');
+    return res;
   },
 };

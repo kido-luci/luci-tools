@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { mergePdfs, imagesToPdf, rotatePdf, splitPdf } from './pdf';
+import type { PDFRawStream } from 'pdf-lib';
+import { mergePdfs, imagesToPdf, rotatePdf, splitPdf, jpegOrientation } from './pdf';
 
 // Build a minimal PDF file fixture with the given page count and page size.
 async function makePdfFile(
@@ -152,6 +153,135 @@ describe('imagesToPdf', () => {
     const result = await imagesToPdf([png, jpeg]);
     const doc = await PDFDocument.load(new Uint8Array(await result.arrayBuffer()));
     expect(doc.getPageCount()).toBe(2);
+  });
+});
+
+// A minimal JPEG: SOI, an optional APP1 Exif block holding the orientation tag,
+// SOF0 and EOI. pdf-lib only reads the header, so no scan data is needed.
+function syntheticJpeg(width: number, height: number, orientation?: number, order: 'II' | 'MM' = 'II'): Uint8Array {
+  const le = order === 'II';
+  const u16 = (n: number) => (le ? [n & 0xff, n >> 8] : [n >> 8, n & 0xff]);
+  const u32 = (n: number) => (le ? [...u16(n & 0xffff), ...u16(n >>> 16)] : [...u16(n >>> 16), ...u16(n & 0xffff)]);
+  const bytes = [0xff, 0xd8];
+  if (orientation !== undefined) {
+    // TIFF header, then IFD0 at offset 8 with one entry: 0x0112, SHORT, count 1.
+    const tiff = [
+      ...(le ? [0x49, 0x49] : [0x4d, 0x4d]), ...u16(42), ...u32(8),
+      ...u16(1), ...u16(0x0112), ...u16(3), ...u32(1), ...u16(orientation), 0, 0,
+      ...u32(0),
+    ];
+    const app1 = [0x45, 0x78, 0x69, 0x66, 0, 0, ...tiff]; // "Exif\0\0"
+    bytes.push(0xff, 0xe1, (app1.length + 2) >> 8, (app1.length + 2) & 0xff, ...app1);
+  }
+  bytes.push(0xff, 0xc0, 0, 11, 8, height >> 8, height & 0xff, width >> 8, width & 0xff, 1, 1, 0x11, 0);
+  bytes.push(0xff, 0xd9);
+  return new Uint8Array(bytes);
+}
+
+const jpegFile = (bytes: Uint8Array) => new File([new Uint8Array(bytes)], 'photo.jpg', { type: 'image/jpeg' });
+
+// The decoded content-stream operators of a PDF's first page.
+async function firstPageOperators(pdf: Blob): Promise<string> {
+  const { PDFDocument, PDFArray, decodePDFRawStream } = await import('pdf-lib');
+  const doc = await PDFDocument.load(new Uint8Array(await pdf.arrayBuffer()));
+  const contents = doc.getPage(0).node.Contents();
+  const streams = contents instanceof PDFArray ? contents.asArray().map((ref) => doc.context.lookup(ref)) : [contents];
+  return streams.map((s) => new TextDecoder().decode(decodePDFRawStream(s as PDFRawStream).decode())).join('\n');
+}
+
+describe('jpegOrientation', () => {
+  it('reads every orientation from little- and big-endian Exif', () => {
+    for (const order of ['II', 'MM'] as const) {
+      for (let o = 1; o <= 8; o++) expect(jpegOrientation(syntheticJpeg(4, 2, o, order))).toBe(o);
+    }
+  });
+
+  it('returns 1 when there is no Exif block', () => {
+    expect(jpegOrientation(syntheticJpeg(4, 2))).toBe(1);
+  });
+
+  it('skips a non-Exif APP1 (XMP) that comes first', () => {
+    const exif = syntheticJpeg(4, 2, 6, 'MM');
+    const xmpBody = [...new TextEncoder().encode('http://ns.adobe.com/xap/1.0/\0<x/>')];
+    const xmp = [0xff, 0xe1, (xmpBody.length + 2) >> 8, (xmpBody.length + 2) & 0xff, ...xmpBody];
+    expect(jpegOrientation(new Uint8Array([0xff, 0xd8, ...xmp, ...exif.slice(2)]))).toBe(6);
+  });
+
+  it('reads a Uint8Array view that starts past the buffer start', () => {
+    const jpeg = syntheticJpeg(4, 2, 8);
+    const padded = new Uint8Array(jpeg.length + 7);
+    padded.set(jpeg, 7);
+    expect(jpegOrientation(padded.subarray(7))).toBe(8);
+  });
+
+  it('returns 1 for anything malformed', () => {
+    const good = syntheticJpeg(4, 2, 6);
+    const tweak = (at: number, ...values: number[]) => {
+      const copy = good.slice();
+      copy.set(values, at);
+      return copy;
+    };
+    // APP1 marker at 2, its length at 4, "Exif\0\0" at 6; the TIFF header at 12
+    // (byte order 12, magic 14, IFD0 offset 16); IFD0's entry count at 20, the
+    // entry's tag at 22 and its value at 30.
+    expect(good[30]).toBe(6);
+    expect(jpegOrientation(new Uint8Array())).toBe(1);
+    expect(jpegOrientation(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))).toBe(1);
+    expect(jpegOrientation(good.slice(0, 20))).toBe(1); // segment cut short
+    expect(jpegOrientation(tweak(2, 0x00))).toBe(1); // not a marker
+    expect(jpegOrientation(tweak(4, 0, 1))).toBe(1); // segment length below 2
+    expect(jpegOrientation(tweak(4, 0, 12))).toBe(1); // segment ends inside the TIFF header
+    expect(jpegOrientation(tweak(10, 0x58))).toBe(1); // not "Exif\0\0"
+    expect(jpegOrientation(tweak(12, 0x58, 0x58))).toBe(1); // byte order "XX"
+    expect(jpegOrientation(tweak(14, 0, 0))).toBe(1); // TIFF magic is not 42
+    expect(jpegOrientation(tweak(16, 0xff, 0xff))).toBe(1); // IFD0 past the segment
+    expect(jpegOrientation(tweak(22, 0x00, 0x01))).toBe(1); // no orientation tag
+    expect(jpegOrientation(tweak(20, 2, 0, 0x00, 0x01))).toBe(1); // 2nd entry past the segment
+    expect(jpegOrientation(tweak(30, 9))).toBe(1); // value out of range
+    expect(jpegOrientation(tweak(30, 0))).toBe(1);
+  });
+});
+
+describe('imagesToPdf orientation', () => {
+  it('turns a 4×2 JPEG with orientation 6 or 8 into a 2×4 page', async () => {
+    const { PDFDocument } = await import('pdf-lib');
+    for (const order of ['II', 'MM'] as const) {
+      for (const o of [6, 8]) {
+        const result = await imagesToPdf([jpegFile(syntheticJpeg(4, 2, o, order))]);
+        const doc = await PDFDocument.load(new Uint8Array(await result.arrayBuffer()));
+        expect(doc.getPage(0).getSize()).toEqual({ width: 2, height: 4 });
+      }
+    }
+  });
+
+  it('keeps a 4×2 page for orientation 1 or no Exif', async () => {
+    const { PDFDocument } = await import('pdf-lib');
+    for (const bytes of [syntheticJpeg(4, 2, 1), syntheticJpeg(4, 2, 1, 'MM'), syntheticJpeg(4, 2)]) {
+      const result = await imagesToPdf([jpegFile(bytes)]);
+      const doc = await PDFDocument.load(new Uint8Array(await result.arrayBuffer()));
+      expect(doc.getPage(0).getSize()).toEqual({ width: 4, height: 2 });
+    }
+  });
+
+  it('draws the image through the matrix for each orientation', async () => {
+    const { PDFDocument } = await import('pdf-lib');
+    // [matrix, page width, page height] for a JPEG stored 4×2.
+    const expected: Record<number, [string, number, number]> = {
+      1: ['1 0 0 1 0 0', 4, 2],
+      2: ['-1 0 0 1 4 0', 4, 2],
+      3: ['-1 0 0 -1 4 2', 4, 2],
+      4: ['1 0 0 -1 0 2', 4, 2],
+      5: ['0 -1 -1 0 2 4', 2, 4],
+      6: ['0 -1 1 0 0 4', 2, 4],
+      7: ['0 1 1 0 0 0', 2, 4],
+      8: ['0 1 -1 0 2 0', 2, 4],
+    };
+    for (const [o, [matrix, width, height]] of Object.entries(expected)) {
+      const result = await imagesToPdf([jpegFile(syntheticJpeg(4, 2, Number(o)))]);
+      expect(await firstPageOperators(result)).toMatch(new RegExp(`^q\\n${matrix} cm\\n`));
+      const doc = await PDFDocument.load(new Uint8Array(await result.arrayBuffer()));
+      expect(doc.getPage(0).getSize()).toEqual({ width, height });
+    }
   });
 });
 

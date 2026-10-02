@@ -1,0 +1,26 @@
+---
+// Cloudflare Pages serves this page, with a 404 status, for any path this engine
+// does not have. The sitemap lists the hub and TOOLS only, so this page is not in it.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../consts';
+
+const title = `Page not found | ${SITE.name}`;
+const description = 'There is no page at this address.';
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="mx-auto max-w-3xl px-4 pb-16 pt-12">
+    <h1 class="font-display text-4xl font-bold tracking-tight text-[var(--text)]">Page not found</h1>
+    <p class="mt-3 text-lg text-[var(--text-2)]">
+      There is no page at this address. It may have moved, or the link may have a typo.
+    </p>
+    <ul class="mt-6 space-y-2 text-lg">
+      <li>
+        <a href={import.meta.env.BASE_URL} class="text-[var(--accent)] underline hover:no-underline">All PDF tools</a>
+      </li>
+      <li>
+        <a href={`${SITE.url}/`} class="text-[var(--accent)] underline hover:no-underline">{SITE.name} home</a>
+      </li>
+    </ul>
+  </article>
+</BaseLayout>

@@ -1,8 +1,13 @@
 // Unit tests for the pure helpers in time.ts. `nowMs` wraps Date.now() for the
 // UI only and is intentionally not unit-tested here.
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { epochToDate, dateToEpoch } from './time';
+
+// The date field is labelled UTC. Run in a zone ahead of UTC (+07:00) so that
+// reading a zone-less date-time as local time fails here; CI's UTC would hide it.
+// (vi.stubEnv sets process.env.TZ; this project has no Node types for `process`.)
+vi.stubEnv('TZ', 'Asia/Ho_Chi_Minh');
 
 describe('epochToDate', () => {
   it('converts epoch 0 seconds to the Unix epoch start', () => {
@@ -57,6 +62,25 @@ describe('dateToEpoch', () => {
 
   it('throws on an empty string', () => {
     expect(() => dateToEpoch('')).toThrow();
+  });
+
+  it('reads an ISO date-time without a zone as UTC, not local time', () => {
+    expect(new Date(1700000000000).getTimezoneOffset()).toBe(-420); // the pinned zone is in effect
+    expect(dateToEpoch('2023-11-14T22:13:20').seconds).toBe(1700000000);
+    expect(dateToEpoch('2023-11-14 22:13:20').seconds).toBe(1700000000);
+    expect(dateToEpoch('2023-11-14T22:13').seconds).toBe(1699999980);
+    expect(dateToEpoch('2023-11-14T22:13:20.5').ms).toBe(1700000000500);
+  });
+
+  it('accepts a lowercase t separator (RFC 3339) and still reads it as UTC', () => {
+    expect(dateToEpoch('2023-11-14t22:13:20').seconds).toBe(1700000000);
+    expect(dateToEpoch('2023-11-14t22:13:20.5').ms).toBe(1700000000500);
+  });
+
+  it('still honours an explicit Z or offset', () => {
+    expect(dateToEpoch('2023-11-14T22:13:20Z').seconds).toBe(1700000000);
+    expect(dateToEpoch('2023-11-14T22:13:20+07:00').seconds).toBe(1699974800);
+    expect(dateToEpoch('2023-11-14T22:13:20-05:00').seconds).toBe(1700018000);
   });
 });
 

@@ -35,7 +35,7 @@ tools.luci-studio.com
 
 `*.pages.dev` subdomains are globally unique, so most origins carry a
 Cloudflare-assigned suffix. The authoritative prefix → origin map is `ORIGINS`
-in `tools-router/src/index.ts`; never guess a host from the directory name.
+in `tools-router/src/routes.ts`; never guess a host from the directory name.
 
 - **One host**, so authority pools and `ads.txt` / AdSense site / consent / legal
   are configured **once** at the root, not per tool.
@@ -45,6 +45,13 @@ in `tools-router/src/index.ts`; never guess a host from the directory name.
   `/image/heic-to-jpg/`). It re-adds the prefix when rewriting redirect `Location`
   headers. It is the one piece of shared infra (and a single point of failure; keep
   it tiny and stable).
+- The Worker also adds the security headers Pages does not send, to every
+  response: a Content-Security-Policy (sent as `Content-Security-Policy-Report-Only`
+  until the live consoles are clean; `'unsafe-eval'` under `/image` only, for
+  heic2any's worker), `X-Frame-Options: SAMEORIGIN` and
+  `Strict-Transport-Security: max-age=31536000`. A page that loads a new
+  third-party script, style, font, image, frame or connection needs the CSP in
+  `tools-router/src/index.ts` updated first.
 - Each engine = **its own top-level directory in this monorepo + its own Pages
   project**, owning one path prefix. (Consolidated 2026-07-31 — the former
   per-engine repos were subtree-merged in with full history, then deleted
@@ -93,6 +100,7 @@ in `tools-router/src/index.ts`; never guess a host from the directory name.
 ├── src/
 │   ├── pages/<keyword>.astro    # one page per search intent, with its how-to + FAQ copy (SEO body)
 │   ├── pages/index.astro        # category hub (e.g. /image/) listing this engine's tools
+│   ├── pages/404.astro          # Pages serves it with a 404 for unknown paths; not in the sitemap
 │   ├── lib/<engine>.ts          # the shared client-side engine (the actual work)
 │   └── components/{Header,Footer,ToolShell,AdSlot,FAQ,SeoHead}.astro
 ├── public/                      # static assets (NO ads.txt/robots here — those are at root)
@@ -138,7 +146,10 @@ VN Decree 13/2023) and a selling point.
   via PR. Never push straight to `master`. Deploys are decoupled from git —
   after merging, run the wrangler deploy for the engine(s) you changed.
 - CI runs per-directory: `.github/workflows/ci-<engine>.yml`, path-filtered to
-  `<engine>/**` (npm ci + check + test + build inside that directory).
+  `<engine>/**` (npm ci + check + test + build inside that directory). Nine
+  engines run `npm run test:coverage`, so their 90% thresholds are enforced;
+  encode-decode and timestamp-converter still run plain `test` because their
+  coverage is below the thresholds.
 - `master` is protected server-side since 2026-10-02: a PR is required, and
   force-push and deletion are blocked for everyone. Admins can still bypass the PR
   rule, so "never push straight to `master`" stays a convention as well.
@@ -152,6 +163,9 @@ VN Decree 13/2023) and a selling point.
   pre-consolidation commit is present; the tags restart from the 2026-08-04
   version baseline (`<engine>/v0.3.0` for the 11 engines, `tools-home/v0.4.0`,
   `tools-router/v0.1.0`).
+- After deploying a release, run `scripts/smoke.sh`: every sitemap URL must
+  answer 200, unknown URLs 404, and every response must carry the router's
+  security headers.
 - **After a topic branch is merged/landed, `git checkout` back to `master`
   locally** so the working tree is clean and not left sitting on a merged
   branch.

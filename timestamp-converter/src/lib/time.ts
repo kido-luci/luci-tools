@@ -27,9 +27,13 @@ export interface DateToEpochResult {
   ms: number;
 }
 
-/** Parse an ISO/date string and return the equivalent epoch seconds + ms. */
+/**
+ * Parse an ISO/date string and return the equivalent epoch seconds + ms. An ISO
+ * date-time without a zone is read as UTC (the field's label), not local time.
+ */
 export function dateToEpoch(iso: string): DateToEpochResult {
-  const date = new Date(iso);
+  const zoneless = /^\d{4}-\d{2}-\d{2}[Tt ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/.test(iso);
+  const date = new Date(zoneless ? `${iso.replace(/[t ]/, 'T')}Z` : iso);
   if (Number.isNaN(date.getTime())) {
     throw new Error(`Invalid date string: ${iso}`);
   }

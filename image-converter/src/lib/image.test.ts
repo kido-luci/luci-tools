@@ -1,10 +1,10 @@
 // Unit tests for the pure helpers in image.ts.
 // `convertImageFile` relies on Canvas / createImageBitmap (browser-only) and
-// is verified manually in the browser — only `isHeic` and `outputFilename`
-// are unit-tested here.
+// is verified manually in the browser — only `isHeic`, `isSvg`,
+// `svgRasterSize` and `outputFilename` are unit-tested here.
 
 import { describe, it, expect } from 'vitest';
-import { isHeic, isSvg, outputFilename } from './image';
+import { isHeic, isSvg, outputFilename, svgRasterSize } from './image';
 
 describe('isHeic', () => {
   it('returns true for image/heic mime type', () => {
@@ -63,6 +63,96 @@ describe('isSvg', () => {
 
   it('returns false for a .png file even with an empty type', () => {
     expect(isSvg(new File([], 'photo.png', { type: '' }))).toBe(false);
+  });
+});
+
+describe('svgRasterSize', () => {
+  // What Chrome reports as the natural size of an SVG without width/height.
+  const sizeless = { width: 300, height: 150 };
+
+  it('keeps the natural size when the root svg sets width and height', () => {
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100" viewBox="0 0 20 10">';
+    expect(svgRasterSize(svg, { width: 200, height: 100 })).toEqual({ width: 200, height: 100 });
+  });
+
+  it('reads width and height spread over several lines', () => {
+    const svg = '<?xml version="1.0"?>\n<svg\n  width="64px"\n  height=\'32\'\n>';
+    expect(svgRasterSize(svg, { width: 64, height: 32 })).toEqual({ width: 64, height: 32 });
+  });
+
+  it('keeps the natural size when one fixed dimension comes with a viewBox', () => {
+    expect(svgRasterSize('<svg height="48" viewBox="0 0 24 24">', { width: 48, height: 48 })).toEqual({
+      width: 48,
+      height: 48,
+    });
+    expect(svgRasterSize('<svg width="200" viewBox="0 0 200 100">', { width: 200, height: 100 })).toEqual({
+      width: 200,
+      height: 100,
+    });
+    expect(svgRasterSize('<svg width="200" height="100%" viewBox="0 0 200 100">', { width: 200, height: 100 })).toEqual({
+      width: 200,
+      height: 100,
+    });
+  });
+
+  it('does not count a single dimension without a viewBox as a size', () => {
+    expect(svgRasterSize('<svg width="64">', { width: 64, height: 150 })).toEqual({ width: 1024, height: 1024 });
+  });
+
+  it('renders a viewBox-only SVG at 1024px on its longer side, in the viewBox ratio', () => {
+    expect(svgRasterSize('<svg viewBox="0 0 200 100">', sizeless)).toEqual({ width: 1024, height: 512 });
+    expect(svgRasterSize('<svg viewBox="0,0,200,100">', sizeless)).toEqual({ width: 1024, height: 512 });
+  });
+
+  it('reads a compact viewBox whose numbers are separated only by signs', () => {
+    expect(svgRasterSize('<svg viewBox="0-10 40 10">', sizeless)).toEqual({ width: 1024, height: 256 });
+  });
+
+  it('ignores a viewBox that does not have four numbers', () => {
+    expect(svgRasterSize('<svg viewBox="0 0 24">', sizeless)).toEqual({ width: 1024, height: 1024 });
+  });
+
+  it('keeps a tall viewBox tall', () => {
+    expect(svgRasterSize('<svg viewBox="0 0 10 40">', { width: 38, height: 150 })).toEqual({ width: 256, height: 1024 });
+  });
+
+  it('renders a 1024px square when there is neither a size nor a viewBox', () => {
+    expect(svgRasterSize('<svg xmlns="http://www.w3.org/2000/svg"><circle r="4"/></svg>', sizeless)).toEqual({
+      width: 1024,
+      height: 1024,
+    });
+    // Some browsers report 0×0 for such an SVG.
+    expect(svgRasterSize('<svg>', { width: 0, height: 0 })).toEqual({ width: 1024, height: 1024 });
+    expect(svgRasterSize('not markup at all', sizeless)).toEqual({ width: 1024, height: 1024 });
+  });
+
+  it('treats a percentage width or height as no size', () => {
+    const svg = '<svg width="100%" height="100%" viewBox="0 0 400 200">';
+    expect(svgRasterSize(svg, sizeless)).toEqual({ width: 1024, height: 512 });
+  });
+
+  it('does not count stroke-width, or a child element width, as the svg width', () => {
+    // Read as a width, stroke-width="2" plus the viewBox would keep Chrome's 150×150.
+    expect(svgRasterSize('<svg stroke-width="2" viewBox="0 0 24 24">', { width: 150, height: 150 })).toEqual({
+      width: 1024,
+      height: 1024,
+    });
+    expect(svgRasterSize('<svg viewBox="0 0 10 20"><rect width="10" height="20"/></svg>', sizeless)).toEqual({
+      width: 512,
+      height: 1024,
+    });
+  });
+
+  it('falls back to the viewBox rule when a sized SVG reports no natural size', () => {
+    expect(svgRasterSize('<svg width="0" height="0" viewBox="0 0 2 1">', { width: 0, height: 0 })).toEqual({
+      width: 1024,
+      height: 512,
+    });
+  });
+
+  it('scales to a requested width, keeping the ratio', () => {
+    expect(svgRasterSize('<svg viewBox="0 0 200 100">', sizeless, 500)).toEqual({ width: 500, height: 250 });
+    expect(svgRasterSize('<svg width="40" height="10">', { width: 40, height: 10 }, 100)).toEqual({ width: 100, height: 25 });
   });
 });
 

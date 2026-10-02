@@ -65,6 +65,25 @@ describe('htmlEntityEncode / htmlEntityDecode', () => {
   it('decodes hex numeric entities like &#x27;', () => {
     expect(htmlEntityDecode('it&#x27;s')).toBe("it's");
   });
+
+  it('decodes one level only: &amp;#60; becomes &#60;, not <', () => {
+    expect(htmlEntityDecode('&amp;#60;')).toBe('&#60;');
+    expect(htmlEntityDecode('&amp;lt;b&amp;gt;')).toBe('&lt;b&gt;');
+  });
+
+  it('decodes numeric entities past U+FFFF, such as emoji', () => {
+    expect(htmlEntityDecode('&#128512;')).toBe('😀');
+    expect(htmlEntityDecode('&#x1F600;')).toBe('😀');
+  });
+
+  it('leaves numeric entities beyond U+10FFFF unchanged', () => {
+    expect(htmlEntityDecode('&#99999999;')).toBe('&#99999999;');
+    expect(htmlEntityDecode('&#x110000;')).toBe('&#x110000;');
+  });
+
+  it('still matches named entities in any case', () => {
+    expect(htmlEntityDecode('&LT;b&Gt; &AMP; &Quot;x&APOS;')).toBe('<b> & "x\'');
+  });
 });
 
 describe('jwtDecode', () => {
