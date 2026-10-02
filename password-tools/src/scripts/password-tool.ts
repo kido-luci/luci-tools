@@ -39,7 +39,15 @@ async function init(): Promise<void> {
     if (lengthFieldLabel) lengthFieldLabel.textContent = 'Word count';
     if (classControls) classControls.style.display = 'none';
     // Loaded on demand so the password pages don't download 7,776 words.
-    wordlist = (await import('../lib/eff-long-wordlist')).EFF_LONG_WORDLIST;
+    try {
+      wordlist = (await import('../lib/eff-long-wordlist')).EFF_LONG_WORDLIST;
+    } catch {
+      // Nothing to generate without the list: say so, and leave the controls
+      // unwired so they do nothing.
+      output.classList.remove('truncate'); // wrap the message rather than cut it off
+      output.textContent = "Couldn't load the word list — please reload the page.";
+      return;
+    }
   }
 
   function currentOptions() {
