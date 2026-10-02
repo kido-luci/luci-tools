@@ -35,7 +35,7 @@ tools.luci-studio.com
 
 `*.pages.dev` subdomains are globally unique, so most origins carry a
 Cloudflare-assigned suffix. The authoritative prefix → origin map is `ORIGINS`
-in `tools-router/src/index.ts`; never guess a host from the directory name.
+in `tools-router/src/routes.ts`; never guess a host from the directory name.
 
 - **One host**, so authority pools and `ads.txt` / AdSense site / consent / legal
   are configured **once** at the root, not per tool.

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import worker, { resolveRoute, rewriteLocation, ORIGINS, HOME_ORIGIN, HOST } from './index';
+import worker from './index';
+import { resolveRoute, rewriteLocation, ORIGINS, HOME_ORIGIN, HOST } from './routes';
 
 // First segments that `in` finds on Object.prototype; each used to crash the Worker.
 const PROTOTYPE_PATHS = ['/constructor/x', '/__proto__/x', '/valueOf', '/toString/', '/hasOwnProperty'];
