@@ -29,7 +29,7 @@ const faqs: FaqItem[] = [
   },
   {
     q: 'What size will the PNG be?',
-    a: "If your SVG sets its own width and height, the PNG is rendered at exactly that size. Otherwise — no size, only a viewBox, or a size in percent — the PNG is 1024px on its longer side in the viewBox's proportions, or a 1024 × 1024 square if there is no viewBox either.",
+    a: "If your SVG sets its own size — a width and a height, or one of them together with a viewBox — the PNG is rendered at exactly that size. Otherwise — no size, only a viewBox, or a size given only in percent — the PNG is 1024px on its longer side in the viewBox's proportions, or a 1024 × 1024 square if there is no viewBox either.",
   },
   {
     q: 'Will the PNG lose any quality compared to the SVG?',
@@ -94,8 +94,9 @@ const faqs: FaqItem[] = [
 
       <h2>Choosing an export size</h2>
       <p>
-        Most SVGs carry their own width and height, and this tool renders
-        the PNG at exactly that size. An SVG with only a viewBox, or a size
+        Most SVGs carry their own width and height — or one of them plus a
+        viewBox, which fixes the other — and this tool renders the PNG at
+        exactly that size. An SVG with only a viewBox, or a size given only
         in percent, has no fixed size, so it is rendered 1024px on its
         longer side in the viewBox's proportions; with no size information
         at all it becomes a 1024 × 1024 square. Either way the download is

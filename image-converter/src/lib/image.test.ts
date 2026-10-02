@@ -80,9 +80,36 @@ describe('svgRasterSize', () => {
     expect(svgRasterSize(svg, { width: 64, height: 32 })).toEqual({ width: 64, height: 32 });
   });
 
+  it('keeps the natural size when one fixed dimension comes with a viewBox', () => {
+    expect(svgRasterSize('<svg height="48" viewBox="0 0 24 24">', { width: 48, height: 48 })).toEqual({
+      width: 48,
+      height: 48,
+    });
+    expect(svgRasterSize('<svg width="200" viewBox="0 0 200 100">', { width: 200, height: 100 })).toEqual({
+      width: 200,
+      height: 100,
+    });
+    expect(svgRasterSize('<svg width="200" height="100%" viewBox="0 0 200 100">', { width: 200, height: 100 })).toEqual({
+      width: 200,
+      height: 100,
+    });
+  });
+
+  it('does not count a single dimension without a viewBox as a size', () => {
+    expect(svgRasterSize('<svg width="64">', { width: 64, height: 150 })).toEqual({ width: 1024, height: 1024 });
+  });
+
   it('renders a viewBox-only SVG at 1024px on its longer side, in the viewBox ratio', () => {
     expect(svgRasterSize('<svg viewBox="0 0 200 100">', sizeless)).toEqual({ width: 1024, height: 512 });
     expect(svgRasterSize('<svg viewBox="0,0,200,100">', sizeless)).toEqual({ width: 1024, height: 512 });
+  });
+
+  it('reads a compact viewBox whose numbers are separated only by signs', () => {
+    expect(svgRasterSize('<svg viewBox="0-10 40 10">', sizeless)).toEqual({ width: 1024, height: 256 });
+  });
+
+  it('ignores a viewBox that does not have four numbers', () => {
+    expect(svgRasterSize('<svg viewBox="0 0 24">', sizeless)).toEqual({ width: 1024, height: 1024 });
   });
 
   it('keeps a tall viewBox tall', () => {
@@ -105,7 +132,8 @@ describe('svgRasterSize', () => {
   });
 
   it('does not count stroke-width, or a child element width, as the svg width', () => {
-    expect(svgRasterSize('<svg stroke-width="2" height="48" viewBox="0 0 24 24">', { width: 48, height: 48 })).toEqual({
+    // Read as a width, stroke-width="2" plus the viewBox would keep Chrome's 150×150.
+    expect(svgRasterSize('<svg stroke-width="2" viewBox="0 0 24 24">', { width: 150, height: 150 })).toEqual({
       width: 1024,
       height: 1024,
     });

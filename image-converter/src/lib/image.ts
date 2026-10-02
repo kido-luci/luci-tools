@@ -46,10 +46,11 @@ async function decodeToBitmap(file: File): Promise<ImageBitmap> {
 const SVG_FALLBACK_SIZE = 1024;
 
 /**
- * Canvas size for rasterizing an SVG. A root <svg> that sets its own width and
- * height (not in %) keeps the browser's natural size. Anything else — no size, a
- * viewBox only, or % sizes — renders SVG_FALLBACK_SIZE px on the longer side at
- * the viewBox ratio, or as a square without a viewBox. `width` scales the result.
+ * Canvas size for rasterizing an SVG. A root <svg> with a fixed (not %) width and
+ * height, or one of them plus a viewBox, keeps the browser's natural size. Anything
+ * else — no size, a viewBox only, or % sizes — renders SVG_FALLBACK_SIZE px on the
+ * longer side at the viewBox ratio, or as a square without a viewBox. `width`
+ * scales the result.
  */
 export function svgRasterSize(
   svgText: string,
@@ -61,15 +62,23 @@ export function svgRasterSize(
   const attr = (name: string) => root.match(new RegExp(`\\s${name}\\s*=\\s*["']([^"']*)["']`))?.[1];
   const isFixed = (v: string | undefined) => v !== undefined && /\d/.test(v) && !v.includes('%');
 
+  // Numbers may be separated by commas, spaces or just a sign ("0-10 40 10").
+  const viewBox = attr('viewBox')?.match(/[-+]?(?:\d*\.)?\d+(?:e[-+]?\d+)?/gi)?.map(Number) ?? [];
+  const [, , vbWidth, vbHeight] = viewBox;
+  const hasViewBox = viewBox.length === 4 && vbWidth > 0 && vbHeight > 0;
+  const fixedWidth = isFixed(attr('width'));
+  const fixedHeight = isFixed(attr('height'));
+  // With a viewBox, one fixed side is enough: the browser derives the other from the ratio.
+  const sized = (fixedWidth && fixedHeight) || ((fixedWidth || fixedHeight) && hasViewBox);
+
   let size: { width: number; height: number };
-  if (isFixed(attr('width')) && isFixed(attr('height')) && natural.width > 0 && natural.height > 0) {
+  if (sized && natural.width > 0 && natural.height > 0) {
     size = natural;
+  } else if (hasViewBox) {
+    const scale = SVG_FALLBACK_SIZE / Math.max(vbWidth, vbHeight);
+    size = { width: Math.max(1, Math.round(vbWidth * scale)), height: Math.max(1, Math.round(vbHeight * scale)) };
   } else {
-    const [, , vbWidth, vbHeight] = (attr('viewBox') ?? '').trim().split(/[\s,]+/).map(Number);
-    const scale = vbWidth > 0 && vbHeight > 0 ? SVG_FALLBACK_SIZE / Math.max(vbWidth, vbHeight) : 0;
-    size = scale
-      ? { width: Math.max(1, Math.round(vbWidth * scale)), height: Math.max(1, Math.round(vbHeight * scale)) }
-      : { width: SVG_FALLBACK_SIZE, height: SVG_FALLBACK_SIZE };
+    size = { width: SVG_FALLBACK_SIZE, height: SVG_FALLBACK_SIZE };
   }
 
   if (!width) return size;
