@@ -124,8 +124,6 @@ function init(): void {
   });
 
   if (dropzone) {
-    dropzone.addEventListener('click', () => input.click());
-
     const activate = (e: Event) => {
       e.preventDefault();
       dropzone.classList.add('border-[var(--accent)]', 'bg-[var(--accent-soft-bg)]');
