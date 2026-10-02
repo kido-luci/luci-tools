@@ -38,22 +38,27 @@ export function htmlEntityEncode(text: string): string {
   return text.replace(/[&<>"']/g, (c) => HTML_ENCODE_MAP[c]);
 }
 
-const HTML_DECODE_MAP: Record<string, string> = {
-  '&amp;': '&',
-  '&lt;': '<',
-  '&gt;': '>',
-  '&quot;': '"',
-  '&apos;': "'",
-  '&#39;': "'",
-  '&#x27;': "'",
+const HTML_NAMED_ENTITIES: Record<string, string> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
 };
 
-/** Reverse htmlEntityEncode, including numeric entities (&#39;, &#x27;). */
+/**
+ * Reverse htmlEntityEncode, including numeric entities (&#39;, &#x27;, &#128512;).
+ * One pass, so `&amp;#60;` loses one level of escaping (`&#60;`), not two.
+ */
 export function htmlEntityDecode(text: string): string {
-  return text
-    .replace(/&amp;|&lt;|&gt;|&quot;|&apos;|&#39;|&#x27;/gi, (m) => HTML_DECODE_MAP[m.toLowerCase()] ?? m)
-    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(Number(dec)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+  return text.replace(
+    /&(?:(amp|lt|gt|quot|apos)|#(\d+)|#x([0-9a-f]+));/gi,
+    (match: string, name?: string, dec?: string, hex?: string) => {
+      if (name) return HTML_NAMED_ENTITIES[name.toLowerCase()];
+      const cp = dec ? Number(dec) : parseInt(hex!, 16);
+      return cp <= 0x10ffff ? String.fromCodePoint(cp) : match;
+    },
+  );
 }
 
 /** Convert a base64url string (JWT segment encoding) to standard base64. */
