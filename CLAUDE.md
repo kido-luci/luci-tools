@@ -50,7 +50,7 @@ in `tools-router/src/routes.ts`; never guess a host from the directory name.
   until the live consoles are clean; `'unsafe-eval'` under `/image` only, for
   heic2any's worker), `X-Frame-Options: SAMEORIGIN` and
   `Strict-Transport-Security: max-age=31536000`. A page that loads a new
-  third-party script, style, font or connection needs the CSP in
+  third-party script, style, font, image, frame or connection needs the CSP in
   `tools-router/src/index.ts` updated first.
 - Each engine = **its own top-level directory in this monorepo + its own Pages
   project**, owning one path prefix. (Consolidated 2026-07-31 — the former
