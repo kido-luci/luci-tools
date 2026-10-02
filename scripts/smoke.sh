@@ -25,10 +25,12 @@ fail() {
   fails=$((fails + 1))
 }
 
-# GET a URL and print its status code; the body and headers land in $tmp.
+# GET a URL and print its status code; the body and headers land in $tmp. A failed
+# request prints 000 (curl's own write-out, or ours when curl printed nothing).
 fetch() {
-  curl -sS --compressed --max-time 20 -o "$tmp/body" -D "$tmp/headers" -w '%{http_code}' "$1" </dev/null 2>/dev/null ||
-    echo 000
+  local code
+  code=$(curl -sS --compressed --max-time 20 -o "$tmp/body" -D "$tmp/headers" -w '%{http_code}' "$1" </dev/null 2>/dev/null)
+  echo "${code:-000}"
 }
 
 # The value of a response header from the last fetch (case-insensitive name).
