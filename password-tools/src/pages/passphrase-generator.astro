@@ -23,11 +23,11 @@ const jsonLd = {
 const faqs: FaqItem[] = [
   {
     q: 'What is a passphrase, and how is it different from a password?',
-    a: 'A passphrase strings together several random words (like "maple-otter-quartz-dawn") instead of random characters. It aims for the same entropy as a complex password but is built from words, which makes it much easier to read, type and remember.',
+    a: 'A passphrase strings together several random words (like "cedar-otter-cobalt-dawn") instead of random characters. It aims for the same entropy as a complex password but is built from words, which makes it much easier to read, type and remember.',
   },
   {
     q: 'Are passphrases actually as secure as random-character passwords?',
-    a: "Yes, when they use enough words picked from a large, random wordlist. Each additional word multiplies the number of possible combinations, similar to how each additional character does for a traditional password — five or six random words comfortably reaches strong entropy.",
+    a: "Yes, when they use enough words picked from a large, random wordlist. Each additional word multiplies the number of possible combinations, similar to how each additional character does for a traditional password — with this tool's 7,776-word list, five or six words reach good entropy (about 65–78 bits) and eight or more reach strong.",
   },
   {
     q: 'Are my generated passphrases uploaded anywhere?',
@@ -35,7 +35,7 @@ const faqs: FaqItem[] = [
   },
   {
     q: 'How many words should my passphrase have?',
-    a: 'Four to five words is a solid baseline for most accounts; six or more pushes into very strong territory. Use the length slider (which controls word count here) and watch the strength meter to see the resulting entropy directly.',
+    a: 'Five to six words is a solid baseline for most accounts; eight or more reaches strong (over 100 bits). Use the length slider (which controls word count here) and watch the strength meter to see the resulting entropy directly.',
   },
   {
     q: 'Can I customize the separator between words?',
@@ -70,7 +70,7 @@ const faqs: FaqItem[] = [
     <div class="copy">
       <h2>How to generate a passphrase</h2>
       <ol>
-        <li>Drag the word-count slider to choose how many words to include — 4–6 is a good range for most accounts.</li>
+        <li>Drag the word-count slider to choose how many words to include — 5–7 is a good range for most accounts.</li>
         <li>Click <strong>Regenerate</strong> until you get a passphrase you like the sound of.</li>
         <li>Click <strong>Copy</strong> to copy it, then paste it straight into your password manager.</li>
       </ol>
@@ -78,7 +78,7 @@ const faqs: FaqItem[] = [
       <h2>Why passphrases are easier to remember</h2>
       <p>
         Human memory is much better at recalling words than random character
-        strings. A passphrase like "maple-otter-quartz-dawn" reaches high
+        strings. A passphrase like "cedar-otter-cobalt-dawn" gets its
         entropy through the sheer number of words in the pool it's drawn
         from, while staying easy to read aloud, type on a phone keyboard, or
         recall days later — something a string like "xQ7$mK2!vL9p" can't
@@ -93,6 +93,12 @@ const faqs: FaqItem[] = [
         translates the current word count directly into bits of entropy, so
         you can see exactly how many words you need to cross into "good" or
         "strong" territory.
+      </p>
+      <p>
+        Words are drawn from the <a href="https://www.eff.org/dice" class="text-[var(--accent)] underline hover:no-underline">EFF Long Wordlist</a>
+        by the Electronic Frontier Foundation — 7,776 words, so each one adds
+        about 12.9 bits — licensed under
+        <a href="https://creativecommons.org/licenses/by/4.0/" class="text-[var(--accent)] underline hover:no-underline">CC BY 4.0</a>.
       </p>
 
       <h2>Where passphrases work best</h2>
