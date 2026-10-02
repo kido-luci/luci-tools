@@ -1,6 +1,9 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import worker, { resolveRoute, rewriteLocation, ORIGINS, HOME_ORIGIN, HOST } from './index';
 
+// First segments that `in` finds on Object.prototype; each used to crash the Worker.
+const PROTOTYPE_PATHS = ['/constructor/x', '/__proto__/x', '/valueOf', '/toString/', '/hasOwnProperty'];
+
 describe('resolveRoute', () => {
   it('routes each engine prefix to its suffixed origin and strips the prefix', () => {
     expect(resolveRoute('/image/heic-to-jpg/')).toEqual({
@@ -44,6 +47,12 @@ describe('resolveRoute', () => {
     expect(resolveRoute('/sitemap.xml').host).toBe(HOME_ORIGIN);
     expect(resolveRoute('/ads.txt').host).toBe(HOME_ORIGIN);
     expect(resolveRoute('/unknown/x')).toEqual({ host: HOME_ORIGIN, prefix: '', originPath: '/unknown/x' });
+  });
+
+  it('sends Object.prototype names to the home project, not up the prototype chain', () => {
+    for (const p of PROTOTYPE_PATHS) {
+      expect(resolveRoute(p)).toEqual({ host: HOME_ORIGIN, prefix: '', originPath: p });
+    }
   });
 });
 
@@ -117,6 +126,12 @@ describe('fetch handler', () => {
   it('sends root and legal paths to tools-home unchanged', async () => {
     expect((await proxy(get('/'))).target).toBe(`https://${HOME_ORIGIN}/`);
     expect((await proxy(get('/privacy/?a=1'))).target).toBe(`https://${HOME_ORIGIN}/privacy/?a=1`);
+  });
+
+  it('proxies Object.prototype names to tools-home instead of crashing', async () => {
+    for (const p of PROTOTYPE_PATHS) {
+      expect((await proxy(get(p))).target).toBe(`https://${HOME_ORIGIN}${p}`);
+    }
   });
 
   it('drops the inbound Host header and forwards the others', async () => {

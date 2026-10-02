@@ -50,7 +50,8 @@ export interface Route {
  */
 export function resolveRoute(pathname: string): Route {
   const seg = pathname.split('/')[1] ?? '';
-  if (seg in ORIGINS) {
+  // Own keys only: `in` also finds Object.prototype names (/constructor, /__proto__…).
+  if (Object.hasOwn(ORIGINS, seg)) {
     return {
       host: ORIGINS[seg],
       prefix: `/${seg}`,
