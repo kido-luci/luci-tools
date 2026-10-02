@@ -72,6 +72,11 @@ describe('dateToEpoch', () => {
     expect(dateToEpoch('2023-11-14T22:13:20.5').ms).toBe(1700000000500);
   });
 
+  it('accepts a lowercase t separator (RFC 3339) and still reads it as UTC', () => {
+    expect(dateToEpoch('2023-11-14t22:13:20').seconds).toBe(1700000000);
+    expect(dateToEpoch('2023-11-14t22:13:20.5').ms).toBe(1700000000500);
+  });
+
   it('still honours an explicit Z or offset', () => {
     expect(dateToEpoch('2023-11-14T22:13:20Z').seconds).toBe(1700000000);
     expect(dateToEpoch('2023-11-14T22:13:20+07:00').seconds).toBe(1699974800);
