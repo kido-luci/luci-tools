@@ -29,7 +29,7 @@ const faqs: FaqItem[] = [
   },
   {
     q: 'What size will the PNG be?',
-    a: "If your SVG specifies its own width and height (or a viewBox), the PNG is rendered at that size. If the SVG has no intrinsic size at all, it falls back to a 1024px-wide square so you still get a usable image.",
+    a: "If your SVG sets its own width and height, the PNG is rendered at exactly that size. Otherwise — no size, only a viewBox, or a size in percent — the PNG is 1024px on its longer side in the viewBox's proportions, or a 1024 × 1024 square if there is no viewBox either.",
   },
   {
     q: 'Will the PNG lose any quality compared to the SVG?',
@@ -94,12 +94,13 @@ const faqs: FaqItem[] = [
 
       <h2>Choosing an export size</h2>
       <p>
-        Most SVGs carry an intrinsic width and height (or a viewBox that
-        implies one), and this tool renders the PNG at that size by
-        default. If your SVG has no size information at all, it falls back
-        to a 1024px-wide image so the download is always usable —
-        icons and logos are typically small enough that this is larger
-        than you'll ever need.
+        Most SVGs carry their own width and height, and this tool renders
+        the PNG at exactly that size. An SVG with only a viewBox, or a size
+        in percent, has no fixed size, so it is rendered 1024px on its
+        longer side in the viewBox's proportions; with no size information
+        at all it becomes a 1024 × 1024 square. Either way the download is
+        always usable — icons and logos are typically small enough that
+        this is larger than you'll ever need.
       </p>
 
       <h2>Common reasons to convert SVG to PNG</h2>
