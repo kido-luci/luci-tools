@@ -3,7 +3,8 @@
 // crypto/Math.random — deterministic input, deterministic assertions.
 
 import { describe, it, expect } from 'vitest';
-import { generatePassword, generatePassphrase, estimateStrength, WORDLIST } from './password';
+import { generatePassword, generatePassphrase, estimateStrength, passphraseStrength } from './password';
+import { EFF_LONG_WORDLIST } from './eff-long-wordlist';
 
 // Deterministic PRNG (mulberry32) so tests are reproducible without crypto.
 function makeRng(seed: number): () => number {
@@ -14,6 +15,16 @@ function makeRng(seed: number): () => number {
     let t = Math.imul(a ^ (a >>> 15), 1 | a);
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// An rng that lands on the given rolls of five dice, in order, so expected
+// words can be read straight off EFF's numbered list ('11111' = 'abacus').
+function diceRng(...rolls: string[]): () => number {
+  let k = 0;
+  return () => {
+    const index = [...rolls[k++]].reduce((n, d) => n * 6 + Number(d) - 1, 0);
+    return (index + 0.5) / 7776;
   };
 }
 
@@ -85,36 +96,71 @@ describe('generatePassword', () => {
 });
 
 describe('generatePassphrase', () => {
+  // A few EFF words contain a hyphen (t-shirt), so split('-') can't count
+  // words: these tests check exact words or split on another separator.
   it('produces the requested word count separated by the default separator', () => {
-    const rng = makeRng(1);
-    const phrase = generatePassphrase(5, rng);
-    expect(phrase.split('-')).toHaveLength(5);
+    const rng = diceRng('15265', '42552', '16245', '22226');
+    expect(generatePassphrase(EFF_LONG_WORDLIST, 4, rng)).toBe('cedar-otter-cobalt-dawn');
   });
 
   it('uses a custom separator', () => {
     const rng = makeRng(2);
-    const phrase = generatePassphrase(4, rng, '_');
+    const phrase = generatePassphrase(EFF_LONG_WORDLIST, 4, rng, '_');
     expect(phrase.split('_')).toHaveLength(4);
-    expect(phrase).not.toContain('-');
+    for (const word of phrase.split('_')) {
+      expect(EFF_LONG_WORDLIST).toContain(word);
+    }
   });
 
   it('returns empty string for word count 0', () => {
     const rng = makeRng(1);
-    expect(generatePassphrase(0, rng)).toBe('');
+    expect(generatePassphrase(EFF_LONG_WORDLIST, 0, rng)).toBe('');
   });
 
-  it('only uses words from the embedded wordlist', () => {
+  it('only uses words from the given wordlist', () => {
     const rng = makeRng(3);
-    const phrase = generatePassphrase(10, rng);
-    for (const word of phrase.split('-')) {
-      expect(WORDLIST).toContain(word);
+    const phrase = generatePassphrase(EFF_LONG_WORDLIST, 10, rng, ' ');
+    for (const word of phrase.split(' ')) {
+      expect(EFF_LONG_WORDLIST).toContain(word);
     }
   });
 
   it('is deterministic for the same injected rng seed', () => {
-    const a = generatePassphrase(6, makeRng(99));
-    const b = generatePassphrase(6, makeRng(99));
+    const a = generatePassphrase(EFF_LONG_WORDLIST, 6, makeRng(99));
+    const b = generatePassphrase(EFF_LONG_WORDLIST, 6, makeRng(99));
     expect(a).toBe(b);
+  });
+});
+
+describe('EFF_LONG_WORDLIST', () => {
+  it('has 7,776 unique entries', () => {
+    expect(EFF_LONG_WORDLIST).toHaveLength(7776);
+    expect(new Set(EFF_LONG_WORDLIST).size).toBe(7776);
+    expect(EFF_LONG_WORDLIST.every((word) => /^[a-z-]+$/.test(word))).toBe(true);
+  });
+});
+
+describe('passphraseStrength', () => {
+  it('reports n × log2(7776) bits for n words of the EFF list', () => {
+    for (let n = 1; n <= 10; n++) {
+      expect(passphraseStrength(n, EFF_LONG_WORDLIST.length).bits).toBeCloseTo(n * Math.log2(7776), 10);
+    }
+  });
+
+  it('labels with the same 28 / 60 / 100-bit thresholds as estimateStrength', () => {
+    // one word from a list of 2^b words carries exactly b bits
+    expect(passphraseStrength(1, 2 ** 27).label).toBe('weak');
+    expect(passphraseStrength(1, 2 ** 28).label).toBe('fair');
+    expect(passphraseStrength(1, 2 ** 60).label).toBe('good');
+    expect(passphraseStrength(1, 2 ** 100).label).toBe('strong');
+  });
+
+  it('rates EFF passphrases by word count, not by their letters', () => {
+    // 5 words = 64.6 bits; scoring the letters would claim ~150 and "strong"
+    expect(passphraseStrength(4, 7776).label).toBe('fair');
+    expect(passphraseStrength(5, 7776).label).toBe('good');
+    expect(passphraseStrength(7, 7776).label).toBe('good');
+    expect(passphraseStrength(8, 7776).label).toBe('strong');
   });
 });
 

@@ -94,36 +94,13 @@ export function generatePassword(opts: GeneratePasswordOptions, rng: Rng = defau
   return shuffle(result, rng).join('');
 }
 
-// ~150 common short English words for passphrase generation. Kept lowercase,
-// no ambiguous punctuation — embedded so generation needs no network fetch.
-export const WORDLIST: readonly string[] = [
-  'apple', 'ash', 'bay', 'bear', 'bell', 'bird', 'blue', 'boat', 'bold', 'bolt',
-  'bone', 'book', 'boot', 'brave', 'bread', 'brick', 'bright', 'brook', 'brush', 'cabin',
-  'cake', 'calm', 'camp', 'candy', 'cave', 'chair', 'chalk', 'charm', 'chase', 'cheese',
-  'chess', 'chief', 'child', 'clay', 'cliff', 'cloud', 'clover', 'coal', 'coast', 'coin',
-  'cold', 'comet', 'coral', 'crane', 'creek', 'crisp', 'crown', 'curve', 'dance', 'dawn',
-  'deep', 'deer', 'desk', 'dew', 'diamond', 'dirt', 'dog', 'dove', 'dragon', 'drift',
-  'drum', 'dust', 'eagle', 'earth', 'echo', 'elm', 'ember', 'fable', 'falcon', 'fast',
-  'fawn', 'feast', 'fern', 'field', 'fire', 'fish', 'flame', 'flow', 'flower', 'fog',
-  'forest', 'fox', 'frost', 'fruit', 'garden', 'gate', 'ghost', 'glow', 'gold', 'grain',
-  'grape', 'grass', 'gray', 'green', 'grove', 'hall', 'harbor', 'hare', 'harp', 'haven',
-  'hawk', 'hazel', 'heart', 'hill', 'honey', 'horn', 'horse', 'ice', 'iris', 'ivy',
-  'jade', 'jazz', 'jewel', 'joy', 'kelp', 'kind', 'kite', 'lake', 'lamp', 'leaf',
-  'lemon', 'light', 'lily', 'lime', 'lion', 'lotus', 'luck', 'lunar', 'lyric', 'maple',
-  'marsh', 'meadow', 'melon', 'mint', 'mist', 'moon', 'moss', 'moth', 'mount', 'music',
-  'night', 'oak', 'ocean', 'olive', 'onyx', 'opal', 'orbit', 'otter', 'owl', 'panda',
-  'peach', 'pearl', 'pebble', 'petal', 'pine', 'plum', 'pond', 'poppy', 'quartz', 'quiet',
-  'rain', 'raven', 'reed', 'reef', 'river', 'robin', 'rock', 'rose', 'sage', 'sail',
-  'sand', 'shade', 'shell', 'shore', 'sky', 'snow', 'song', 'spark', 'star', 'stone',
-  'storm', 'stream', 'sun', 'swan', 'tide', 'tiger', 'toast', 'trail', 'tree', 'tulip',
-  'valley', 'violet', 'wave', 'wheat', 'willow', 'wind', 'wolf', 'wood', 'wren', 'zephyr',
-] as const;
-
 /**
- * Generate a passphrase of `wordCount` words picked from the embedded
- * wordlist, joined by `separator`. Deterministic when `rng` is injected.
+ * Generate a passphrase of `wordCount` words picked from `wordlist` (the EFF
+ * Long Wordlist in eff-long-wordlist.ts, which the caller loads and passes in),
+ * joined by `separator`. Deterministic when `rng` is injected.
  */
 export function generatePassphrase(
+  wordlist: readonly string[],
   wordCount: number,
   rng: Rng = defaultRng,
   separator = '-',
@@ -131,7 +108,7 @@ export function generatePassphrase(
   if (wordCount <= 0) return '';
   const words: string[] = [];
   for (let i = 0; i < wordCount; i++) {
-    words.push(pick(WORDLIST, rng));
+    words.push(pick(wordlist, rng));
   }
   return words.join(separator);
 }
@@ -143,10 +120,19 @@ export interface StrengthEstimate {
   label: StrengthLabel;
 }
 
+/** Label a bit count by common thresholds — shared by passwords and passphrases. */
+function strengthLabel(bits: number): StrengthLabel {
+  if (bits < 28) return 'weak';
+  if (bits < 60) return 'fair';
+  if (bits < 100) return 'good';
+  return 'strong';
+}
+
 /**
  * Estimate password entropy in bits as length × log2(charset size present),
  * using the widest character-class assumption detectable from the string's
- * contents. Labeled by common bit thresholds.
+ * contents. Labeled by common bit thresholds. Only for random-character
+ * passwords: a passphrase's letters aren't random, so use passphraseStrength.
  */
 export function estimateStrength(pw: string): StrengthEstimate {
   if (pw.length === 0) return { bits: 0, label: 'weak' };
@@ -160,11 +146,15 @@ export function estimateStrength(pw: string): StrengthEstimate {
 
   const bits = pw.length * Math.log2(charsetSize);
 
-  let label: StrengthLabel;
-  if (bits < 28) label = 'weak';
-  else if (bits < 60) label = 'fair';
-  else if (bits < 100) label = 'good';
-  else label = 'strong';
+  return { bits, label: strengthLabel(bits) };
+}
 
-  return { bits, label };
+/**
+ * Exact entropy of a passphrase from generatePassphrase: each word is an
+ * independent uniform pick from `listSize` words, so it adds log2(listSize)
+ * bits (≈ 12.9 for the EFF list's 7,776 words).
+ */
+export function passphraseStrength(wordCount: number, listSize: number): StrengthEstimate {
+  const bits = wordCount * Math.log2(listSize);
+  return { bits, label: strengthLabel(bits) };
 }

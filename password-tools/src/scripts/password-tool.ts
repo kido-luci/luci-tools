@@ -1,7 +1,7 @@
 // Wires the [data-password-tool] widget rendered by PasswordTool.astro to the
 // generation engine. `mode` (password | passphrase) is read from `data-mode`,
 // so every page reuses this exact script — only the attribute differs.
-import { generatePassword, generatePassphrase, estimateStrength } from '../lib/password';
+import { generatePassword, generatePassphrase, estimateStrength, passphraseStrength } from '../lib/password';
 
 const STRENGTH_COLOR: Record<string, string> = {
   weak: 'bg-red-500',
@@ -10,7 +10,7 @@ const STRENGTH_COLOR: Record<string, string> = {
   strong: 'bg-green-600',
 };
 
-function init(): void {
+async function init(): Promise<void> {
   const root = document.querySelector<HTMLElement>('[data-password-tool]');
   if (!root) return;
 
@@ -31,12 +31,23 @@ function init(): void {
 
   // Passphrases are word-based: the "length" slider becomes a word count and
   // the character-class checkboxes don't apply.
+  let wordlist: readonly string[] = [];
   if (mode === 'passphrase') {
     lengthInput.min = '3';
     lengthInput.max = '10';
     lengthInput.value = '5';
     if (lengthFieldLabel) lengthFieldLabel.textContent = 'Word count';
     if (classControls) classControls.style.display = 'none';
+    // Loaded on demand so the password pages don't download 7,776 words.
+    try {
+      wordlist = (await import('../lib/eff-long-wordlist')).EFF_LONG_WORDLIST;
+    } catch {
+      // Nothing to generate without the list: say so, and leave the controls
+      // unwired so they do nothing.
+      output.classList.remove('truncate'); // wrap the message rather than cut it off
+      output.textContent = "Couldn't load the word list — please reload the page.";
+      return;
+    }
   }
 
   function currentOptions() {
@@ -50,12 +61,16 @@ function init(): void {
   function render(): void {
     const value =
       mode === 'passphrase'
-        ? generatePassphrase(Number(lengthInput!.value))
+        ? generatePassphrase(wordlist, Number(lengthInput!.value))
         : generatePassword(currentOptions());
 
     output!.textContent = value;
 
-    const { bits, label } = estimateStrength(value);
+    // A passphrase's strength comes from its word count, not its letters.
+    const { bits, label } =
+      mode === 'passphrase'
+        ? passphraseStrength(Number(lengthInput!.value), wordlist.length)
+        : estimateStrength(value);
     if (strengthFill) {
       const pct = Math.min(100, Math.round((bits / 128) * 100));
       strengthFill.style.width = `${pct}%`;
@@ -103,4 +118,4 @@ function init(): void {
   render();
 }
 
-init();
+void init();
