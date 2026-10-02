@@ -197,9 +197,10 @@ export function jsonToCsv(input: string): string {
  * inside quotes, commas and line breaks inside quoted fields, and both CRLF and
  * LF line endings. The first row is the header; returns pretty-printed JSON
  * where each subsequent row is an object mapping header → cell (all strings).
- * A trailing newline does not produce an extra blank row. A quote that does
- * not open its field is a literal character (lenient RFC 4180), so `12" large`
- * stays one value instead of swallowing the rows after it.
+ * A trailing newline does not produce an extra blank row. A quote opens a
+ * quoted field only where nothing but spaces or tabs (which are kept) precede
+ * it in the field; anywhere else it is a literal character (lenient RFC 4180),
+ * so `12" large` stays one value instead of swallowing the rows after it.
  */
 export function csvToJson(input: string): string {
   const records: string[][] = [];
@@ -236,7 +237,7 @@ export function csvToJson(input: string): string {
       continue;
     }
 
-    if (char === '"' && !fieldStarted) {
+    if (char === '"' && /^[ \t]*$/.test(field)) {
       inQuotes = true;
       fieldStarted = true;
     } else if (char === ',') {

@@ -462,6 +462,18 @@ describe('csvToJson', () => {
   ])('keeps a stray quote %s literal instead of swallowing the next rows', (_name, csv, expected) => {
     expect(JSON.parse(csvToJson(csv))).toEqual(expected);
   });
+
+  it.each([
+    ['a space', 'name,city\n"Smith, John", "New York, NY"', [{ name: 'Smith, John', city: ' New York, NY' }]],
+    ['a tab', 'a,b\n1,\t"x, y"', [{ a: '1', b: '\tx, y' }]],
+    [
+      'spaces, beside a literal mid-field quote',
+      'item,size,city\npizza,12" large, "New York, NY"',
+      [{ item: 'pizza', size: '12" large', city: ' New York, NY' }],
+    ],
+  ])('opens a quoted field after %s, keeping the leading whitespace', (_name, csv, expected) => {
+    expect(JSON.parse(csvToJson(csv))).toEqual(expected);
+  });
 });
 
 describe('CSV round-trip', () => {
