@@ -78,6 +78,30 @@ export function rewriteLocation(location: string, host: string, prefix: string):
   return location;
 }
 
+/**
+ * The Content-Security-Policy every page gets, sent as Report-Only until the live
+ * consoles are clean. 'unsafe-inline' because Astro's inline scripts change per build
+ * and Cloudflare's injected loader per request (no hash or nonce can match them);
+ * the data:/blob: sources cover inline fonts, images, downloads and heic2any's
+ * worker. Only /image allows 'unsafe-eval': that worker runs `new Function`.
+ */
+function contentSecurityPolicy(prefix: string): string {
+  const unsafeEval = prefix === '/image' ? " 'unsafe-eval'" : '';
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'unsafe-inline'${unsafeEval} https://static.cloudflareinsights.com`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob:",
+    "font-src 'self' data:",
+    "connect-src 'self' data: blob: https://cloudflareinsights.com",
+    "worker-src 'self' blob:",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'self'",
+  ].join('; ');
+}
+
 export default {
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
@@ -97,16 +121,16 @@ export default {
       ...(hasBody ? { duplex: 'half' } : {}),
     } as RequestInit);
 
-    // Pass the response through, fixing only a leaking or unprefixed redirect.
-    const location = originRes.headers.get('location');
-    if (!location) return originRes;
+    // Headers on a fetch() result are immutable in Workers, so copy the response first.
+    const res = new Response(originRes.body, originRes);
 
-    const fixedHeaders = new Headers(originRes.headers);
-    fixedHeaders.set('location', rewriteLocation(location, host, prefix));
-    return new Response(originRes.body, {
-      status: originRes.status,
-      statusText: originRes.statusText,
-      headers: fixedHeaders,
-    });
+    // Pass the response through, fixing only a leaking or unprefixed redirect,
+    // and add the security headers Pages does not send.
+    const location = res.headers.get('location');
+    if (location) res.headers.set('location', rewriteLocation(location, host, prefix));
+    res.headers.set('Content-Security-Policy-Report-Only', contentSecurityPolicy(prefix));
+    res.headers.set('X-Frame-Options', 'SAMEORIGIN');
+    res.headers.set('Strict-Transport-Security', 'max-age=31536000');
+    return res;
   },
 };

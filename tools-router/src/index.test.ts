@@ -175,3 +175,64 @@ describe('fetch handler', () => {
     expect(res.headers.get('location')).toBe('/pdf/merge-pdf/');
   });
 });
+
+const CSP =
+  "default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; " +
+  "style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; " +
+  "connect-src 'self' data: blob: https://cloudflareinsights.com; worker-src 'self' blob:; " +
+  "object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'";
+const IMAGE_CSP = CSP.replace("'unsafe-inline' https", "'unsafe-inline' 'unsafe-eval' https");
+
+/** A response whose headers throw on write, as a fetch() result's do in Workers. */
+function immutable(res: Response): Response {
+  for (const method of ['set', 'append', 'delete']) {
+    Object.defineProperty(res.headers, method, {
+      value: () => {
+        throw new TypeError("Can't modify immutable headers.");
+      },
+    });
+  }
+  return res;
+}
+
+describe('security headers', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('adds a Report-Only CSP, X-Frame-Options and HSTS to every response', async () => {
+    const responses = [
+      (await proxy(get('/'))).res,
+      (await proxy(get('/pdf/merge-pdf/'))).res,
+      (await proxy(get('/qr/nope/'), new Response('missing', { status: 404 }))).res,
+      (await proxy(get('/pdf/merge-pdf'), new Response(null, { status: 308, headers: { location: '/merge-pdf/' } }))).res,
+    ];
+    for (const res of responses) {
+      expect(res.headers.get('content-security-policy-report-only')).toBe(CSP);
+      expect(res.headers.get('content-security-policy')).toBeNull();
+      expect(res.headers.get('x-frame-options')).toBe('SAMEORIGIN');
+      expect(res.headers.get('strict-transport-security')).toBe('max-age=31536000');
+    }
+  });
+
+  it("allows 'unsafe-eval' under /image only (heic2any's worker runs new Function)", async () => {
+    const csp = async (path: string) =>
+      (await proxy(get(path))).res.headers.get('content-security-policy-report-only');
+    expect(await csp('/image/heic-to-jpg/')).toBe(IMAGE_CSP);
+    expect(await csp('/image/')).toBe(IMAGE_CSP);
+    expect(await csp('/imagefoo/')).toBe(CSP);
+    expect(await csp('/pdf/jpg-to-pdf/')).toBe(CSP);
+    expect(await csp('/')).toBe(CSP);
+  });
+
+  it('copies the immutable upstream headers instead of writing to them', async () => {
+    const { res } = await proxy(get('/hash/'), immutable(new Response('ok', { headers: { 'content-type': 'text/html' } })));
+    expect(res.headers.get('content-type')).toBe('text/html');
+    expect(res.headers.get('x-frame-options')).toBe('SAMEORIGIN');
+
+    const redirect = immutable(new Response(null, { status: 308, headers: { location: '/md5-hash-generator/' } }));
+    const { res: moved } = await proxy(get('/hash/md5-hash-generator'), redirect);
+    expect(moved.headers.get('location')).toBe('/hash/md5-hash-generator/');
+    expect(moved.headers.get('strict-transport-security')).toBe('max-age=31536000');
+  });
+});
