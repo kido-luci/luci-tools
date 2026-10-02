@@ -19,11 +19,12 @@
 import { resolveRoute, rewriteLocation } from './routes';
 
 /**
- * The Content-Security-Policy every page gets, sent as Report-Only until the live
- * consoles are clean. 'unsafe-inline' because Astro's inline scripts change per build
- * and Cloudflare's injected loader per request (no hash or nonce can match them);
- * the data:/blob: sources cover inline fonts, images, downloads and heic2any's
- * worker. Only /image allows 'unsafe-eval': that worker runs `new Function`.
+ * The Content-Security-Policy every page gets, enforced since v0.2.1 (after a clean
+ * Report-Only round on the live tools). 'unsafe-inline' because Astro's inline
+ * scripts change per build and Cloudflare's injected loader per request (no hash
+ * or nonce can match them); the data:/blob: sources cover inline fonts, images,
+ * downloads and heic2any's worker. Only /image allows 'unsafe-eval': that worker
+ * runs `new Function`.
  */
 function contentSecurityPolicy(prefix: string): string {
   const unsafeEval = prefix === '/image' ? " 'unsafe-eval'" : '';
@@ -68,7 +69,7 @@ export default {
     // and add the security headers Pages does not send.
     const location = res.headers.get('location');
     if (location) res.headers.set('location', rewriteLocation(location, host, prefix));
-    res.headers.set('Content-Security-Policy-Report-Only', contentSecurityPolicy(prefix));
+    res.headers.set('Content-Security-Policy', contentSecurityPolicy(prefix));
     res.headers.set('X-Frame-Options', 'SAMEORIGIN');
     res.headers.set('Strict-Transport-Security', 'max-age=31536000');
     return res;

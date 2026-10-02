@@ -201,7 +201,7 @@ describe('security headers', () => {
     vi.unstubAllGlobals();
   });
 
-  it('adds a Report-Only CSP, X-Frame-Options and HSTS to every response', async () => {
+  it('adds an enforcing CSP, X-Frame-Options and HSTS to every response', async () => {
     const responses = [
       (await proxy(get('/'))).res,
       (await proxy(get('/pdf/merge-pdf/'))).res,
@@ -209,8 +209,8 @@ describe('security headers', () => {
       (await proxy(get('/pdf/merge-pdf'), new Response(null, { status: 308, headers: { location: '/merge-pdf/' } }))).res,
     ];
     for (const res of responses) {
-      expect(res.headers.get('content-security-policy-report-only')).toBe(CSP);
-      expect(res.headers.get('content-security-policy')).toBeNull();
+      expect(res.headers.get('content-security-policy')).toBe(CSP);
+      expect(res.headers.get('content-security-policy-report-only')).toBeNull();
       expect(res.headers.get('x-frame-options')).toBe('SAMEORIGIN');
       expect(res.headers.get('strict-transport-security')).toBe('max-age=31536000');
     }
@@ -218,7 +218,7 @@ describe('security headers', () => {
 
   it("allows 'unsafe-eval' under /image only (heic2any's worker runs new Function)", async () => {
     const csp = async (path: string) =>
-      (await proxy(get(path))).res.headers.get('content-security-policy-report-only');
+      (await proxy(get(path))).res.headers.get('content-security-policy');
     expect(await csp('/image/heic-to-jpg/')).toBe(IMAGE_CSP);
     expect(await csp('/image/')).toBe(IMAGE_CSP);
     expect(await csp('/imagefoo/')).toBe(CSP);

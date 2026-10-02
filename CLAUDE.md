@@ -46,8 +46,8 @@ in `tools-router/src/routes.ts`; never guess a host from the directory name.
   headers. It is the one piece of shared infra (and a single point of failure; keep
   it tiny and stable).
 - The Worker also adds the security headers Pages does not send, to every
-  response: a Content-Security-Policy (sent as `Content-Security-Policy-Report-Only`
-  until the live consoles are clean; `'unsafe-eval'` under `/image` only, for
+  response: a Content-Security-Policy (enforced since router v0.2.1;
+  `'unsafe-eval'` under `/image` only, for
   heic2any's worker), `X-Frame-Options: SAMEORIGIN` and
   `Strict-Transport-Security: max-age=31536000`. A page that loads a new
   third-party script, style, font, image, frame or connection needs the CSP in
