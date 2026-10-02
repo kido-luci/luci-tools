@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { resolveRoute, rewriteLocation, ORIGINS, HOME_ORIGIN } from './index';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import worker, { resolveRoute, rewriteLocation, ORIGINS, HOME_ORIGIN, HOST } from './index';
 
 describe('resolveRoute', () => {
   it('routes each engine prefix to its suffixed origin and strips the prefix', () => {
@@ -83,5 +83,80 @@ describe('ORIGINS', () => {
     expect(Object.keys(ORIGINS).sort()).toEqual([
       'color', 'encode', 'fancy-text', 'hash', 'image', 'json', 'password', 'pdf', 'qr', 'time', 'unit',
     ]);
+  });
+});
+
+type SentInit = RequestInit & { duplex?: string };
+
+/** Run the Worker against a stubbed origin; returns its response and the one upstream call. */
+async function proxy(request: Request, origin: Response = new Response('ok')) {
+  const upstream = vi.fn(async (_target: string, _init: SentInit) => origin);
+  vi.stubGlobal('fetch', upstream);
+  const res = await worker.fetch(request);
+  expect(upstream).toHaveBeenCalledTimes(1);
+  const [target, sent] = upstream.mock.calls[0];
+  return { res, target, sent };
+}
+
+const get = (path: string, init?: RequestInit) => new Request(`https://${HOST}${path}`, init);
+
+describe('fetch handler', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('proxies an engine path to its origin, prefix stripped and query string kept', async () => {
+    const { target, sent } = await proxy(get('/image/heic-to-jpg/?q=1&x=y'));
+    expect(target).toBe('https://image-converter-69t.pages.dev/heic-to-jpg/?q=1&x=y');
+    expect(sent.method).toBe('GET');
+    expect(sent.redirect).toBe('manual');
+    expect(sent.body).toBeUndefined();
+    expect(sent).not.toHaveProperty('duplex');
+  });
+
+  it('sends root and legal paths to tools-home unchanged', async () => {
+    expect((await proxy(get('/'))).target).toBe(`https://${HOME_ORIGIN}/`);
+    expect((await proxy(get('/privacy/?a=1'))).target).toBe(`https://${HOME_ORIGIN}/privacy/?a=1`);
+  });
+
+  it('drops the inbound Host header and forwards the others', async () => {
+    const { sent } = await proxy(get('/pdf/merge-pdf/', { headers: { host: HOST, 'accept-language': 'vi' } }));
+    const headers = new Headers(sent.headers);
+    expect(headers.get('host')).toBeNull();
+    expect(headers.get('accept-language')).toBe('vi');
+  });
+
+  it('streams a POST body to the origin with duplex: half', async () => {
+    const request = get('/json/json-formatter/', { method: 'POST', body: 'payload' });
+    const { sent } = await proxy(request);
+    expect(sent.method).toBe('POST');
+    expect(sent.duplex).toBe('half');
+    expect(sent.body).toBe(request.body);
+    expect(await new Response(sent.body).text()).toBe('payload');
+  });
+
+  it("passes the origin's status, headers and body through", async () => {
+    const origin = new Response('missing', { status: 404, headers: { 'content-type': 'text/html' } });
+    const { res } = await proxy(get('/qr/nope/'), origin);
+    expect(res.status).toBe(404);
+    expect(res.headers.get('content-type')).toBe('text/html');
+    expect(await res.text()).toBe('missing');
+  });
+
+  it('rewrites an absolute origin redirect onto the public host and prefix', async () => {
+    const origin = new Response(null, {
+      status: 307,
+      headers: { location: 'https://image-converter-69t.pages.dev/heic-to-jpg/' },
+    });
+    const { res } = await proxy(get('/image/heic-to-jpg'), origin);
+    expect(res.status).toBe(307);
+    expect(res.headers.get('location')).toBe(`https://${HOST}/image/heic-to-jpg/`);
+  });
+
+  it('re-adds the prefix to a root-relative redirect', async () => {
+    const origin = new Response(null, { status: 308, headers: { location: '/merge-pdf/' } });
+    const { res } = await proxy(get('/pdf/merge-pdf'), origin);
+    expect(res.status).toBe(308);
+    expect(res.headers.get('location')).toBe('/pdf/merge-pdf/');
   });
 });
